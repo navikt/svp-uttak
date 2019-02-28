@@ -11,15 +11,17 @@ pipeline {
     }
     stages {
         stage("initialize") {
-            checkout scm
-            GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
-            changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
-            mRevision = maven.revision()
-            tagName = mRevision + changelist
-            committer = sh(script: 'git log -1 --pretty=format:"%an (%ae)"', returnStdout: true).trim()
-            committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
-            changelog = sh(script: 'git log `git describe --tags --abbrev=0`..HEAD --oneline', returnStdout: true)
-            currentBuild.displayName = tagName
+            steps {
+                checkout scm
+                GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
+                changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
+                mRevision = maven.revision()
+                tagName = mRevision + changelist
+                committer = sh(script: 'git log -1 --pretty=format:"%an (%ae)"', returnStdout: true).trim()
+                committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
+                changelog = sh(script: 'git log `git describe --tags --abbrev=0`..HEAD --oneline', returnStdout: true)
+                currentBuild.displayName = tagName
+            }
         }
 
         stage('Build') {
