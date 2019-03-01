@@ -42,16 +42,18 @@ pipeline {
                 }
             }
             steps {
-                configFileProvider(
-                        [configFile(fileId: 'navMavenSettings', variable: 'MAVEN_SETTINGS')]) {
+                script {
+                    configFileProvider(
+                            [configFile(fileId: 'navMavenSettings', variable: 'MAVEN_SETTINGS')]) {
 
-                    buildEnvironment = new buildEnvironment()
-                    if(maven.javaVersion() != null) {
-                        buildEnvironment.overrideJDK(maven.javaVersion())
+                        buildEnvironment = new buildEnvironment()
+                        if(maven.javaVersion() != null) {
+                            buildEnvironment.overrideJDK(maven.javaVersion())
+                        }
+
+                        sh "mvn -U -B -s $MAVEN_SETTINGS -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$tagName clean deploy"
+
                     }
-
-                    sh "mvn -U -B -s $MAVEN_SETTINGS -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$tagName clean deploy"
-
                 }
             }
         }
