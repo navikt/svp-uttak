@@ -3,14 +3,15 @@
 import no.nav.jenkins.*
 
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v $HOME/.m2:/root/.m2'
-        }
-    }
+    agent none
+
     stages {
         stage("initialize") {
+            agent {
+                node {
+                    label 'DOCKER'
+                }
+            }
             steps {
                 checkout scm
                 script {
@@ -27,15 +28,19 @@ pipeline {
         }
 
         stage('Build') {
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn -B'
             }
         }
 
-        stage('Upload Artifact') {
-            steps {
-                sh "mvn clean deploy -Dusername=${env.DEP_USERNAME} -Dpassword=${env.DEP_PASSWORD} -DskipTests -B -e -Dfile.encoding=UTF-8 -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$tagName"
-            }
-        }
+        //stage('Upload Artifact') {
+
+        //}
     }
 }
