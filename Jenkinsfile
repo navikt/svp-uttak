@@ -6,7 +6,7 @@ pipeline {
     agent none
 
     stages {
-        stage("initialize") {
+        stage("Bygg og deploy") {
             agent {
                 node {
                     label 'DOCKER'
@@ -25,24 +25,7 @@ pipeline {
                     //def committerEmail = sh(script: 'git log -1 --pretty=format:"%ae"', returnStdout: true).trim()
                     //def changelog = sh(script: 'git log `git describe --tags --abbrev=0`..HEAD --oneline', returnStdout: true)
                     currentBuild.displayName = tagName
-                }
-            }
-        }
 
-        stage('Deploy') {
-            //agent {
-            //    docker {
-            //        image 'maven:3-alpine'
-            //        args '-v $HOME/.m2:/root/.m2'
-            //    }
-            //}
-            agent {
-                node {
-                    label 'DOCKER'
-                }
-            }
-            steps {
-                script {
                     configFileProvider(
                             [configFile(fileId: 'navMavenSettings', variable: 'MAVEN_SETTINGS')]) {
 
@@ -57,6 +40,8 @@ pipeline {
                 }
             }
         }
+
+
 
         //stage('Upload Artifact') {
 
