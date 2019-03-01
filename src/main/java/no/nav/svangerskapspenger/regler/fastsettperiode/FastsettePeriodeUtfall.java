@@ -1,4 +1,4 @@
-package no.nav.svangerskapspenger.regler.fastsettperiode.utfall;
+package no.nav.svangerskapspenger.regler.fastsettperiode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,10 +14,13 @@ import no.nav.svangerskapspenger.domene.resultat.PeriodeAvslåttÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeInnvilgetÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.UtfallType;
-import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
 
-public class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGrunnlag> {
+class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGrunnlag> {
+
+    public static final String UTFALL = "UTFALL";
+    public static final String ÅRSAK = "ÅRSAK";
+
 
     private final PeriodeÅrsak periodeÅrsak;
     private final RuleReasonRef ruleReasonRef;
@@ -40,8 +43,8 @@ public class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGr
         this.ruleReasonRef = new RuleReasonRefImpl(String.valueOf(periodeÅrsak.getId()), periodeÅrsak.getBeskrivelse());
 
         this.utfallSpesifiserere.add((singleEvaluation, grunnlag) -> {
-            singleEvaluation.getEvaluationProperties().put(FastsettePeriodeRegel.FastsettePeriodePropertyType.UTFALL, utfallType);
-            singleEvaluation.getEvaluationProperties().put(FastsettePeriodeRegel.FastsettePeriodePropertyType.ÅRSAK, periodeÅrsak);
+            singleEvaluation.getEvaluationProperties().put(UTFALL, utfallType);
+            singleEvaluation.getEvaluationProperties().put(ÅRSAK, periodeÅrsak);
         });
     }
 

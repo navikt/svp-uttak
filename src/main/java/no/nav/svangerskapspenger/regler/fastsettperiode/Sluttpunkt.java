@@ -1,19 +1,19 @@
-package no.nav.svangerskapspenger.regler.fastsettperiode.utfall;
+package no.nav.svangerskapspenger.regler.fastsettperiode;
 
 import no.nav.svangerskapspenger.domene.resultat.PeriodeAvslåttÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeInnvilgetÅrsak;
 
-public class Sluttpunkt {
+class Sluttpunkt {
 
     private Sluttpunkt() {
         // For å hindre instanser
     }
 
-    public static FastsettePeriodeUtfall innvilgelse(String id, PeriodeInnvilgetÅrsak årsak) {
+    static FastsettePeriodeUtfall innvilgelse(String id, PeriodeInnvilgetÅrsak årsak) {
         return new FastsettePeriodeUtfall(id, årsak);
     }
 
-    public static FastsettePeriodeUtfall avslag(String id, PeriodeAvslåttÅrsak årsak) {
+    static FastsettePeriodeUtfall avslag(String id, PeriodeAvslåttÅrsak årsak) {
         return new FastsettePeriodeUtfall(id, årsak);
     }
 
