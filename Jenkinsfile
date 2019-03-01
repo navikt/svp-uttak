@@ -29,15 +29,30 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Deploy') {
+            //agent {
+            //    docker {
+            //        image 'maven:3-alpine'
+            //        args '-v $HOME/.m2:/root/.m2'
+            //    }
+            //}
             agent {
-                docker {
-                    image 'maven:3-alpine'
-                    args '-v $HOME/.m2:/root/.m2'
+                node {
+                    label 'DOCKER'
                 }
             }
             steps {
-                sh 'mvn -U -B -Dfile.encoding=UTF-8 clean install'
+                configFileProvider(
+                        [configFile(fileId: 'navMavenSettings', variable: 'MAVEN_SETTINGS')]) {
+
+                    buildEnvironment = new buildEnvironment()
+                    if(maven.javaVersion() != null) {
+                        buildEnvironment.overrideJDK(maven.javaVersion())
+                    }
+
+                    sh "mvn -U -B -s $MAVEN_SETTINGS -Dfile.encoding=UTF-8 -DinstallAtEnd=true -DdeployAtEnd=true -Dsha1= -Dchangelist= -Drevision=$tagName clean deploy"
+
+                }
             }
         }
 
