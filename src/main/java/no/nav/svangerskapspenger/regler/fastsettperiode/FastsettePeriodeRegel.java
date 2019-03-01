@@ -1,11 +1,5 @@
 package no.nav.svangerskapspenger.regler.fastsettperiode;
 
-import java.util.Optional;
-
-import no.nav.fpsak.nare.evaluation.Resultat;
-import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
-import no.nav.svangerskapspenger.domene.resultat.PeriodeÅrsak;
-import no.nav.svangerskapspenger.domene.resultat.UtfallType;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkBarnetsDødsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkBrukersDødsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFødselsdato;
@@ -13,7 +7,6 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFørste
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpphørsdatoForMedlemskap;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkTermindato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
-import no.nav.svangerskapspenger.regler.fastsettperiode.utfall.Sluttpunkt;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeAvslåttÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeInnvilgetÅrsak;
 import no.nav.fpsak.nare.RuleService;
@@ -69,54 +62,4 @@ public class FastsettePeriodeRegel implements RuleService<FastsettePeriodeGrunnl
                 .ellers(sjekkBarnetsDødsdato);
     }
 
-    public static final class FastsettePeriodePropertyType {
-
-        public static final String UTFALL = "UTFALL";
-        public static final String ÅRSAK = "ÅRSAK";
-
-        private FastsettePeriodePropertyType() {
-            //For å hindre instanser
-        }
-
-    }
-
-    public static class Regelresultat {
-
-        private final EvaluationSummary evaluationSummary;
-
-        public Regelresultat(Evaluation evaluation) {
-            this.evaluationSummary = new EvaluationSummary(evaluation);
-        }
-
-        private <T> T getProperty(String tag, Class<T> clazz) {
-            Object obj = getProperty(tag);
-            if (obj != null && !clazz.isAssignableFrom(obj.getClass())) {
-                throw new IllegalArgumentException("Kan ikke hente property " + tag + ". Forventet " + clazz.getSimpleName() + " men fant " + obj.getClass());
-            }
-            return (T) obj;
-        }
-
-
-        public UtfallType getUtfallType() {
-            return getProperty(FastsettePeriodePropertyType.UTFALL, UtfallType.class);
-        }
-
-        public PeriodeÅrsak getPeriodeÅrsak() {
-            return getProperty(FastsettePeriodePropertyType.ÅRSAK, PeriodeÅrsak.class);
-        }
-
-
-        public boolean oppfylt() {
-            return !evaluationSummary.leafEvaluations(Resultat.JA).isEmpty();
-        }
-
-        private Object getProperty(String tag) {
-            Optional<Evaluation> first = evaluationSummary.leafEvaluations().stream()
-                .filter(e -> e.getEvaluationProperties() != null)
-                .findFirst();
-
-            return first.map(evaluation -> evaluation.getEvaluationProperties().get(tag)).orElse(null);
-        }
-
-    }
 }

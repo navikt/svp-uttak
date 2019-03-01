@@ -1,8 +1,13 @@
 package no.nav.svangerskapspenger.tjeneste.fastsettuttak;
 
+import java.time.LocalDate;
+import java.util.Set;
+import java.util.TreeSet;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
+import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
@@ -17,7 +22,7 @@ public class FastsettPerioderTjeneste {
 
     public void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder) {
         //Først knekk opp perioder på alle potensielle knekkpunkter
-        var knekkpunkter = KnekkpunktIdentifiserer.finnKnekkpunkter(avklarteDatoer);
+        var knekkpunkter = finnKnekkpunkter(avklarteDatoer);
         uttaksperioder.knekk(knekkpunkter);
 
         //Fastsett perioder
@@ -30,7 +35,7 @@ public class FastsettPerioderTjeneste {
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
         var regelJson = EvaluationSerializer.asJson(evaluering);
-        var regelresultat = new FastsettePeriodeRegel.Regelresultat(evaluering);
+        var regelresultat = new Regelresultat(evaluering);
         var utfallType = regelresultat.getUtfallType();
         var årsak = regelresultat.getPeriodeÅrsak();
 
@@ -53,5 +58,20 @@ public class FastsettPerioderTjeneste {
             throw new UttakRegelFeil("Kunne ikke serialisere regelinput for avklaring av uttaksperioder.", e);
         }
     }
+
+    private Set<LocalDate> finnKnekkpunkter(AvklarteDatoer avklarteDatoer) {
+        var knekkpunkter = new TreeSet<LocalDate>();
+
+        avklarteDatoer.getOpphørsdatoForMedlemskap().ifPresent(knekkpunkter::add);
+        knekkpunkter.add(avklarteDatoer.getFørsteLovligeUttaksdag());
+        knekkpunkter.add(avklarteDatoer.getTerminsdato().minusWeeks(3));
+        avklarteDatoer.getFødselsdato().ifPresent(knekkpunkter::add);
+        avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
+        avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);
+
+        return knekkpunkter;
+    }
+
+
 
 }
