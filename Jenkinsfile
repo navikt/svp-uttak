@@ -16,6 +16,7 @@ pipeline {
                 checkout scm
                 script {
                     Date date = new Date()
+                    maven = new maven()
                     def GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
                     def changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
                     def mRevision = maven.revision()
