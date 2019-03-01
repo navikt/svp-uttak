@@ -37,7 +37,7 @@ pipeline {
                 }
             }
             steps {
-                sh 'mvn -B'
+                sh 'mvn -U -B -Dfile.encoding=UTF-8 clean install'
             }
         }
 
