@@ -166,4 +166,49 @@ public class FastsettePerioderRegelOrkestreringTest {
 
     }
 
+    @Test
+    public void uttak_med_delvis_tilrettelegging_etter_en_måned_og_opphør_av_medlemskap_gir_tre_perioder() {
+        var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
+        var avklarteDatoer = new AvklarteDatoer(
+                Optional.empty(),
+                Optional.empty(),
+                Optional.of(opphørAvMedlemskap),
+                JORDMORS_DATO,
+                TERMINDATO,
+                Optional.empty()
+        );
+        var uttaksperioder = new Uttaksperioder();
+        var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
+                new Uttaksperiode(JORDMORS_DATO, startTilpassing.minusDays(1), FULL_YTELSESGRAD),
+                new Uttaksperiode(startTilpassing, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
+
+        fastsettePerioderRegelOrkestrering.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
+        assertThat(perioder).hasSize(3);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getTom()).isEqualTo(startTilpassing.minusDays(1));
+        assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(startTilpassing);
+        assertThat(periode1.getTom()).isEqualTo(opphørAvMedlemskap.minusDays(1));
+        assertThat(periode1.getYtelsesgrad()).isEqualTo(BigDecimal.valueOf(40L));
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+
+        var periode2 = perioder.get(2);
+        assertThat(periode2.getFom()).isEqualTo(opphørAvMedlemskap);
+        assertThat(periode2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(periode2.getYtelsesgrad()).isEqualTo(BigDecimal.valueOf(40L));
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
+        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.BRUKER_ER_IKKE_MEDLEM);
+    }
+
 }
