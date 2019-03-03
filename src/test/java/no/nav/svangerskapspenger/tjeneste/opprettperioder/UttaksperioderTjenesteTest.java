@@ -55,7 +55,7 @@ public class UttaksperioderTjenesteTest {
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
-        assertThat(perioder).hasSize(0);
+        assertThat(perioder.getUttaksperioder()).hasSize(0);
     }
 
 
@@ -72,7 +72,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato().minusDays(1));
@@ -93,7 +93,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
@@ -114,7 +114,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
@@ -140,7 +140,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
@@ -160,7 +160,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
@@ -180,7 +180,7 @@ public class UttaksperioderTjenesteTest {
         var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
