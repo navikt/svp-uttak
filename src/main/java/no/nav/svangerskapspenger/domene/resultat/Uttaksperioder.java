@@ -10,30 +10,32 @@ import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 
 public class Uttaksperioder {
 
-    private final Map<Arbeidsforhold, UttaksperioderPerArbeidsforhold> perioderPerArbeidsforhold;
+    private final Map<Arbeidsforhold, UttaksperioderPerArbeidsforhold> perioderPerArbeidsforholdMap;
 
     public Uttaksperioder() {
-        this.perioderPerArbeidsforhold = new HashMap<>();
+        this.perioderPerArbeidsforholdMap = new HashMap<>();
     }
 
     public void leggTilPerioder(Arbeidsforhold arbeidsforhold, Uttaksperiode... perioder) {
-        perioderPerArbeidsforhold.put(arbeidsforhold, new UttaksperioderPerArbeidsforhold(List.of(perioder)));
+        perioderPerArbeidsforholdMap.put(arbeidsforhold, new UttaksperioderPerArbeidsforhold(List.of(perioder)));
     }
 
     public Set<Arbeidsforhold> alleArbeidsforhold() {
-        return perioderPerArbeidsforhold.keySet();
+        return perioderPerArbeidsforholdMap.keySet();
     }
 
-    public List<Uttaksperiode> perioder(Arbeidsforhold arbeidsforhold) {
-        var perioder = perioderPerArbeidsforhold.get(arbeidsforhold);
-        if (perioder == null) {
-            return List.of();
-        }
-        return perioderPerArbeidsforhold.get(arbeidsforhold).getUttaksperioder();
+    public UttaksperioderPerArbeidsforhold perioder(Arbeidsforhold arbeidsforhold) {
+        return perioderPerArbeidsforholdMap.get(arbeidsforhold);
     }
+
+    public void avslåForArbeidsforhold(Arbeidsforhold arbeidsforhold, ArbeidsforholdAvslåttÅrsak arbeidsforholdAvslåttÅrsak) {
+        var perioderPerArbeidsforhold = perioderPerArbeidsforholdMap.get(arbeidsforhold);
+        perioderPerArbeidsforhold.avslå(arbeidsforholdAvslåttÅrsak);
+    }
+
 
     public void knekk(Set<LocalDate> knekkpunkter) {
-        alleArbeidsforhold().forEach(arbeidsforhold -> perioderPerArbeidsforhold.get(arbeidsforhold).knekk(knekkpunkter));
+        alleArbeidsforhold().forEach(arbeidsforhold -> perioderPerArbeidsforholdMap.get(arbeidsforhold).knekk(knekkpunkter));
     }
 
 

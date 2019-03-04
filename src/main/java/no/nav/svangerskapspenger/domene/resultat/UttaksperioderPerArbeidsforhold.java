@@ -14,6 +14,10 @@ public class UttaksperioderPerArbeidsforhold {
         this.uttaksperioder = uttaksperioder;
     }
 
+    public ArbeidsforholdÅrsak getArbeidsforholdÅrsak() {
+        return arbeidsforholdÅrsak;
+    }
+
     public List<Uttaksperiode> getUttaksperioder() {
         return uttaksperioder;
     }

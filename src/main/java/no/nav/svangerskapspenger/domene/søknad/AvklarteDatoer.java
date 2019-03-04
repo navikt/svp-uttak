@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public class AvklarteDatoer {
 
+    private final LocalDate legesDato;
     private final Optional<LocalDate> brukersDødsdato;
     private final Optional<LocalDate> barnetsDødsdato;
     private final Optional<LocalDate> opphørsdatoForMedlemskap;
@@ -13,18 +14,24 @@ public class AvklarteDatoer {
     private final Optional<LocalDate> fødselsdato;
 
     public AvklarteDatoer(
+            LocalDate legesDato,
             Optional<LocalDate> brukersDødsdato,
             Optional<LocalDate> barnetsDødsdato,
             Optional<LocalDate> opphørsdatoForMedlemskap,
             LocalDate førsteLovligeUttaksdato,
             LocalDate termindato,
             Optional<LocalDate> fødselsdato) {
+        this.legesDato = legesDato;
         this.brukersDødsdato = brukersDødsdato;
         this.barnetsDødsdato = barnetsDødsdato;
         this.opphørsdatoForMedlemskap = opphørsdatoForMedlemskap;
         this.førsteLovligeUttaksdato = førsteLovligeUttaksdato;
         this.termindato = termindato;
         this.fødselsdato = fødselsdato;
+    }
+
+    public LocalDate getLegesDato() {
+        return legesDato;
     }
 
     public Optional<LocalDate> getBrukersDødsdato() {
@@ -51,54 +58,4 @@ public class AvklarteDatoer {
         return fødselsdato;
     }
 
-
-    public static final class AvklarteDatoerBuilder {
-        private Optional<LocalDate> brukersDødsdato;
-        private Optional<LocalDate> barnetsDødsdato;
-        private Optional<LocalDate> opphørsdatoForMedlemskap;
-        private LocalDate førsteLovligeUttaksdato;
-        private LocalDate termindato;
-        private Optional<LocalDate> fødselsdato;
-
-        private AvklarteDatoerBuilder() {
-        }
-
-        public static AvklarteDatoerBuilder anAvklarteDatoer() {
-            return new AvklarteDatoerBuilder();
-        }
-
-        public AvklarteDatoerBuilder medBrukersDødsdato(Optional<LocalDate> brukersDødsdato) {
-            this.brukersDødsdato = brukersDødsdato;
-            return this;
-        }
-
-        public AvklarteDatoerBuilder medBarnetsDødsdato(Optional<LocalDate> barnetsDødsdato) {
-            this.barnetsDødsdato = barnetsDødsdato;
-            return this;
-        }
-
-        public AvklarteDatoerBuilder medOpphørsdatoForMedlemskap(Optional<LocalDate> opphørsdatoForMedlemskap) {
-            this.opphørsdatoForMedlemskap = opphørsdatoForMedlemskap;
-            return this;
-        }
-
-        public AvklarteDatoerBuilder medFørsteLovligeUttaksdato(LocalDate førsteLovligeUttaksdato) {
-            this.førsteLovligeUttaksdato = førsteLovligeUttaksdato;
-            return this;
-        }
-
-        public AvklarteDatoerBuilder medTermindato(LocalDate termindato) {
-            this.termindato = termindato;
-            return this;
-        }
-
-        public AvklarteDatoerBuilder medFødselsdato(Optional<LocalDate> fødselsdato) {
-            this.fødselsdato = fødselsdato;
-            return this;
-        }
-
-        public AvklarteDatoer build() {
-            return new AvklarteDatoer(brukersDødsdato, barnetsDødsdato, opphørsdatoForMedlemskap, førsteLovligeUttaksdato, termindato, fødselsdato);
-        }
-    }
 }

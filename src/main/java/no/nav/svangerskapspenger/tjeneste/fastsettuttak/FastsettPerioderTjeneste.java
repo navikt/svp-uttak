@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdAvslåttÅrsak;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
@@ -26,8 +27,19 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.knekk(knekkpunkter);
 
         //Fastsett perioder
-        FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-        uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> uttaksperioder.perioder(arbeidsforhold).forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode)));
+        if (erLegesDatoErFørTreUkerTermindato(avklarteDatoer)) {
+            FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
+            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> uttaksperioder.perioder(arbeidsforhold).getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode)));
+        } else {
+            //avslå for alle arbeidsforhold
+            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
+                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+            });
+        }
+    }
+
+    private boolean erLegesDatoErFørTreUkerTermindato(AvklarteDatoer avklarteDatoer) {
+        return avklarteDatoer.getLegesDato().isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
     }
 
     private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {
