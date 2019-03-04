@@ -1,4 +1,4 @@
-package no.nav.svangerskapspenger.tjeneste.opprettperioder;
+package no.nav.svangerskapspenger.utils;
 
 import static java.lang.Math.toIntExact;
 
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-class Virkedager {
+public class Virkedager {
 
     private static final int DAGER_PR_UKE = 7;
     private static final int VIRKEDAGER_PR_UKE = 5;
@@ -17,7 +17,7 @@ class Virkedager {
         // For å unngå instanser
     }
 
-    static int antallVirkedager(LocalDate fom, LocalDate tom) {
+    public static int antallVirkedager(LocalDate fom, LocalDate tom) {
         Objects.requireNonNull(fom);
         Objects.requireNonNull(tom);
         if (fom.isAfter(tom)) {

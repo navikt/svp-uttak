@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdAvslåttÅrsak;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
@@ -27,9 +28,8 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.knekk(knekkpunkter);
 
         //Fastsett perioder
-        if (erLegesDatoErFørTreUkerTermindato(avklarteDatoer)) {
-            FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> uttaksperioder.perioder(arbeidsforhold).getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode)));
+        if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer)) {
+            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> fastsettPerioder(avklarteDatoer, uttaksperioder, arbeidsforhold));
         } else {
             //avslå for alle arbeidsforhold
             uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
@@ -38,8 +38,18 @@ public class FastsettPerioderTjeneste {
         }
     }
 
-    private boolean erLegesDatoErFørTreUkerTermindato(AvklarteDatoer avklarteDatoer) {
-        return avklarteDatoer.getLegesDato().isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
+    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold) {
+        FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
+        var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
+        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
+        uttaksperioderPerArbeidsforhold.fjernPerioderUtenVirkedager();
+        if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
+            uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
+        }
+    }
+
+    private boolean erTilretteleggingBehovDatoFørTreUkerTermindato(AvklarteDatoer avklarteDatoer) {
+        return avklarteDatoer.getTilretteleggingBehovDato().isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
     }
 
     private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {
@@ -83,7 +93,5 @@ public class FastsettPerioderTjeneste {
 
         return knekkpunkter;
     }
-
-
 
 }

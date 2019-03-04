@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import no.nav.svangerskapspenger.utils.Virkedager;
 
 public class UttaksperioderPerArbeidsforhold {
 
@@ -22,7 +25,15 @@ public class UttaksperioderPerArbeidsforhold {
         return uttaksperioder;
     }
 
-    void avslå(ArbeidsforholdAvslåttÅrsak arbeidsforholdAvslåttÅrsak) {
+    public void fjernPerioderUtenVirkedager() {
+        uttaksperioder = uttaksperioder
+            .stream()
+            .filter(periode -> Virkedager.antallVirkedager(periode.getFom(), periode.getTom())>0)
+            .collect(Collectors.toList());
+    }
+
+
+    public void avslå(ArbeidsforholdAvslåttÅrsak arbeidsforholdAvslåttÅrsak) {
         uttaksperioder.clear();
         this.arbeidsforholdÅrsak = arbeidsforholdAvslåttÅrsak;
     }
