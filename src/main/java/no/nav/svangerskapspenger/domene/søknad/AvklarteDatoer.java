@@ -5,7 +5,7 @@ import java.util.Optional;
 
 public class AvklarteDatoer {
 
-    private final LocalDate legesDato;
+    private final LocalDate tilretteleggingBehovDato;
     private final Optional<LocalDate> brukersDødsdato;
     private final Optional<LocalDate> barnetsDødsdato;
     private final Optional<LocalDate> opphørsdatoForMedlemskap;
@@ -14,14 +14,14 @@ public class AvklarteDatoer {
     private final Optional<LocalDate> fødselsdato;
 
     public AvklarteDatoer(
-            LocalDate legesDato,
+            LocalDate tilretteleggingBehovDato,
             Optional<LocalDate> brukersDødsdato,
             Optional<LocalDate> barnetsDødsdato,
             Optional<LocalDate> opphørsdatoForMedlemskap,
             LocalDate førsteLovligeUttaksdato,
             LocalDate termindato,
             Optional<LocalDate> fødselsdato) {
-        this.legesDato = legesDato;
+        this.tilretteleggingBehovDato = tilretteleggingBehovDato;
         this.brukersDødsdato = brukersDødsdato;
         this.barnetsDødsdato = barnetsDødsdato;
         this.opphørsdatoForMedlemskap = opphørsdatoForMedlemskap;
@@ -30,8 +30,8 @@ public class AvklarteDatoer {
         this.fødselsdato = fødselsdato;
     }
 
-    public LocalDate getLegesDato() {
-        return legesDato;
+    public LocalDate getTilretteleggingBehovDato() {
+        return tilretteleggingBehovDato;
     }
 
     public Optional<LocalDate> getBrukersDødsdato() {

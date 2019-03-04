@@ -18,25 +18,27 @@ public class FastsettPerioderTjenesteTest {
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = new Arbeidsforhold("123", "456");
     private static final BigDecimal FULL_YTELSESGRAD = BigDecimal.valueOf(100L);
 
-    private static final LocalDate JORDMORS_DATO = LocalDate.of(2019, Month.JANUARY, 1);
+    private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY,1);
+    private static final LocalDate SØKNAD_MOTTAT_DATO = LocalDate.of(2019, Month.JANUARY, 3);
+    private static final LocalDate FØRSTE_LOVLIGE_UTTAKSDATO = SØKNAD_MOTTAT_DATO.withDayOfMonth(1).minusMonths(3);
 
     private final FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
 
     @Test
     public void lovlig_uttak_skal_bli_innvilget() {
         var avklarteDatoer = new AvklarteDatoer(
-                JORDMORS_DATO,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                JORDMORS_DATO,
-                TERMINDATO,
-                Optional.empty()
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(JORDMORS_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
+                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
 
@@ -44,7 +46,7 @@ public class FastsettPerioderTjenesteTest {
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
@@ -56,17 +58,17 @@ public class FastsettPerioderTjenesteTest {
     public void uttak_avslås_ved_brukers_død() {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
         var avklarteDatoer = new AvklarteDatoer(
-                JORDMORS_DATO,
-                Optional.of(brukersdødsdato),
-                Optional.empty(),
-                Optional.empty(),
-                JORDMORS_DATO,
-                TERMINDATO,
-                Optional.empty()
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.of(brukersdødsdato),
+            Optional.empty(),
+            Optional.empty(),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(JORDMORS_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
+                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
 
@@ -75,7 +77,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(perioder).hasSize(2);
 
         var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(brukersdødsdato.minusDays(1));
         assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
@@ -94,17 +96,17 @@ public class FastsettPerioderTjenesteTest {
     public void uttak_avslås_ved_barnets_død() {
         var barnetsDødsdato = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
-                JORDMORS_DATO,
-                Optional.empty(),
-                Optional.of(barnetsDødsdato),
-                Optional.empty(),
-                JORDMORS_DATO,
-                TERMINDATO,
-                Optional.empty()
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.of(barnetsDødsdato),
+            Optional.empty(),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(JORDMORS_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
+                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
 
@@ -113,7 +115,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(perioder).hasSize(2);
 
         var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(barnetsDødsdato.minusDays(1));
         assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
@@ -132,17 +134,17 @@ public class FastsettPerioderTjenesteTest {
     public void uttak_etter_opphør_av_medlemskap_avslås() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
-                JORDMORS_DATO,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.of(opphørAvMedlemskap),
-                JORDMORS_DATO,
-                TERMINDATO,
-                Optional.empty()
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(opphørAvMedlemskap),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(JORDMORS_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
+                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
 
@@ -151,7 +153,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(perioder).hasSize(2);
 
         var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(opphørAvMedlemskap.minusDays(1));
         assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
@@ -170,18 +172,18 @@ public class FastsettPerioderTjenesteTest {
     public void uttak_med_delvis_tilrettelegging_etter_en_måned_og_opphør_av_medlemskap_gir_tre_perioder() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
-                JORDMORS_DATO,
-                Optional.empty(),
-                Optional.empty(),
-                Optional.of(opphørAvMedlemskap),
-                JORDMORS_DATO,
-                TERMINDATO,
-                Optional.empty()
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.of(opphørAvMedlemskap),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
         );
         var uttaksperioder = new Uttaksperioder();
         var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(JORDMORS_DATO, startTilpassing.minusDays(1), FULL_YTELSESGRAD),
+                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, startTilpassing.minusDays(1), FULL_YTELSESGRAD),
                 new Uttaksperiode(startTilpassing, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
@@ -191,7 +193,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(perioder).hasSize(3);
 
         var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(JORDMORS_DATO);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(startTilpassing.minusDays(1));
         assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
@@ -220,7 +222,7 @@ public class FastsettPerioderTjenesteTest {
             Optional.empty(),
             Optional.empty(),
             Optional.of(opphørAvMedlemskap),
-            JORDMORS_DATO,
+            FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
             Optional.empty()
         );
@@ -234,6 +236,63 @@ public class FastsettPerioderTjenesteTest {
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
         assertThat(perioder.getUttaksperioder()).hasSize(0);
         assertThat(perioder.getArbeidsforholdÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+    }
+
+    @Test
+    public void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
+        var avklarteDatoer = new AvklarteDatoer(
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
+        );
+        var uttaksperioder = new Uttaksperioder();
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 4), FULL_YTELSESGRAD),
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_YTELSESGRAD), //bare helg
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 7), LocalDate.of(2019, Month.JANUARY, 13), FULL_YTELSESGRAD)
+        );
+
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(2);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 4));
+        assertThat(periode0.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 7));
+        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 13));
+        assertThat(periode1.getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+    }
+
+    @Test
+    public void skal_sette_avslag_på_hele_arbeidsforholdet_dersom_periodene_kun_ikkeholder_helg() {
+        var avklarteDatoer = new AvklarteDatoer(
+            TILRETTELEGGING_BEHOV_DATO,
+            Optional.empty(),
+            Optional.empty(),
+            Optional.empty(),
+            FØRSTE_LOVLIGE_UTTAKSDATO,
+            TERMINDATO,
+            Optional.empty()
+        );
+        var uttaksperioder = new Uttaksperioder();
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_YTELSESGRAD) //bare helg
+        );
+
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
+        assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getArbeidsforholdÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
     }
 
 }
