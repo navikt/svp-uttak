@@ -8,7 +8,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriod
 @RuleDocumentation(SjekkTermindato.ID)
 public class SjekkTermindato extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
-    public static final String ID = "FP_VK x.x";
+    public static final String ID = "SVP_VK 14.4.x";
 
     public SjekkTermindato() {
         super(ID);
@@ -16,11 +16,11 @@ public class SjekkTermindato extends LeafSpecification<FastsettePeriodeGrunnlag>
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-            var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
-            var sisteLovligeUttaksdag = grunnlag.getAvklarteDatoer().getTerminsdato().minusWeeks(3);
-            if (startUttaksperiode.equals(sisteLovligeUttaksdag) || startUttaksperiode.isAfter(sisteLovligeUttaksdag)) {
-                return ja();
-            }
+        var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
+        var sisteLovligeUttaksdag = grunnlag.getAvklarteDatoer().getTerminsdato().minusWeeks(3);
+        if (startUttaksperiode.equals(sisteLovligeUttaksdag) || startUttaksperiode.isAfter(sisteLovligeUttaksdag)) {
+            return ja();
+        }
         return nei();
     }
 

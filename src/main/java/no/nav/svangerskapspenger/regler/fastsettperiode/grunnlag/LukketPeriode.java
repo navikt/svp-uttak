@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * En periode som har definert både start- og slutt-tidpunkt
  */
-public class LukketPeriode {
+public abstract class LukketPeriode {
 
     private final LocalDate fom;
     private final LocalDate tom;

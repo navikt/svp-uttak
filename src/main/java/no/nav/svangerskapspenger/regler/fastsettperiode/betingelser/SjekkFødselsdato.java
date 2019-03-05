@@ -19,9 +19,9 @@ public class SjekkFødselsdato extends LeafSpecification<FastsettePeriodeGrunnla
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
         if (grunnlag.getAvklarteDatoer().getFødselsdato().isPresent()) {
             var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
-            var fødsslsdato = grunnlag.getAvklarteDatoer().getFødselsdato().get();
-            if (fødsslsdato.isBefore(grunnlag.getAvklarteDatoer().getTerminsdato().minusWeeks(3))) {
-                if (startUttaksperiode.equals(fødsslsdato) || startUttaksperiode.isAfter(grunnlag.getAvklarteDatoer().getFørsteLovligeUttaksdag())) {
+            var fødselsdato = grunnlag.getAvklarteDatoer().getFødselsdato().get();
+            if (fødselsdato.isBefore(grunnlag.getAvklarteDatoer().getTerminsdato().minusWeeks(3))) {
+                if (startUttaksperiode.equals(fødselsdato) || startUttaksperiode.isAfter(fødselsdato)) {
                     return ja();
                 }
             }
