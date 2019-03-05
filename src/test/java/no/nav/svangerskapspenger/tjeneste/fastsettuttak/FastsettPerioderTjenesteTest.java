@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.Optional;
 
 import no.nav.svangerskapspenger.domene.resultat.*;
 import org.junit.Test;
@@ -30,12 +29,12 @@ public class FastsettPerioderTjenesteTest {
     public void lovlig_uttak_skal_bli_innvilget() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -60,12 +59,12 @@ public class FastsettPerioderTjenesteTest {
     public void lovlig_uttak_skal_bli_innvilget_for_to_arbeidsforhold() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -104,12 +103,12 @@ public class FastsettPerioderTjenesteTest {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.of(brukersdødsdato),
-            Optional.empty(),
-            Optional.empty(),
+            brukersdødsdato,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -142,12 +141,12 @@ public class FastsettPerioderTjenesteTest {
         var barnetsDødsdato = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.of(barnetsDødsdato),
-            Optional.empty(),
+            null,
+            barnetsDødsdato,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -180,12 +179,12 @@ public class FastsettPerioderTjenesteTest {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.of(opphørAvMedlemskap),
+            null,
+            null,
+            opphørAvMedlemskap,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -218,12 +217,12 @@ public class FastsettPerioderTjenesteTest {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.of(opphørAvMedlemskap),
+            null,
+            null,
+            opphørAvMedlemskap,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
@@ -264,12 +263,12 @@ public class FastsettPerioderTjenesteTest {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TERMINDATO.minusWeeks(2),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.of(opphørAvMedlemskap),
+            null,
+            null,
+            opphørAvMedlemskap,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -287,12 +286,12 @@ public class FastsettPerioderTjenesteTest {
     public void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -321,12 +320,12 @@ public class FastsettPerioderTjenesteTest {
     public void skal_sette_avslag_på_hele_arbeidsforholdet_dersom_periodene_kun_ikkeholder_helg() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -346,12 +345,12 @@ public class FastsettPerioderTjenesteTest {
         var fødseldatoTidligFødsel = TERMINDATO.minusWeeks(4);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.of(fødseldatoTidligFødsel)
+            fødseldatoTidligFødsel
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -384,12 +383,12 @@ public class FastsettPerioderTjenesteTest {
         var førsteLovligeUttaksdato = TILRETTELEGGING_BEHOV_DATO.plusWeeks(1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             førsteLovligeUttaksdato,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -420,12 +419,12 @@ public class FastsettPerioderTjenesteTest {
     public void uttaksperioder_som_går_utover_3_uker_før_termindato_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty(),
+            null,
+            null,
+            null,
             FØRSTE_LOVLIGE_UTTAKSDATO,
             TERMINDATO,
-            Optional.empty()
+            null
         );
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
