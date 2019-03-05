@@ -280,7 +280,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
         assertThat(perioder.getUttaksperioder()).hasSize(0);
-        assertThat(perioder.getArbeidsforholdÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+        assertThat(perioder.getArbeidsforholdAvslåttÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
     }
 
     @Test
@@ -337,7 +337,7 @@ public class FastsettPerioderTjenesteTest {
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
-        assertThat(perioder.getArbeidsforholdÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
+        assertThat(perioder.getArbeidsforholdAvslåttÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
     }
 
 
