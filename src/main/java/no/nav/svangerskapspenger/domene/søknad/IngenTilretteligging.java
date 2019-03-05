@@ -17,10 +17,6 @@ public class IngenTilretteligging implements Tilrettelegging {
         this.tilretteleggingOpphørerDato = tilretteleggingOpphørerDato;
     }
 
-    public LocalDate getTilretteleggingOpphørerDato() {
-        return tilretteleggingOpphørerDato;
-    }
-
     @Override
     public void opprettPerioder(Uttaksperioder uttaksperioder, Søknad søknad) {
         if (nesteUkedag(søknad.getTilretteliggingBehovDato()).equals(nesteUkedag(tilretteleggingOpphørerDato))) {

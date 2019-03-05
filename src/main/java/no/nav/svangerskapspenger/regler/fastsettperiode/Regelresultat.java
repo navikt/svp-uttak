@@ -3,7 +3,6 @@ package no.nav.svangerskapspenger.regler.fastsettperiode;
 import java.util.Optional;
 
 import no.nav.fpsak.nare.evaluation.Evaluation;
-import no.nav.fpsak.nare.evaluation.Resultat;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.UtfallType;
@@ -33,10 +32,6 @@ public class Regelresultat {
         return getProperty(FastsettePeriodeUtfall.ÅRSAK, PeriodeÅrsak.class);
     }
 
-
-    public boolean oppfylt() {
-        return !evaluationSummary.leafEvaluations(Resultat.JA).isEmpty();
-    }
 
     private Object getProperty(String tag) {
         Optional<Evaluation> first = evaluationSummary.leafEvaluations().stream()

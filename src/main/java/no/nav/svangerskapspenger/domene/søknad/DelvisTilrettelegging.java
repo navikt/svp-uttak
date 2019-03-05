@@ -18,14 +18,6 @@ public class DelvisTilrettelegging implements Tilrettelegging {
         this.tilretteleggingsprosent = tilretteleggingsprosent;
     }
 
-    public LocalDate getTilretteleggingArbeidsgiverDato() {
-        return tilretteleggingArbeidsgiverDato;
-    }
-
-    public BigDecimal getTilretteleggingsprosent() {
-        return tilretteleggingsprosent;
-    }
-
     @Override
     public void opprettPerioder(Uttaksperioder uttaksperioder, Søknad søknad ) {
         if (tilretteleggingArbeidsgiverDato.isAfter(søknad.getTilretteliggingBehovDato())) {
