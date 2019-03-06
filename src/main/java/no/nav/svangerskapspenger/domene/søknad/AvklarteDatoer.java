@@ -26,7 +26,6 @@ public class AvklarteDatoer {
         Objects.requireNonNull(førsteLovligeUttaksdato, "Første lovlige uttaksdato må være utfylt.");
         Objects.requireNonNull(termindato, "Termindato må være utfylt.");
 
-
         this.tilretteleggingBehovDato = tilretteleggingBehovDato;
         this.brukersDødsdato = brukersDødsdato;
         this.barnetsDødsdato = barnetsDødsdato;

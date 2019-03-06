@@ -27,7 +27,7 @@ public class FullTilrettelegging implements Tilrettelegging {
         if(tilretteleggingArbeidsgiverDato.isAfter(søknad.getTilretteliggingBehovDato())) {
             if (tilretteleggingArbeidsgiverDato.isAfter(søknad.getTermindato().minusWeeks(3))) {
                 uttaksperioder.leggTilPerioder(arbeidsforhold,
-                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.getTermindato().minusWeeks(3).minusDays(1), FULL_YTELSESGRAD));
+                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_YTELSESGRAD));
             } else {
                 uttaksperioder.leggTilPerioder(arbeidsforhold,
                         new Uttaksperiode(søknad.getTilretteliggingBehovDato(), tilretteleggingArbeidsgiverDato.minusDays(1), FULL_YTELSESGRAD));
@@ -37,7 +37,5 @@ public class FullTilrettelegging implements Tilrettelegging {
             uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
         }
     }
-
-
 
 }

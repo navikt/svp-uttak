@@ -189,4 +189,25 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
     }
 
+
+    @Test
+    public void ingen_tilrettelegging_før_etter_en_uke_gir_en_perioder() {
+        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
+        var søknad = new Søknad(
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(ingenTilrettelegging));
+
+        var uttaksperioder = new Uttaksperioder();
+        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+
+        assertThat(manuellBehandlingSet).hasSize(0);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
+        assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+    }
+
 }
