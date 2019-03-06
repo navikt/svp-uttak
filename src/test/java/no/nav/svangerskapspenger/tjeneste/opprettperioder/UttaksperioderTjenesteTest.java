@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdAvslåttÅrsak;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
@@ -56,6 +57,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getArbeidsforholdAvslåttÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
     }
 
 

@@ -32,9 +32,9 @@ public class FastsettPerioderTjeneste {
             uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> fastsettPerioder(avklarteDatoer, uttaksperioder, arbeidsforhold));
         } else {
             //avslå for alle arbeidsforhold
-            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
-                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
-            });
+            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold ->
+                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO)
+            );
         }
     }
 

@@ -8,7 +8,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriod
 @RuleDocumentation(SjekkBrukersDødsdato.ID)
 public class SjekkBrukersDødsdato extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
-    public static final String ID = "FP_VK x.x";
+    public static final String ID = "SVP_VK 14.4.1";
 
     public SjekkBrukersDødsdato() {
         super(ID);

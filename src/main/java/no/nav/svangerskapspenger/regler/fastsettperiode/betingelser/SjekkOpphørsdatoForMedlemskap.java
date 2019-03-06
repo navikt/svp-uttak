@@ -9,7 +9,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriod
 @RuleDocumentation(SjekkOpphørsdatoForMedlemskap.ID)
 public class SjekkOpphørsdatoForMedlemskap extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
-    public static final String ID = "FP_VK x.x";
+    public static final String ID = "SVP_VK 14.4.3";
 
     public SjekkOpphørsdatoForMedlemskap() {
         super(ID);
