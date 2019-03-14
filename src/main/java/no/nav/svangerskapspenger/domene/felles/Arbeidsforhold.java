@@ -1,6 +1,7 @@
 package no.nav.svangerskapspenger.domene.felles;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class Arbeidsforhold {
 
@@ -16,8 +17,8 @@ public class Arbeidsforhold {
         return virksomhetId;
     }
 
-    public String getArbeidsforholdId() {
-        return arbeidsforholdId;
+    public Optional<String> getArbeidsforholdId() {
+        return Optional.ofNullable(arbeidsforholdId);
     }
 
 
