@@ -8,7 +8,7 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
 public class DelvisTilrettelegging implements Tilrettelegging {
 
-    private static final BigDecimal FULL_YTELSESGRAD = BigDecimal.valueOf(100L);
+    private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private final LocalDate tilretteleggingArbeidsgiverDato;
     private final BigDecimal tilretteleggingsprosent;
@@ -23,17 +23,17 @@ public class DelvisTilrettelegging implements Tilrettelegging {
         if (tilretteleggingArbeidsgiverDato.isAfter(søknad.getTilretteliggingBehovDato())) {
             if (tilretteleggingArbeidsgiverDato.isBefore(søknad.getTermindato().minusWeeks(3))) {
                 uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(),
-                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), tilretteleggingArbeidsgiverDato.minusDays(1), FULL_YTELSESGRAD),
-                        new Uttaksperiode(tilretteleggingArbeidsgiverDato, søknad.sisteDagFørTermin(), FULL_YTELSESGRAD.subtract(tilretteleggingsprosent))
+                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), tilretteleggingArbeidsgiverDato.minusDays(1), FULL_UTBETALINGSGRAD),
+                        new Uttaksperiode(tilretteleggingArbeidsgiverDato, søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD.subtract(tilretteleggingsprosent))
                 );
             } else {
                 uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(),
-                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_YTELSESGRAD)
+                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD)
                 );
             }
         } else {
             uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(),
-                    new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_YTELSESGRAD.subtract(tilretteleggingsprosent))
+                    new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD.subtract(tilretteleggingsprosent))
             );
         }
     }

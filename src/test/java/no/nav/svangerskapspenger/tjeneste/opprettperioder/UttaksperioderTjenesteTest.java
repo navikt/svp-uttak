@@ -20,7 +20,7 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
 public class UttaksperioderTjenesteTest {
 
-    private static final BigDecimal FULL_YTELSESGRAD = BigDecimal.valueOf(100L);
+    private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = new Arbeidsforhold("123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
@@ -78,7 +78,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato().minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
 
@@ -99,7 +99,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
     @Test
@@ -120,11 +120,11 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(2);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
 
         assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
         assertThat(perioder.get(1).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(1).getYtelsesgrad()).isEqualTo(BigDecimal.valueOf(80L));
+        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(80L));
 
     }
 
@@ -146,11 +146,11 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(BigDecimal.valueOf(80L));
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(80L));
     }
 
     @Test
-    public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_ytelse() {
+    public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L));
         var søknad = new Søknad(
                 ARBEIDSFORHOLD1,
@@ -166,7 +166,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
 
@@ -207,7 +207,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getYtelsesgrad()).isEqualTo(FULL_YTELSESGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
 }
