@@ -9,7 +9,7 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
 public class FullTilrettelegging implements Tilrettelegging {
 
-    private static final BigDecimal FULL_YTELSESGRAD = BigDecimal.valueOf(100L);
+    private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private final LocalDate tilretteleggingArbeidsgiverDato;
 
@@ -27,10 +27,10 @@ public class FullTilrettelegging implements Tilrettelegging {
         if(tilretteleggingArbeidsgiverDato.isAfter(søknad.getTilretteliggingBehovDato())) {
             if (tilretteleggingArbeidsgiverDato.isAfter(søknad.getTermindato().minusWeeks(3))) {
                 uttaksperioder.leggTilPerioder(arbeidsforhold,
-                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_YTELSESGRAD));
+                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
             } else {
                 uttaksperioder.leggTilPerioder(arbeidsforhold,
-                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), tilretteleggingArbeidsgiverDato.minusDays(1), FULL_YTELSESGRAD));
+                        new Uttaksperiode(søknad.getTilretteliggingBehovDato(), tilretteleggingArbeidsgiverDato.minusDays(1), FULL_UTBETALINGSGRAD));
             }
         } else {
             uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold());

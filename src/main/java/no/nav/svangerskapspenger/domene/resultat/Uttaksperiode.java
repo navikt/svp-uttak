@@ -9,7 +9,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.LukketPeriode;
 
 public class Uttaksperiode extends LukketPeriode {
 
-    private final BigDecimal ytelsesgrad;
+    private final BigDecimal utbetalingsgrad;
     private UtfallType utfallType = UtfallType.UAVKLART;
     private PeriodeÅrsak årsak;
     private String sporingGrunnlag;
@@ -17,9 +17,9 @@ public class Uttaksperiode extends LukketPeriode {
 
     public Uttaksperiode(LocalDate fom,
                          LocalDate tom,
-                         BigDecimal ytelsesgrad) {
+                         BigDecimal utbetalingsgrad) {
         super(fom, tom);
-        this.ytelsesgrad = ytelsesgrad;
+        this.utbetalingsgrad = utbetalingsgrad;
     }
 
     /**
@@ -28,7 +28,7 @@ public class Uttaksperiode extends LukketPeriode {
      *
      */
     private Uttaksperiode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom) {
-        this(fom, tom, uttaksperiode.ytelsesgrad);
+        this(fom, tom, uttaksperiode.utbetalingsgrad);
         this.årsak = uttaksperiode.årsak;
         this.utfallType =uttaksperiode.utfallType;
         this.sporingGrunnlag = uttaksperiode.sporingGrunnlag;
@@ -65,8 +65,8 @@ public class Uttaksperiode extends LukketPeriode {
         return sporingRegel;
     }
 
-    public BigDecimal getYtelsesgrad() {
-        return ytelsesgrad;
+    public BigDecimal getUtbetalingsgrad() {
+        return utbetalingsgrad;
     }
 
     Optional<Tuple<Uttaksperiode, Uttaksperiode>> knekk(LocalDate knekkpunkt) {
