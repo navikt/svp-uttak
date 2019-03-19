@@ -18,7 +18,7 @@ pipeline {
                     Date date = new Date()
                     maven = new maven()
                     def GIT_COMMIT_HASH = sh(script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
-                    def changelist = "_" + date.format("YYYYMMDDHHmmss") + "_" + GIT_COMMIT_HASH
+                    def changelist = "_" + date.format("YYYYMMddHHmmss") + "_" + GIT_COMMIT_HASH
                     def mRevision = maven.revision()
                     def tagName = mRevision + changelist
                     //def committer = sh(script: 'git log -1 --pretty=format:"%an (%ae)"', returnStdout: true).trim()
