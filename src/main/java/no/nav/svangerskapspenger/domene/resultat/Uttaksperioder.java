@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
@@ -38,5 +39,26 @@ public class Uttaksperioder {
         alleArbeidsforhold().forEach(arbeidsforhold -> perioderPerArbeidsforholdMap.get(arbeidsforhold).knekk(knekkpunkter));
     }
 
+    public Optional<LocalDate> finnSisteUttaksdato() {
+        Optional<LocalDate> sisteUttaksdato = Optional.empty();
+        for (var entry: perioderPerArbeidsforholdMap.entrySet()) {
+            var maxDatoForArbeidsforhold = entry.getValue().getUttaksperioder().stream().map(p -> p.getTom()).max(LocalDate::compareTo);
+            if (!sisteUttaksdato.isPresent() || (maxDatoForArbeidsforhold.isPresent() && maxDatoForArbeidsforhold.get().isAfter(sisteUttaksdato.get()))) {
+                sisteUttaksdato = maxDatoForArbeidsforhold;
+            }
+        }
+        return sisteUttaksdato;
+    }
+
+    public Optional<LocalDate> finnFørsteUttaksdato() {
+        Optional<LocalDate> førsteUttaksdato = Optional.empty();
+        for (var entry: perioderPerArbeidsforholdMap.entrySet()) {
+            var minDatoForArbeidsforhold = entry.getValue().getUttaksperioder().stream().map(p -> p.getFom()).min(LocalDate::compareTo);
+            if (!førsteUttaksdato.isPresent() || (minDatoForArbeidsforhold.isPresent() && minDatoForArbeidsforhold.get().isBefore(førsteUttaksdato.get()))) {
+                førsteUttaksdato = minDatoForArbeidsforhold;
+            }
+        }
+        return førsteUttaksdato;
+    }
 
 }
