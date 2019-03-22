@@ -12,8 +12,8 @@ public class Uttaksperiode extends LukketPeriode {
     private final BigDecimal utbetalingsgrad;
     private UtfallType utfallType = UtfallType.UAVKLART;
     private PeriodeÅrsak årsak;
-    private String sporingGrunnlag;
-    private String sporingRegel;
+    private String regelInput;
+    private String regelSporing;
 
     public Uttaksperiode(LocalDate fom,
                          LocalDate tom,
@@ -31,22 +31,22 @@ public class Uttaksperiode extends LukketPeriode {
         this(fom, tom, uttaksperiode.utbetalingsgrad);
         this.årsak = uttaksperiode.årsak;
         this.utfallType =uttaksperiode.utfallType;
-        this.sporingGrunnlag = uttaksperiode.sporingGrunnlag;
-        this.sporingRegel = uttaksperiode.sporingRegel;
+        this.regelInput = uttaksperiode.regelInput;
+        this.regelSporing = uttaksperiode.regelSporing;
     }
 
     public void avslå(PeriodeÅrsak årsak, String sporingGrunnlag, String sporingRegel) {
-        this.utfallType = UtfallType.AVSLÅTT;
+        this.utfallType = UtfallType.IKKE_OPPFYLT;
         this.årsak = årsak;
-        this.sporingGrunnlag = sporingGrunnlag;
-        this.sporingRegel = sporingRegel;
+        this.regelInput = sporingGrunnlag;
+        this.regelSporing = sporingRegel;
     }
 
     public void innvilg(PeriodeÅrsak årsak, String sporingGrunnlag, String sporingRegel) {
-        this.utfallType = UtfallType.INNVILGET;
+        this.utfallType = UtfallType.OPPFYLT;
         this.årsak = årsak;
-        this.sporingGrunnlag = sporingGrunnlag;
-        this.sporingRegel = sporingRegel;
+        this.regelInput = sporingGrunnlag;
+        this.regelSporing = sporingRegel;
     }
 
     public UtfallType getUtfallType() {
@@ -57,12 +57,12 @@ public class Uttaksperiode extends LukketPeriode {
         return årsak;
     }
 
-    public String getSporingGrunnlag() {
-        return sporingGrunnlag;
+    public String getRegelInput() {
+        return regelInput;
     }
 
-    public String getSporingRegel() {
-        return sporingRegel;
+    public String getRegelSporing() {
+        return regelSporing;
     }
 
     public BigDecimal getUtbetalingsgrad() {

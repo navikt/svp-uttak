@@ -43,7 +43,7 @@ public class UttaksperioderTest {
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
-        uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
+        uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
 
         assertThat(uttaksperioder.finnFørsteUttaksdato().isPresent()).isFalse();
         assertThat(uttaksperioder.finnSisteUttaksdato().isPresent()).isFalse();

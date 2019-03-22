@@ -49,10 +49,10 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
-        assertThat(periode0.getSporingGrunnlag()).isNotEmpty();
-        assertThat(periode0.getSporingRegel()).isNotEmpty();
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getRegelInput()).isNotEmpty();
+        assertThat(periode0.getRegelSporing()).isNotEmpty();
     }
 
     @Test
@@ -85,8 +85,8 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0Arb1.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0Arb1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode0Arb1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0Arb1.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0Arb1.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0Arb1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0Arb1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var perioderArb2 = uttaksperioder.perioder(ARBEIDSFORHOLD2).getUttaksperioder();
         assertThat(perioderArb2).hasSize(1);
@@ -94,12 +94,12 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0Arb2.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0Arb2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode0Arb2.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
-        assertThat(periode0Arb2.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0Arb2.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0Arb2.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0Arb2.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 
     @Test
-    public void uttak_avslås_ved_brukers_død() {
+    public void uttak_ikke_oppfylt_ved_brukers_død() {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
@@ -124,20 +124,20 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(brukersdødsdato.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(brukersdødsdato);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.BRUKER_ER_DØD);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_DØD);
     }
 
 
     @Test
-    public void uttak_avslås_ved_barnets_død() {
+    public void uttak_ikke_oppfylt_ved_barnets_død() {
         var barnetsDødsdato = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
@@ -162,15 +162,15 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(barnetsDødsdato.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(barnetsDødsdato);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.BARN_ER_DØDT);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BARN_ER_DØDT);
     }
 
 
@@ -200,15 +200,15 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(opphørAvMedlemskap.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(opphørAvMedlemskap);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.BRUKER_ER_IKKE_MEDLEM);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_IKKE_MEDLEM);
 
     }
 
@@ -240,26 +240,26 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(startTilpassing.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(startTilpassing);
         assertThat(periode1.getTom()).isEqualTo(opphørAvMedlemskap.minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode2 = perioder.get(2);
         assertThat(periode2.getFom()).isEqualTo(opphørAvMedlemskap);
         assertThat(periode2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode2.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
-        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.BRUKER_ER_IKKE_MEDLEM);
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_IKKE_MEDLEM);
     }
 
     @Test
-    public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_avslås() {
+    public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer(
             TERMINDATO.minusWeeks(2),
@@ -279,7 +279,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
         assertThat(perioder.getUttaksperioder()).hasSize(0);
-        assertThat(perioder.getArbeidsforholdAvslåttÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+        assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
     }
 
     @Test
@@ -317,7 +317,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void skal_sette_avslag_på_hele_arbeidsforholdet_dersom_periodene_kun_ikkeholder_helg() {
+    public void skal_sette_ikke_oppfylt_på_hele_arbeidsforholdet_dersom_periodene_kun_inneholder_helg() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
             null,
@@ -336,12 +336,12 @@ public class FastsettPerioderTjenesteTest {
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
-        assertThat(perioder.getArbeidsforholdAvslåttÅrsak()).isEqualTo(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
+        assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
     }
 
 
     @Test
-    public void lovlig_uttak_med_tidlig_fødsel_skal_avslå_fra_fødselsdato() {
+    public void lovlig_uttak_med_tidlig_fødsel_skal_ikke_oppfylles_fra_fødselsdato() {
         var fødseldatoTidligFødsel = TERMINDATO.minusWeeks(4);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
@@ -366,20 +366,20 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(fødseldatoTidligFødsel.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(fødseldatoTidligFødsel);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.PERIODEN_ER_IKKE_FØR_FØDSEL);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_IKKE_FØR_FØDSEL);
     }
 
     @Test
-    public void søkt_for_sent_gir_avslått_perioder_frem_til_første_lovlige_uttaksperiode() {
+    public void søkt_for_sent_gir_ikke_oppfylte_perioder_frem_til_første_lovlige_uttaksperiode() {
         var førsteLovligeUttaksdato = TILRETTELEGGING_BEHOV_DATO.plusWeeks(1);
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
@@ -404,19 +404,19 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(førsteLovligeUttaksdato.minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.SØKT_FOR_SENT);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.SØKT_FOR_SENT);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(førsteLovligeUttaksdato);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 
     @Test
-    public void uttaksperioder_som_går_utover_3_uker_før_termindato_skal_avslås() {
+    public void uttaksperioder_som_går_utover_3_uker_før_termindato_skal_ikke_oppfylles() {
         var avklarteDatoer = new AvklarteDatoer(
             TILRETTELEGGING_BEHOV_DATO,
             null,
@@ -440,15 +440,15 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.INNVILGET);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeInnvilgetÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(TERMINDATO.minusWeeks(3));
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(2).minusDays(1));
         assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.AVSLÅTT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeAvslåttÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN);
     }
 
 }

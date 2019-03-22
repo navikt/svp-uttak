@@ -3,7 +3,7 @@ package no.nav.svangerskapspenger.domene.søknad;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdAvslåttÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
@@ -34,7 +34,7 @@ public class FullTilrettelegging implements Tilrettelegging {
             }
         } else {
             uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold());
-            uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
+            uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
         }
     }
 

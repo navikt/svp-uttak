@@ -1,7 +1,7 @@
 package no.nav.svangerskapspenger.domene.resultat;
 
 public enum UtfallType {
-    AVSLÅTT,
-    INNVILGET,
+    IKKE_OPPFYLT,
+    OPPFYLT,
     UAVKLART
 }

@@ -10,15 +10,15 @@ import no.nav.svangerskapspenger.utils.Virkedager;
 
 public class UttaksperioderPerArbeidsforhold {
 
-    private ArbeidsforholdAvslåttÅrsak arbeidsforholdAvslåttÅrsak;
+    private ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak;
     private List<Uttaksperiode> uttaksperioder;
 
     public UttaksperioderPerArbeidsforhold(List<Uttaksperiode> uttaksperioder) {
         this.uttaksperioder = uttaksperioder;
     }
 
-    public ArbeidsforholdAvslåttÅrsak getArbeidsforholdAvslåttÅrsak() {
-        return arbeidsforholdAvslåttÅrsak;
+    public ArbeidsforholdIkkeOppfyltÅrsak getArbeidsforholdIkkeOppfyltÅrsak() {
+        return arbeidsforholdIkkeOppfyltÅrsak;
     }
 
     public List<Uttaksperiode> getUttaksperioder() {
@@ -33,9 +33,9 @@ public class UttaksperioderPerArbeidsforhold {
     }
 
 
-    public void avslå(ArbeidsforholdAvslåttÅrsak arbeidsforholdAvslåttÅrsak) {
+    public void avslå(ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak) {
         uttaksperioder = List.of();
-        this.arbeidsforholdAvslåttÅrsak = arbeidsforholdAvslåttÅrsak;
+        this.arbeidsforholdIkkeOppfyltÅrsak = arbeidsforholdIkkeOppfyltÅrsak;
     }
 
     void knekk(Set<LocalDate> knekkpunkter) {
