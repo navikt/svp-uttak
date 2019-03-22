@@ -23,7 +23,6 @@ public class Regelresultat {
         return (T) obj;
     }
 
-
     public UtfallType getUtfallType() {
         return getProperty(FastsettePeriodeUtfall.UTFALL, UtfallType.class);
     }
@@ -31,7 +30,6 @@ public class Regelresultat {
     public PeriodeÅrsak getPeriodeÅrsak() {
         return getProperty(FastsettePeriodeUtfall.ÅRSAK, PeriodeÅrsak.class);
     }
-
 
     private Object getProperty(String tag) {
         Optional<Evaluation> first = evaluationSummary.leafEvaluations().stream()

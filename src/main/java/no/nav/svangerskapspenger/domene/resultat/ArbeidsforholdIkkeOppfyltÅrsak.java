@@ -1,6 +1,6 @@
 package no.nav.svangerskapspenger.domene.resultat;
 
-public enum ArbeidsforholdAvslåttÅrsak implements Årsak {
+public enum ArbeidsforholdIkkeOppfyltÅrsak implements Årsak {
 
     LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO(8301, "Lege/jordmors dato for tilpassing er ikke før tre uker før termindato"),
     UTTAK_KUN_PÅ_HELG(8302, "Uttak kun på helg"),
@@ -9,7 +9,7 @@ public enum ArbeidsforholdAvslåttÅrsak implements Årsak {
     private final int id;
     private final String beskrivelse;
 
-    ArbeidsforholdAvslåttÅrsak(int id, String beskrivelse) {
+    ArbeidsforholdIkkeOppfyltÅrsak(int id, String beskrivelse) {
         this.id = id;
         this.beskrivelse = beskrivelse;
     }

@@ -7,7 +7,7 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdAvslåttÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
@@ -33,7 +33,7 @@ public class FastsettPerioderTjeneste {
         } else {
             //avslå for alle arbeidsforhold
             uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold ->
-                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdAvslåttÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO)
+                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO)
             );
         }
     }
@@ -44,7 +44,7 @@ public class FastsettPerioderTjeneste {
         uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
         uttaksperioderPerArbeidsforhold.fjernPerioderUtenVirkedager();
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
-            uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdAvslåttÅrsak.UTTAK_KUN_PÅ_HELG);
+            uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
     }
 
@@ -62,10 +62,10 @@ public class FastsettPerioderTjeneste {
         var årsak = regelresultat.getPeriodeÅrsak();
 
         switch (utfallType) {
-            case AVSLÅTT:
+            case IKKE_OPPFYLT:
                 periode.avslå(årsak, inputJson, regelJson);
                 break;
-            case INNVILGET:
+            case OPPFYLT:
                 periode.innvilg(årsak, inputJson, regelJson);
                 break;
             default:

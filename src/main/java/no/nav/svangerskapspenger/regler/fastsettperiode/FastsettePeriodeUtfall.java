@@ -10,8 +10,8 @@ import no.nav.fpsak.nare.evaluation.RuleReasonRef;
 import no.nav.fpsak.nare.evaluation.RuleReasonRefImpl;
 import no.nav.fpsak.nare.evaluation.node.SingleEvaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
-import no.nav.svangerskapspenger.domene.resultat.PeriodeAvslåttÅrsak;
-import no.nav.svangerskapspenger.domene.resultat.PeriodeInnvilgetÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.PeriodeIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.PeriodeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.PeriodeÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.UtfallType;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
@@ -26,12 +26,12 @@ class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGrunnlag>
     private final RuleReasonRef ruleReasonRef;
     private final List<BiConsumer<SingleEvaluation, FastsettePeriodeGrunnlag>> utfallSpesifiserere = new ArrayList<>();
 
-    FastsettePeriodeUtfall(String id, PeriodeInnvilgetÅrsak periodeÅrsak) {
-        this(id, periodeÅrsak, UtfallType.INNVILGET);
+    FastsettePeriodeUtfall(String id, PeriodeOppfyltÅrsak periodeÅrsak) {
+        this(id, periodeÅrsak, UtfallType.OPPFYLT);
     }
 
-    FastsettePeriodeUtfall(String id, PeriodeAvslåttÅrsak periodeÅrsak) {
-        this(id, periodeÅrsak, UtfallType.AVSLÅTT);
+    FastsettePeriodeUtfall(String id, PeriodeIkkeOppfyltÅrsak periodeÅrsak) {
+        this(id, periodeÅrsak, UtfallType.IKKE_OPPFYLT);
     }
 
     private FastsettePeriodeUtfall(String id, PeriodeÅrsak periodeÅrsak, UtfallType utfallType) {
@@ -64,7 +64,7 @@ class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGrunnlag>
     }
 
     private SingleEvaluation getHovedUtfall() {
-        if (periodeÅrsak instanceof PeriodeInnvilgetÅrsak) {
+        if (periodeÅrsak instanceof PeriodeOppfyltÅrsak) {
             return ja(ruleReasonRef);
         }
         return nei(ruleReasonRef);

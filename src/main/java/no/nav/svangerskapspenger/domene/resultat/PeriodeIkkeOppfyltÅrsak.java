@@ -1,6 +1,6 @@
 package no.nav.svangerskapspenger.domene.resultat;
 
-public enum PeriodeAvslåttÅrsak implements PeriodeÅrsak {
+public enum PeriodeIkkeOppfyltÅrsak implements PeriodeÅrsak {
 
     BRUKER_ER_DØD(8304, "Bruker er død"),
     BARN_ER_DØDT(8305, "Barnet/barna er dødt"),
@@ -12,7 +12,7 @@ public enum PeriodeAvslåttÅrsak implements PeriodeÅrsak {
     private final int id;
     private final String beskrivelse;
 
-    PeriodeAvslåttÅrsak(int id, String beskrivelse) {
+    PeriodeIkkeOppfyltÅrsak(int id, String beskrivelse) {
         this.id = id;
         this.beskrivelse = beskrivelse;
     }
