@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
+import no.nav.svangerskapspenger.domene.søknad.Ferie;
 
 public class FastsettPerioderTjenesteTest {
 
@@ -27,15 +28,12 @@ public class FastsettPerioderTjenesteTest {
 
     @Test
     public void lovlig_uttak_skal_bli_innvilget() {
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -57,15 +55,12 @@ public class FastsettPerioderTjenesteTest {
 
     @Test
     public void lovlig_uttak_skal_bli_innvilget_for_to_arbeidsforhold() {
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -73,7 +68,6 @@ public class FastsettPerioderTjenesteTest {
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
 
         fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
-
 
         var arbeidsforholdSet = uttaksperioder.alleArbeidsforhold();
 
@@ -101,15 +95,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void uttak_ikke_oppfylt_ved_brukers_død() {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            brukersdødsdato,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medBrukersDødsdato(brukersdødsdato)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -139,15 +131,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void uttak_ikke_oppfylt_ved_barnets_død() {
         var barnetsDødsdato = LocalDate.of(2019, Month.APRIL, 1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            barnetsDødsdato,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medBarnetsDødsdato(barnetsDødsdato)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -177,15 +167,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void uttak_etter_opphør_av_medlemskap_avslås() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            opphørAvMedlemskap,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -215,15 +203,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void uttak_med_delvis_tilrettelegging_etter_en_måned_og_opphør_av_medlemskap_gir_tre_perioder() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            opphørAvMedlemskap,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
@@ -261,15 +247,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TERMINDATO.minusWeeks(2),
-            null,
-            null,
-            opphørAvMedlemskap,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TERMINDATO.minusWeeks(2))
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TERMINDATO.minusWeeks(2), TERMINDATO.minusDays(1), FULL_UTBETALINGSGRAD));
@@ -284,15 +268,12 @@ public class FastsettPerioderTjenesteTest {
 
     @Test
     public void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 4), FULL_UTBETALINGSGRAD),
@@ -318,15 +299,12 @@ public class FastsettPerioderTjenesteTest {
 
     @Test
     public void skal_sette_ikke_oppfylt_på_hele_arbeidsforholdet_dersom_periodene_kun_inneholder_helg() {
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_UTBETALINGSGRAD) //bare helg
@@ -343,15 +321,13 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void lovlig_uttak_med_tidlig_fødsel_skal_ikke_oppfylles_fra_fødselsdato() {
         var fødseldatoTidligFødsel = TERMINDATO.minusWeeks(4);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            fødseldatoTidligFødsel
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medFødselsdato(fødseldatoTidligFødsel)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -381,15 +357,12 @@ public class FastsettPerioderTjenesteTest {
     @Test
     public void søkt_for_sent_gir_ikke_oppfylte_perioder_frem_til_første_lovlige_uttaksperiode() {
         var førsteLovligeUttaksdato = TILRETTELEGGING_BEHOV_DATO.plusWeeks(1);
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            førsteLovligeUttaksdato,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(førsteLovligeUttaksdato)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -417,15 +390,12 @@ public class FastsettPerioderTjenesteTest {
 
     @Test
     public void uttaksperioder_som_går_utover_3_uker_før_termindato_skal_ikke_oppfylles() {
-        var avklarteDatoer = new AvklarteDatoer(
-            TILRETTELEGGING_BEHOV_DATO,
-            null,
-            null,
-            null,
-            FØRSTE_LOVLIGE_UTTAKSDATO,
-            TERMINDATO,
-            null
-        );
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(2).minusDays(1), FULL_UTBETALINGSGRAD));
@@ -450,5 +420,56 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN);
     }
+
+    @Test
+    public void ferie_skal_avslås() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medFerie(new Ferie(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1)))
+            .build();
+
+        var uttaksperioder = new Uttaksperioder();
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
+            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(3);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
+        assertThat(periode0.getTom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getRegelInput()).isNotEmpty();
+        assertThat(periode0.getRegelSporing()).isNotEmpty();
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1));
+        assertThat(periode1.getTom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1));
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        assertThat(periode1.getRegelInput()).isNotEmpty();
+        assertThat(periode1.getRegelSporing()).isNotEmpty();
+
+
+        var periode2 = perioder.get(2);
+        assertThat(periode2.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2));
+        assertThat(periode2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode2.getRegelInput()).isNotEmpty();
+        assertThat(periode2.getRegelSporing()).isNotEmpty();
+
+    }
+
 
 }

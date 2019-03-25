@@ -2,6 +2,7 @@ package no.nav.svangerskapspenger.regler.fastsettperiode;
 
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkBarnetsDødsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkBrukersDødsdato;
+import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFerie;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFødselsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFørsteLovligeUttaksdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpphørsdatoForMedlemskap;
@@ -37,9 +38,13 @@ public class FastsettePeriodeRegel implements RuleService<FastsettePeriodeGrunnl
     @Override
     public Specification<FastsettePeriodeGrunnlag> getSpecification() {
 
+        var sjekkFerie = rs.hvisRegel(SjekkFerie.ID, "Er perioden i en ferieperiode?")
+            .hvis(new SjekkFerie(), Sluttpunkt.ikkeOppfylt("UT8012", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE))
+            .ellers(Sluttpunkt.oppfylt("UT8011", PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET));
+
         var sjekkTermindato = rs.hvisRegel(SjekkTermindato.ID, "Er perioden på eller etter \"termin minus tre uker\"?")
                 .hvis(new SjekkTermindato(), Sluttpunkt.ikkeOppfylt("UT8010", PeriodeIkkeOppfyltÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN))
-                .ellers(Sluttpunkt.oppfylt("UT8011", PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET));
+                .ellers(sjekkFerie);
 
         var sjekkFødselsdato = rs.hvisRegel(SjekkFødselsdato.ID, "Er fødselsdato kjent og er fødsel minst tre uker før termin og er perioden på eller etter fødselsdato?")
                 .hvis(new SjekkFødselsdato(), Sluttpunkt.ikkeOppfylt("UT8009", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_IKKE_FØR_FØDSEL))

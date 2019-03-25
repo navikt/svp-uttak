@@ -29,4 +29,8 @@ public abstract class LukketPeriode {
         return tom;
     }
 
+    public boolean overlapper(LukketPeriode annenPeriode) {
+        return !this.tom.isBefore(annenPeriode.fom) && !this.fom.isAfter(annenPeriode.tom);
+    }
+
 }

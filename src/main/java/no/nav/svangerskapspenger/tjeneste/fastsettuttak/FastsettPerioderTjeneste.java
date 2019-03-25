@@ -90,6 +90,10 @@ public class FastsettPerioderTjeneste {
         avklarteDatoer.getFødselsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);
+        avklarteDatoer.getFerier().forEach(ferie -> {
+            knekkpunkter.add(ferie.getFom());
+            knekkpunkter.add(ferie.getTom().plusDays(1));
+        });
 
         return knekkpunkter;
     }
