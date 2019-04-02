@@ -22,16 +22,12 @@ public class UttaksperioderPerArbeidsforhold {
     }
 
     public List<Uttaksperiode> getUttaksperioder() {
-        return uttaksperioder;
-    }
-
-    public void fjernPerioderUtenVirkedager() {
-        uttaksperioder = uttaksperioder
+        //Fjerner perioder med bare helg.
+        return uttaksperioder
             .stream()
             .filter(periode -> Virkedager.antallVirkedager(periode.getFom(), periode.getTom())>0)
             .collect(Collectors.toList());
     }
-
 
     public void avslå(ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak) {
         uttaksperioder = List.of();
