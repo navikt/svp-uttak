@@ -42,7 +42,6 @@ public class FastsettPerioderTjeneste {
         FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
         var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
         uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
-        uttaksperioderPerArbeidsforhold.fjernPerioderUtenVirkedager();
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
