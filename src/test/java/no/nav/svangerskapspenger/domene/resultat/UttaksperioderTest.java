@@ -14,7 +14,7 @@ public class UttaksperioderTest {
 
     @Test
     public void riktig_start_og_slutt_dato_med_en_periode() {
-        var arbeidsforhold = new Arbeidsforhold("123","456");
+        var arbeidsforhold = Arbeidsforhold.virksomhet("123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
@@ -25,8 +25,8 @@ public class UttaksperioderTest {
 
     @Test
     public void riktig_start_og_slutt_dato_med_perioder_på_forskjellige_arbeidsforhold() {
-        var arbeidsforhold1 = new Arbeidsforhold("123","456");
-        var arbeidsforhold2 = new Arbeidsforhold("234","567");
+        var arbeidsforhold1 = Arbeidsforhold.virksomhet("123", "456");
+        var arbeidsforhold2 = Arbeidsforhold.virksomhet("234", "567");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold1,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
@@ -39,7 +39,7 @@ public class UttaksperioderTest {
 
     @Test
     public void ingen_start_og_slutt_dato_dersom_avslag_på_arbeidsforhold() {
-        var arbeidsforhold = new Arbeidsforhold("123","456");
+        var arbeidsforhold = Arbeidsforhold.virksomhet("123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
