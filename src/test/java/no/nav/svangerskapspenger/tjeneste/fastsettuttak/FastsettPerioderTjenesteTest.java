@@ -15,8 +15,8 @@ import no.nav.svangerskapspenger.domene.søknad.Ferie;
 
 public class FastsettPerioderTjenesteTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = new Arbeidsforhold("123", "456");
-    private static final Arbeidsforhold ARBEIDSFORHOLD2 = new Arbeidsforhold("234", "567");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet("234", "567");
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
@@ -470,6 +470,5 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode2.getRegelSporing()).isNotEmpty();
 
     }
-
 
 }

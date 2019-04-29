@@ -46,7 +46,7 @@ class Resultat {
  */
 public class FpsakSimuleringTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = new Arbeidsforhold("123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
