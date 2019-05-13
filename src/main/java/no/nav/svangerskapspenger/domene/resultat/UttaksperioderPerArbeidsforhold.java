@@ -2,6 +2,7 @@ package no.nav.svangerskapspenger.domene.resultat;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +49,13 @@ public class UttaksperioderPerArbeidsforhold {
             });
             this.uttaksperioder = nyePerioder;
         });
+    }
+
+    void leggTilPerioder(Uttaksperiode... perioder) {
+        var tmpList = new ArrayList<Uttaksperiode>();
+        tmpList.addAll(uttaksperioder);
+        tmpList.addAll(List.of(perioder));
+        uttaksperioder = Collections.unmodifiableList(tmpList);
     }
 
 }

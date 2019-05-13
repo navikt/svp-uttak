@@ -12,12 +12,14 @@ import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 
 public class UttaksperioderTest {
 
+    private static final BigDecimal FULL_UTBETALING = BigDecimal.valueOf(100L);
+
     @Test
     public void riktig_start_og_slutt_dato_med_en_periode() {
         var arbeidsforhold = Arbeidsforhold.virksomhet("123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
 
         assertThat(uttaksperioder.finnFørsteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(uttaksperioder.finnSisteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
@@ -29,9 +31,9 @@ public class UttaksperioderTest {
         var arbeidsforhold2 = Arbeidsforhold.virksomhet("234", "567");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold1,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
         uttaksperioder.leggTilPerioder(arbeidsforhold2,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 15), LocalDate.of(2019, Month.FEBRUARY, 20), BigDecimal.valueOf(100L)));
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 15), LocalDate.of(2019, Month.FEBRUARY, 20), FULL_UTBETALING));
 
         assertThat(uttaksperioder.finnFørsteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(uttaksperioder.finnSisteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 20));
@@ -42,7 +44,7 @@ public class UttaksperioderTest {
         var arbeidsforhold = Arbeidsforhold.virksomhet("123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), BigDecimal.valueOf(100L)));
+            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
         uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
 
         assertThat(uttaksperioder.finnFørsteUttaksdato().isPresent()).isFalse();
@@ -55,6 +57,20 @@ public class UttaksperioderTest {
 
         assertThat(uttaksperioder.finnFørsteUttaksdato().isPresent()).isFalse();
         assertThat(uttaksperioder.finnSisteUttaksdato().isPresent()).isFalse();
+    }
+
+    @Test
+    public void skal_være_mulig_å_legge_til_perioder() {
+        var uttaksperioder = new Uttaksperioder();
+        var arbeidsforhold = Arbeidsforhold.virksomhet("123", "456");
+
+        uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
+        uttaksperioder.leggTilPerioder(arbeidsforhold,
+            new Uttaksperiode(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28), FULL_UTBETALING),
+            new Uttaksperiode(LocalDate.of(2019, Month.MARCH, 1), LocalDate.of(2019, Month.MARCH, 31), FULL_UTBETALING));
+
+
+        assertThat(uttaksperioder.perioder(arbeidsforhold).getUttaksperioder()).hasSize(3);
     }
 
 }
