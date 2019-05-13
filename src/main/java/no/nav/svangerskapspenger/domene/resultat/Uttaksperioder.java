@@ -18,7 +18,12 @@ public class Uttaksperioder {
     }
 
     public void leggTilPerioder(Arbeidsforhold arbeidsforhold, Uttaksperiode... perioder) {
-        perioderPerArbeidsforholdMap.put(arbeidsforhold, new UttaksperioderPerArbeidsforhold(List.of(perioder)));
+        var uttaksperioderPerArbeidsforhold = perioderPerArbeidsforholdMap.get(arbeidsforhold);
+        if (uttaksperioderPerArbeidsforhold == null) {
+            perioderPerArbeidsforholdMap.put(arbeidsforhold, new UttaksperioderPerArbeidsforhold(List.of(perioder)));
+            return;
+        }
+        uttaksperioderPerArbeidsforhold.leggTilPerioder(perioder);
     }
 
     public Set<Arbeidsforhold> alleArbeidsforhold() {
