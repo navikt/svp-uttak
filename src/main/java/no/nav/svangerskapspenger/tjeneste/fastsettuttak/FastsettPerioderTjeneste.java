@@ -28,14 +28,13 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.knekk(knekkpunkter);
 
         //Fastsett perioder
-        if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer)) {
-            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> fastsettPerioder(avklarteDatoer, uttaksperioder, arbeidsforhold));
-        } else {
-            //avslå for alle arbeidsforhold
-            uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold ->
-                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO)
-            );
-        }
+        uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
+            if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer, arbeidsforhold)) {
+                fastsettPerioder(avklarteDatoer, uttaksperioder, arbeidsforhold);
+            } else {
+                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+            }
+        });
     }
 
     private void fastsettPerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold) {
@@ -47,8 +46,12 @@ public class FastsettPerioderTjeneste {
         }
     }
 
-    private boolean erTilretteleggingBehovDatoFørTreUkerTermindato(AvklarteDatoer avklarteDatoer) {
-        return avklarteDatoer.getTilretteleggingBehovDato().isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
+    private boolean erTilretteleggingBehovDatoFørTreUkerTermindato(AvklarteDatoer avklarteDatoer, Arbeidsforhold arbeidsforhold) {
+        var tilretteleggingBehovDato = avklarteDatoer.getTilretteleggingBehovDatoer().get(arbeidsforhold);
+        if (tilretteleggingBehovDato != null) {
+            return tilretteleggingBehovDato.isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
+        }
+        return true;
     }
 
     private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {
