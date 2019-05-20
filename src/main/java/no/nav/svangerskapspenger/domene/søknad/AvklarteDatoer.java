@@ -3,13 +3,16 @@ package no.nav.svangerskapspenger.domene.søknad;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+
 public class AvklarteDatoer {
 
-    private LocalDate tilretteleggingBehovDato;
     private LocalDate brukersDødsdato;
     private LocalDate barnetsDødsdato;
     private LocalDate opphørsdatoForMedlemskap;
@@ -17,12 +20,13 @@ public class AvklarteDatoer {
     private LocalDate termindato;
     private LocalDate fødselsdato;
     private List<Ferie> ferier = new ArrayList<>();
+    private Map<Arbeidsforhold, LocalDate> tilretteleggingBehovDatoer = new HashMap<>();
 
     private AvklarteDatoer() {
     }
 
-    public LocalDate getTilretteleggingBehovDato() {
-        return tilretteleggingBehovDato;
+    public Map<Arbeidsforhold, LocalDate> getTilretteleggingBehovDatoer() {
+        return Collections.unmodifiableMap(tilretteleggingBehovDatoer);
     }
 
     public Optional<LocalDate> getBrukersDødsdato() {
@@ -60,8 +64,8 @@ public class AvklarteDatoer {
             kladd = new AvklarteDatoer();
         }
 
-        public Builder medTilretteleggingBehovDato(LocalDate tilretteleggingBehovDato) {
-            kladd.tilretteleggingBehovDato = tilretteleggingBehovDato;
+        public Builder medTilretteleggingBehovDato(Arbeidsforhold arbeidsforhold, LocalDate tilretteleggingBehovDato) {
+            kladd.tilretteleggingBehovDatoer.put(arbeidsforhold, tilretteleggingBehovDato);
             return this;
         }
 
@@ -101,7 +105,9 @@ public class AvklarteDatoer {
         }
 
         public AvklarteDatoer build() {
-            Objects.requireNonNull(kladd.tilretteleggingBehovDato, "Tilrettelegging behov dato må være utfylt.");
+            if (kladd.tilretteleggingBehovDatoer.size() == 0) {
+                throw new IllegalArgumentException("Tilrettelegging behov dato må være utfylt for minst et arbeidsforhold.");
+            }
             Objects.requireNonNull(kladd.førsteLovligeUttaksdato, "Første lovlige uttaksdato må være utfylt.");
             Objects.requireNonNull(kladd.termindato, "Termindato må være utfylt.");
             return kladd;
