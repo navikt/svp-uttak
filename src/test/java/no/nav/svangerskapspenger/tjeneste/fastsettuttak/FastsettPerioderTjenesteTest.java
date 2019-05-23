@@ -139,7 +139,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_er_satt() {
+    public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TILRETTELEGGING_BEHOV_DATO)
             .medTermindato(TERMINDATO)
