@@ -139,6 +139,32 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
+    public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_er_satt() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TILRETTELEGGING_BEHOV_DATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+        var uttaksperioder = new Uttaksperioder();
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
+            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
+        assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.SØKT_FOR_SENT);
+        assertThat(periode0.getRegelInput()).isNotEmpty();
+        assertThat(periode0.getRegelSporing()).isNotEmpty();
+    }
+
+    @Test
     public void uttak_ikke_oppfylt_ved_brukers_død() {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
         var avklarteDatoer = new AvklarteDatoer.Builder()

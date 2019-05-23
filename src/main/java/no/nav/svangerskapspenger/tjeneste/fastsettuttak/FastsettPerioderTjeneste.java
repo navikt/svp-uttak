@@ -87,7 +87,7 @@ public class FastsettPerioderTjeneste {
         var knekkpunkter = new TreeSet<LocalDate>();
 
         avklarteDatoer.getOpphørsdatoForMedlemskap().ifPresent(knekkpunkter::add);
-        knekkpunkter.add(avklarteDatoer.getFørsteLovligeUttaksdag());
+        avklarteDatoer.getFørsteLovligeUttaksdag().ifPresent(knekkpunkter::add);
         knekkpunkter.add(avklarteDatoer.getTerminsdato().minusWeeks(3));
         avklarteDatoer.getFødselsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
