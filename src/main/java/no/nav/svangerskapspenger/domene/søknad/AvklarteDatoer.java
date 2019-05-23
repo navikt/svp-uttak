@@ -41,8 +41,8 @@ public class AvklarteDatoer {
         return Optional.ofNullable(opphørsdatoForMedlemskap);
     }
 
-    public LocalDate getFørsteLovligeUttaksdag() {
-        return førsteLovligeUttaksdato;
+    public Optional<LocalDate>getFørsteLovligeUttaksdag() {
+        return Optional.ofNullable(førsteLovligeUttaksdato);
     }
 
     public LocalDate getTerminsdato() {
@@ -108,7 +108,6 @@ public class AvklarteDatoer {
             if (kladd.tilretteleggingBehovDatoer.size() == 0) {
                 throw new IllegalArgumentException("Tilrettelegging behov dato må være utfylt for minst et arbeidsforhold.");
             }
-            Objects.requireNonNull(kladd.førsteLovligeUttaksdato, "Første lovlige uttaksdato må være utfylt.");
             Objects.requireNonNull(kladd.termindato, "Termindato må være utfylt.");
             return kladd;
         }
