@@ -339,6 +339,26 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
+    public void dersom_arbeidsforholdet_er_avslått_ifn_opprettelse_så_skal_ikke_fastsette_perioder_avstyre_resultatet() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TILRETTELEGGING_BEHOV_DATO)
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+        var uttaksperioder = new Uttaksperioder();
+        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1);
+        uttaksperioder.avslåForArbeidsforhold(ARBEIDSFORHOLD1, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
+
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
+        assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
+    }
+
+    @Test
     public void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TILRETTELEGGING_BEHOV_DATO)
@@ -542,5 +562,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode2.getRegelSporing()).isNotEmpty();
 
     }
+
+
 
 }
