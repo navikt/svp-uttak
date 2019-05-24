@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.UttaksperioderPerArbeidsforhold;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
@@ -29,17 +30,19 @@ public class FastsettPerioderTjeneste {
 
         //Fastsett perioder
         uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
-            if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer, arbeidsforhold)) {
-                fastsettPerioder(avklarteDatoer, uttaksperioder, arbeidsforhold);
-            } else {
-                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+            var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
+            if (uttaksperioderPerArbeidsforhold.getArbeidsforholdIkkeOppfyltÅrsak() == null) {
+                if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer, arbeidsforhold)) {
+                    fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold);
+                } else {
+                    uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+                }
             }
         });
     }
 
-    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold) {
+    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold) {
         FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-        var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
         uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
