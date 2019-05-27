@@ -36,6 +36,10 @@ public class Uttaksperioder {
 
     public void avslåForArbeidsforhold(Arbeidsforhold arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak) {
         var perioderPerArbeidsforhold = perioderPerArbeidsforholdMap.get(arbeidsforhold);
+        if (perioderPerArbeidsforhold == null) {
+            perioderPerArbeidsforhold = new UttaksperioderPerArbeidsforhold(List.of());
+            perioderPerArbeidsforholdMap.put(arbeidsforhold, perioderPerArbeidsforhold);
+        }
         perioderPerArbeidsforhold.avslå(arbeidsforholdIkkeOppfyltÅrsak);
     }
 

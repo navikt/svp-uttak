@@ -1,9 +1,9 @@
 package no.nav.svangerskapspenger.domene.søknad;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
@@ -19,20 +19,16 @@ public class IngenTilretteligging implements Tilrettelegging {
 
     @Override
     public void opprettPerioder(Uttaksperioder uttaksperioder, Søknad søknad) {
-        if (nesteUkedag(søknad.getTilretteliggingBehovDato()).equals(nesteUkedag(tilretteleggingOpphørerDato))) {
-            uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(), new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
+        var arbeidsforhold = søknad.getArbeidsforhold();
+        if (tilretteleggingOpphørerDato.isAfter(søknad.getTilretteliggingBehovDato()) || tilretteleggingOpphørerDato.equals(søknad.getTilretteliggingBehovDato())) {
+            if (tilretteleggingOpphørerDato.isBefore(søknad.sisteDagFørTermin().plusDays(1))) {
+                uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(tilretteleggingOpphørerDato, søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
+            } else {
+                uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE_FREM_TIL_3_UKER_FØR_TERMIN);
+            }
         } else {
-            uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(), new Uttaksperiode(tilretteleggingOpphørerDato, søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
+            uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
         }
-    }
-
-    private LocalDate nesteUkedag(LocalDate dato) {
-        if (dato.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-            return dato.plusDays(2);
-        } else if(dato.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            return dato.plusDays(1);
-        }
-        return dato;
     }
 
 }

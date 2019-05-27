@@ -210,4 +210,24 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
+    @Test
+    public void ingen_tilrettelegging_etter_3_uker_før_termin_gir_avslag_på_arbeidsforhold() {
+        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20).plusWeeks(1));
+        var søknad = new Søknad(
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(ingenTilrettelegging));
+
+        var uttaksperioder = new Uttaksperioder();
+        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+
+        assertThat(manuellBehandlingSet).hasSize(0);
+        assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
+            .isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE_FREM_TIL_3_UKER_FØR_TERMIN);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(0);
+    }
+
+
 }
