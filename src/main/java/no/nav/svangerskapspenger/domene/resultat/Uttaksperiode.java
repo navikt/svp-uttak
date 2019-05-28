@@ -69,7 +69,7 @@ public class Uttaksperiode extends LukketPeriode {
         return utbetalingsgrad;
     }
 
-    Optional<Tuple<Uttaksperiode, Uttaksperiode>> knekk(LocalDate knekkpunkt) {
+    public Optional<Tuple<Uttaksperiode, Uttaksperiode>> knekk(LocalDate knekkpunkt) {
         if (knekkpunkt.isAfter(getFom()) && !knekkpunkt.isAfter(getTom())) {
             var periode1 = new Uttaksperiode(this, this.getFom(), knekkpunkt.minusDays(1));
             var periode2 = new Uttaksperiode(this, knekkpunkt, this.getTom());
