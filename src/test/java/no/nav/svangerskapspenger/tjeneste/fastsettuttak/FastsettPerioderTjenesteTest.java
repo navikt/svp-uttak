@@ -317,28 +317,6 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
-        var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
-        var avklarteDatoer = new AvklarteDatoer.Builder()
-            .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TERMINDATO.minusWeeks(2))
-            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
-            .medTermindato(TERMINDATO)
-            .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
-            .build();
-
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TERMINDATO.minusWeeks(2), TERMINDATO.minusDays(1), FULL_UTBETALINGSGRAD));
-
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
-
-        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
-        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
-        assertThat(perioder.getUttaksperioder()).hasSize(0);
-        assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
-    }
-
-    @Test
     public void dersom_arbeidsforholdet_er_avslått_ifn_opprettelse_så_skal_ikke_fastsette_perioder_avstyre_resultatet() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, TILRETTELEGGING_BEHOV_DATO)

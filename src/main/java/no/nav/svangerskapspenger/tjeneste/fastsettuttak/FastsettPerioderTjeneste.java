@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.UttaksperioderPerArbeidsforhold;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
@@ -32,11 +31,7 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
             var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
             if (uttaksperioderPerArbeidsforhold.getArbeidsforholdIkkeOppfyltÅrsak() == null) {
-                if (erTilretteleggingBehovDatoFørTreUkerTermindato(avklarteDatoer, arbeidsforhold)) {
-                    fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold);
-                } else {
-                    uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
-                }
+                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold);
             }
         });
     }
@@ -47,14 +42,6 @@ public class FastsettPerioderTjeneste {
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
-    }
-
-    private boolean erTilretteleggingBehovDatoFørTreUkerTermindato(AvklarteDatoer avklarteDatoer, Arbeidsforhold arbeidsforhold) {
-        var tilretteleggingBehovDato = avklarteDatoer.getTilretteleggingBehovDatoer().get(arbeidsforhold);
-        if (tilretteleggingBehovDato != null) {
-            return tilretteleggingBehovDato.isBefore(avklarteDatoer.getTerminsdato().minusWeeks(3));
-        }
-        return true;
     }
 
     private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {

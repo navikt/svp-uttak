@@ -12,6 +12,8 @@ import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
+import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
@@ -229,5 +231,23 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(0);
     }
 
+    @Test
+    public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
+        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20));
+        var søknad = new Søknad(
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.APRIL, 20),
+            List.of(ingenTilrettelegging));
+
+        var uttaksperioder = new Uttaksperioder();
+        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+
+        assertThat(manuellBehandlingSet).hasSize(0);
+        assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
+            .isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(0);
+    }
 
 }

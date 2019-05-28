@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
@@ -13,11 +14,17 @@ public class UttaksperioderTjeneste {
         var manuellbehandlingSet = EnumSet.noneOf(ManuellBehandling.class);
 
         søknader.forEach(søknad -> {
-            if (søknad.getTilrettelegginger().size() != 1) {
-                manuellbehandlingSet.add(ManuellBehandling.AVKLAR_TILRETTELIGGING);
+            if (søknad.getTilretteliggingBehovDato().isAfter(søknad.getTermindato().minusWeeks(3).minusDays(1))) {
+                uttaksperioder.avslåForArbeidsforhold(søknad.getArbeidsforhold(),
+                    ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
+            } else {
+                if (søknad.getTilrettelegginger().size() != 1) {
+                    manuellbehandlingSet.add(ManuellBehandling.AVKLAR_TILRETTELIGGING);
+                }
+                var tilrettelegging = søknad.getTilrettelegginger().get(0);  //TODO legg til støtte for flere kryss
+                tilrettelegging.opprettPerioder(uttaksperioder, søknad);
             }
-            var tilrettelegging = søknad.getTilrettelegginger().get(0);
-            tilrettelegging.opprettPerioder(uttaksperioder, søknad);
+
         });
 
         return manuellbehandlingSet;
