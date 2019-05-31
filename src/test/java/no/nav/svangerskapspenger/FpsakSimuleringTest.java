@@ -19,6 +19,7 @@ import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.FastsettPerioderTjeneste;
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.ManuellBehandling;
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjeneste;
+import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjenesteV2;
 
 class Resultat {
     private Set<ManuellBehandling> manuellBehandlingSet = new HashSet<>();
@@ -48,7 +49,7 @@ public class FpsakSimuleringTest {
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
 
-    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
+    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV2();
     private FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
 
     @Test

@@ -1,11 +1,11 @@
 package no.nav.svangerskapspenger.domene.søknad;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class IngenTilretteligging implements Tilrettelegging {
 
@@ -30,5 +30,21 @@ public class IngenTilretteligging implements Tilrettelegging {
             uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
         }
     }
+
+    @Override
+    public LocalDate getArbeidsgiversDato() {
+        return tilretteleggingOpphørerDato;
+    }
+
+    @Override
+    public TilretteleggingKryss getTilretteleggingKryss() {
+        return TilretteleggingKryss.C;
+    }
+
+    @Override
+    public BigDecimal getTilretteleggingsprosent() {
+        return BigDecimal.ZERO;
+    }
+
 
 }
