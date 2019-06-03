@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+//TODO SVP slettes når vi har verifisert at v2 virker.
 public class UttaksperioderTjenesteV1 implements UttaksperioderTjeneste {
 
     @Override

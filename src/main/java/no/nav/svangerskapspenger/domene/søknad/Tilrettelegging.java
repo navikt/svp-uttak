@@ -16,4 +16,6 @@ public interface Tilrettelegging {
 
     BigDecimal getTilretteleggingsprosent();
 
+    void setArbeidsgiversDato(LocalDate arbeidsgiversDato);
+
 }

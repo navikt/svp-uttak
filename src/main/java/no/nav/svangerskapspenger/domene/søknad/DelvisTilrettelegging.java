@@ -10,7 +10,7 @@ public class DelvisTilrettelegging implements Tilrettelegging {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
-    private final LocalDate tilretteleggingArbeidsgiverDato;
+    private LocalDate tilretteleggingArbeidsgiverDato;
     private final BigDecimal tilretteleggingsprosent;
 
     public DelvisTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato, BigDecimal tilretteleggingsprosent) {
@@ -51,5 +51,10 @@ public class DelvisTilrettelegging implements Tilrettelegging {
     @Override
     public BigDecimal getTilretteleggingsprosent() {
         return tilretteleggingsprosent;
+    }
+
+    @Override
+    public void setArbeidsgiversDato(LocalDate arbeidsgiversDato) {
+        this.tilretteleggingArbeidsgiverDato = arbeidsgiversDato;
     }
 }

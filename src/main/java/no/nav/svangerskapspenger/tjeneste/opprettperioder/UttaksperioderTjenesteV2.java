@@ -110,7 +110,6 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
             opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad);
             nesteFom = tom.plusDays(1);
         }
-        //opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), nesteFom, søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD);
     }
 
     private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
@@ -144,10 +143,11 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
         if (!tilretteleggingerFørBehovDato.isEmpty()) {
 
             if (!tilretteleggingerPåBehovDato.isEmpty()) {
-                resultat = join(resultat, tilretteleggingerPåBehovDato);
+                resultat = join(tilretteleggingerPåBehovDato, resultat);
             } else {
-                var sisteTilrettelegging = sisteArbeidsgiverDato(tilretteleggingerEtterBehovDato);
-                resultat = join(resultat, List.of(sisteTilrettelegging));
+                var sisteTilrettelegging = sisteArbeidsgiverDato(tilretteleggingerFørBehovDato);
+                sisteTilrettelegging.setArbeidsgiversDato(søknad.getTilretteliggingBehovDato());
+                resultat = join(List.of(sisteTilrettelegging), resultat);
             }
 
         } else {

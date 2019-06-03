@@ -11,7 +11,7 @@ public class FullTilrettelegging implements Tilrettelegging {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
-    private final LocalDate tilretteleggingArbeidsgiverDato;
+    private LocalDate tilretteleggingArbeidsgiverDato;
 
     public FullTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato) {
         this.tilretteleggingArbeidsgiverDato = tilretteleggingArbeidsgiverDato;
@@ -52,4 +52,10 @@ public class FullTilrettelegging implements Tilrettelegging {
     public BigDecimal getTilretteleggingsprosent() {
         return BigDecimal.valueOf(100L);
     }
+
+    @Override
+    public void setArbeidsgiversDato(LocalDate arbeidsgiversDato) {
+        this.tilretteleggingArbeidsgiverDato = arbeidsgiversDato;
+    }
+
 }
