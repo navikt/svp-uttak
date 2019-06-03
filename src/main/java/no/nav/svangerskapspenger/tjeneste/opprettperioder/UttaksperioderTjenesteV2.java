@@ -34,7 +34,7 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
                 var tilrettelegginger = fjernUnødvendigeTilrettelegginger(søknad);
 
 
-                avklarPerioder(søknad, tilrettelegginger, uttaksperioder);
+                opprettPerioder(søknad, tilrettelegginger, uttaksperioder);
 
             }
         });
@@ -42,41 +42,41 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
         return manuellbehandlingSet;
     }
 
-    private void avklarPerioder(Søknad søknad, List<Tilrettelegging> tilrettelegginger, Uttaksperioder uttaksperioder) {
-        Tilrettelegging førsteTilrettelegging = null;
-        if (tilrettelegginger.size()==1) {
-            førsteTilrettelegging = tilrettelegginger.get(0);
+    private void opprettPerioder(Søknad søknad, List<Tilrettelegging> tilrettelegginger, Uttaksperioder uttaksperioder) {
+        if (tilrettelegginger.size() == 1) {
+            var førsteTilrettelegging = tilrettelegginger.get(0);
+            if (førsteTilrettelegging.getArbeidsgiversDato().equals(søknad.getTilretteliggingBehovDato()) &&
+                førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.A)) {
+                uttaksperioder.avslåForArbeidsforhold(søknad.getArbeidsforhold(), ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
+                return;
+            }
 
-        }
-        if (tilrettelegginger.size() == 1 &&
-            førsteTilrettelegging.getArbeidsgiversDato().equals(søknad.getTilretteliggingBehovDato()) &&
-            førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.A)) {
-            uttaksperioder.avslåForArbeidsforhold(søknad.getArbeidsforhold(), ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
-            return;
-        }
-
-
-        if (tilrettelegginger.size() == 1 &&
-            førsteTilrettelegging.getArbeidsgiversDato().isAfter(søknad.sisteDagFørTermin()) &&
-            førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.C)) {
-            uttaksperioder.avslåForArbeidsforhold(søknad.getArbeidsforhold(), ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE_FREM_TIL_3_UKER_FØR_TERMIN);
-            return;
+            if (førsteTilrettelegging.getArbeidsgiversDato().isAfter(søknad.sisteDagFørTermin()) &&
+                førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.C)) {
+                uttaksperioder.avslåForArbeidsforhold(søknad.getArbeidsforhold(), ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE_FREM_TIL_3_UKER_FØR_TERMIN);
+                return;
+            }
         }
 
         if (tilrettelegginger.isEmpty()) {
             uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(), new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
             return;
         }
-        if (tilrettelegginger.size() == 1 &&
-            førsteTilrettelegging.getArbeidsgiversDato().equals(søknad.getTilretteliggingBehovDato()) &&
-            førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.C)) {
-            uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(), new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
-            return;
+
+        if (tilrettelegginger.size() == 1) {
+            var førsteTilrettelegging = tilrettelegginger.get(0);
+            if (førsteTilrettelegging.getArbeidsgiversDato().equals(søknad.getTilretteliggingBehovDato()) &&
+                førsteTilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.C)) {
+                uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold(), new Uttaksperiode(søknad.getTilretteliggingBehovDato(), søknad.sisteDagFørTermin(), FULL_UTBETALINGSGRAD));
+                return;
+            }
         }
 
-
         var sorterteTilrettelegginger = tilrettelegginger.stream().sorted(Comparator.comparing(Tilrettelegging::getArbeidsgiversDato)).collect(Collectors.toList());
+        opprettPerioderSisteSteg(søknad, uttaksperioder, sorterteTilrettelegginger);
+    }
 
+    private void opprettPerioderSisteSteg(Søknad søknad, Uttaksperioder uttaksperioder, List<Tilrettelegging> sorterteTilrettelegginger) {
         LocalDate nesteFom = søknad.getTilretteliggingBehovDato();
         if (!sorterteTilrettelegginger.isEmpty() && søknad.getTilretteliggingBehovDato().isBefore(sorterteTilrettelegginger.get(0).getArbeidsgiversDato())) {
             var utbetalingsgrad = FULL_UTBETALINGSGRAD;
@@ -86,18 +86,17 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
             opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), nesteFom, sorterteTilrettelegginger.get(0).getArbeidsgiversDato().minusDays(1), utbetalingsgrad);
             nesteFom = sorterteTilrettelegginger.get(0).getArbeidsgiversDato();
         }
-        LocalDate fom;
-        LocalDate tom;
         for (int i = 0; i < sorterteTilrettelegginger.size(); i++) {
-            fom = nesteFom;
+            var fom = nesteFom;
+            LocalDate tom;
             if (i < sorterteTilrettelegginger.size()-1) {
-                tom = tilrettelegginger.get(i+1).getArbeidsgiversDato().minusDays(1);
+                tom = sorterteTilrettelegginger.get(i+1).getArbeidsgiversDato().minusDays(1);
             } else {
                 tom = søknad.sisteDagFørTermin();
             }
             var utbetalingsgrad = FULL_UTBETALINGSGRAD;
             if (i >= 0) {
-                var tilrettelegging = tilrettelegginger.get(i);
+                var tilrettelegging = sorterteTilrettelegginger.get(i);
                 var kryss = tilrettelegging.getTilretteleggingKryss();
 
                 if (kryss.equals(TilretteleggingKryss.A)) {
@@ -159,8 +158,6 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
             .filter(tilrettelegging -> !tilrettelegging.getArbeidsgiversDato().isAfter(søknad.sisteDagFørTermin()) || tilrettelegging.getTilretteleggingKryss().equals(TilretteleggingKryss.C))
             .collect(Collectors.toList());
     }
-
-
 
     private List<Tilrettelegging> join(List<Tilrettelegging> t1, List<Tilrettelegging> t2) {
         var samletListe = new ArrayList<Tilrettelegging>();
