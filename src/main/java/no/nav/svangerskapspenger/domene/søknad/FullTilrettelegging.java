@@ -1,17 +1,17 @@
 package no.nav.svangerskapspenger.domene.søknad;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public class FullTilrettelegging implements Tilrettelegging {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
-    private final LocalDate tilretteleggingArbeidsgiverDato;
+    private LocalDate tilretteleggingArbeidsgiverDato;
 
     public FullTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato) {
         this.tilretteleggingArbeidsgiverDato = tilretteleggingArbeidsgiverDato;
@@ -36,6 +36,26 @@ public class FullTilrettelegging implements Tilrettelegging {
             uttaksperioder.leggTilPerioder(søknad.getArbeidsforhold());
             uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
         }
+    }
+
+    @Override
+    public LocalDate getArbeidsgiversDato() {
+        return tilretteleggingArbeidsgiverDato;
+    }
+
+    @Override
+    public TilretteleggingKryss getTilretteleggingKryss() {
+        return TilretteleggingKryss.A;
+    }
+
+    @Override
+    public BigDecimal getTilretteleggingsprosent() {
+        return BigDecimal.valueOf(100L);
+    }
+
+    @Override
+    public void setArbeidsgiversDato(LocalDate arbeidsgiversDato) {
+        this.tilretteleggingArbeidsgiverDato = arbeidsgiversDato;
     }
 
 }

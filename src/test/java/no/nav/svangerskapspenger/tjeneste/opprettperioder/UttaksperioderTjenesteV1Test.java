@@ -12,33 +12,33 @@ import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
-import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
-import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
-public class UttaksperioderTjenesteTest {
+public class UttaksperioderTjenesteV1Test {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
 
+    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV1();
+
     @Test
     public void manuell_behandling_pga_tvetydig_søknad_med_flere_tilrettelegginger() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(50L));
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging, fullTilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(1);
         assertThat(manuellBehandlingSet.iterator().next()).isEqualTo(ManuellBehandling.AVKLAR_TILRETTELIGGING);
@@ -48,13 +48,13 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_fra_start() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                Collections.singletonList(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
@@ -67,13 +67,13 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_etter_en_måned() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                Collections.singletonList(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -88,13 +88,13 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_på_termin() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.MAY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -109,13 +109,13 @@ public class UttaksperioderTjenesteTest {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1), BigDecimal.valueOf(20L));
 
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -135,13 +135,13 @@ public class UttaksperioderTjenesteTest {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L));
 
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -155,13 +155,13 @@ public class UttaksperioderTjenesteTest {
     public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -175,13 +175,13 @@ public class UttaksperioderTjenesteTest {
     public void ingen_tilrettelegging_fra_første_dag_gir_en_periode() {
         var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(ingenTilrettelegging));
+            ARBEIDSFORHOLD1,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -202,7 +202,7 @@ public class UttaksperioderTjenesteTest {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -222,7 +222,7 @@ public class UttaksperioderTjenesteTest {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
@@ -241,7 +241,7 @@ public class UttaksperioderTjenesteTest {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = new UttaksperioderTjeneste().opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
