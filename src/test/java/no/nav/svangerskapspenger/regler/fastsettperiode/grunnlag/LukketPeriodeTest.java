@@ -6,6 +6,8 @@ import java.time.Month;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
+import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
+
 public class LukketPeriodeTest {
 
     @Test(expected = NullPointerException.class)

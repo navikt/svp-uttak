@@ -1,6 +1,11 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
+import no.nav.svangerskapspenger.domene.felles.arbeid.AktivitetIdentifikator;
+import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeid;
+import no.nav.svangerskapspenger.domene.felles.arbeid.ArbeidTidslinje;
+import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
@@ -37,7 +42,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
@@ -64,7 +69,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
@@ -95,7 +100,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(ingenTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
@@ -124,7 +129,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(ingenTilrettelegging, delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
@@ -151,7 +156,7 @@ public class UttaksperioderTjenesteV2Test {
                 Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
@@ -170,7 +175,7 @@ public class UttaksperioderTjenesteV2Test {
                 Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -196,7 +201,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -217,7 +222,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -243,7 +248,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -263,7 +268,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -283,7 +288,7 @@ public class UttaksperioderTjenesteV2Test {
                 List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -304,7 +309,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -330,7 +335,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
@@ -349,7 +354,7 @@ public class UttaksperioderTjenesteV2Test {
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
@@ -357,5 +362,16 @@ public class UttaksperioderTjenesteV2Test {
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(0);
     }
+
+    private Arbeidsprosenter lagArbeideprosenter() {
+        var arbeidsprosenter = new Arbeidsprosenter();
+        var aktivitetsindikator = new AktivitetIdentifikator(ARBEIDSFORHOLD1.getArbeidsgiverVirksomhetId(), ARBEIDSFORHOLD1.getArbeidsforholdId().get(), AktivitetIdentifikator.ArbeidsgiverType.VIRKSOMHET);
+        var tidslinje = new ArbeidTidslinje.Builder()
+            .medArbeid(new LukketPeriode(LocalDate.of(2017 ,Month.JANUARY, 1), LocalDate.of(2020,Month.JANUARY, 1)), Arbeid.forOrdinærtArbeid(BigDecimal.valueOf(100L)))
+            .build();
+        arbeidsprosenter.leggTil(aktivitetsindikator, tidslinje);
+        return arbeidsprosenter;
+    }
+
 
 }
