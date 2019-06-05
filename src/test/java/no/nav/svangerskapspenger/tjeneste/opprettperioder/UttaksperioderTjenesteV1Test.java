@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
@@ -21,7 +20,7 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 
 public class UttaksperioderTjenesteV1Test {
 
-    private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
+    private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
@@ -34,12 +33,13 @@ public class UttaksperioderTjenesteV1Test {
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(1);
         assertThat(manuellBehandlingSet.iterator().next()).isEqualTo(ManuellBehandling.AVKLAR_TILRETTELIGGING);
@@ -50,12 +50,13 @@ public class UttaksperioderTjenesteV1Test {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
@@ -69,19 +70,20 @@ public class UttaksperioderTjenesteV1Test {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato().minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
 
@@ -90,19 +92,20 @@ public class UttaksperioderTjenesteV1Test {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.MAY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(tilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
     @Test
@@ -111,19 +114,20 @@ public class UttaksperioderTjenesteV1Test {
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
 
         assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
         assertThat(perioder.get(1).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
@@ -137,12 +141,13 @@ public class UttaksperioderTjenesteV1Test {
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -157,19 +162,20 @@ public class UttaksperioderTjenesteV1Test {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(delvisTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
     @Test
@@ -177,19 +183,20 @@ public class UttaksperioderTjenesteV1Test {
         var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
 
@@ -198,19 +205,20 @@ public class UttaksperioderTjenesteV1Test {
         var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
     @Test
@@ -218,12 +226,13 @@ public class UttaksperioderTjenesteV1Test {
         var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.JANUARY, 1),
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
@@ -237,23 +246,19 @@ public class UttaksperioderTjenesteV1Test {
         var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
             TERMINDATO,
             LocalDate.of(2019, Month.APRIL, 20),
             List.of(ingenTilrettelegging));
 
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), lagArbeideprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(List.of(søknad), uttaksperioder);
 
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
             .isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(0);
-    }
-
-    private Arbeidsprosenter lagArbeideprosenter() {
-        var arbeidsprosenter = new Arbeidsprosenter();
-        return arbeidsprosenter;
     }
 
 }

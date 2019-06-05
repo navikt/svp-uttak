@@ -1,6 +1,5 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
-import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
@@ -13,7 +12,7 @@ import java.util.Set;
 public class UttaksperioderTjenesteV1 implements UttaksperioderTjeneste {
 
     @Override
-    public Set<ManuellBehandling> opprett(List<Søknad> søknader, Arbeidsprosenter arbeidsprosenter, Uttaksperioder uttaksperioder) {
+    public Set<ManuellBehandling> opprett(List<Søknad> søknader, Uttaksperioder uttaksperioder) {
         var manuellbehandlingSet = EnumSet.noneOf(ManuellBehandling.class);
 
         søknader.forEach(søknad -> {
