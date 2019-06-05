@@ -63,7 +63,6 @@ public class FpsakSimuleringTest {
         var avklartedatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(tilretteleggingsbehovdato)
             .medTermindato(termindato)
-            .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, tilretteleggingsbehovdato)
             .build();
 
         var resultat = opprettOgFastsettPerioder(søknad, avklartedatoer);
@@ -89,7 +88,6 @@ public class FpsakSimuleringTest {
         var avklartedatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(tilretteleggingsbehovdato)
             .medTermindato(termindato)
-            .medTilretteleggingBehovDato(ARBEIDSFORHOLD1, tilretteleggingsbehovdato)
             .build();
 
         var resultat = opprettOgFastsettPerioder(søknad, avklartedatoer);

@@ -1,13 +1,14 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 final class UtbetalingsgradUtleder {
 
-    private static final BigDecimal NULL_PROSENT = BigDecimal.ZERO;
-    private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
+    private static final BigDecimal NULL_PROSENT = new BigDecimal("0.00");
+    private static final BigDecimal HUNDRE_PROSENT = new BigDecimal("100");
 
     private UtbetalingsgradUtleder() {
         //static class
@@ -21,7 +22,8 @@ final class UtbetalingsgradUtleder {
         if (tilretteleggingsprosent.compareTo(stillingsprosent) > 0) {
             return NULL_PROSENT;
         }
-        var utbetalingsgrad = HUNDRE_PROSENT.subtract(tilretteleggingsprosent.divide(stillingsprosent).multiply(HUNDRE_PROSENT));
+        var arbeidsprosent = stillingsprosent.subtract(tilretteleggingsprosent);
+        var utbetalingsgrad = arbeidsprosent.multiply(HUNDRE_PROSENT).divide(stillingsprosent, 2, RoundingMode.HALF_UP);
         if (utbetalingsgrad.compareTo(BigDecimal.valueOf(100L)) > 0) {
             return HUNDRE_PROSENT;
         }

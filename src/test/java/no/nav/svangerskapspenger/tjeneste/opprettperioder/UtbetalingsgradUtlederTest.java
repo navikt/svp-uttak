@@ -23,38 +23,44 @@ public class UtbetalingsgradUtlederTest {
 
     @Test
     public void test_utbetalingsgrad_beregning() {
-        utførTest(100, 50, new BigDecimal("50"));
-        utførTest(100, 10, new BigDecimal("90"));
-        utførTest(100, 0, new BigDecimal("100"));
-        utførTest(100, 100, new BigDecimal("0"));
-        utførTest(100, 110, new BigDecimal("0"));
+        utførTest(new BigDecimal("100"), new BigDecimal("50"), new BigDecimal("50.00"));
+        utførTest(new BigDecimal("100"), new BigDecimal("10"), new BigDecimal("90.00"));
+        utførTest(new BigDecimal("100"), new BigDecimal("0"), new BigDecimal("100.00"));
+        utførTest(new BigDecimal("100"), new BigDecimal("100"), new BigDecimal("0.00"));
+        utførTest(new BigDecimal("100"), new BigDecimal("110"), new BigDecimal("0.00"));
 
-        utførTest(80, 20, new BigDecimal("75"));
-        utførTest(80, 10, new BigDecimal("87.5"));
-        utførTest(80, 0, new BigDecimal("100"));
-        utførTest(80, 100, new BigDecimal("0"));
-        utførTest(80, 110, new BigDecimal("0"));
+        utførTest(new BigDecimal("80"), new BigDecimal("20"), new BigDecimal("75.00"));
+        utførTest(new BigDecimal("80"), new BigDecimal("10"), new BigDecimal("87.50"));
+        utførTest(new BigDecimal("80"), new BigDecimal("0"), new BigDecimal("100.00"));
+        utførTest(new BigDecimal("80"), new BigDecimal("100"), new BigDecimal("0.00"));
+        utførTest(new BigDecimal("80"), new BigDecimal("110"), new BigDecimal("0.00"));
+        utførTest(new BigDecimal("80"), new BigDecimal("40"), new BigDecimal("50.00"));
 
-        utførTest(120, 30, new BigDecimal("75"));
-        utførTest(120, 12, new BigDecimal("90"));
-        utførTest(120, 0, new BigDecimal("100"));
-        utførTest(120, 108, new BigDecimal("10"));
+        utførTest(new BigDecimal("50"), new BigDecimal("30"), new BigDecimal("40.00"));
+        utførTest(new BigDecimal("95"), new BigDecimal("5"), new BigDecimal("94.74"));
+
+        utførTest(new BigDecimal("120"), new BigDecimal("30"), new BigDecimal("75.00"));
+        utførTest(new BigDecimal("120"), new BigDecimal("12"), new BigDecimal("90.00"));
+        utførTest(new BigDecimal("120"), new BigDecimal("0"), new BigDecimal("100.00"));
+        utførTest(new BigDecimal("120"), new BigDecimal("108"), new BigDecimal("10.00"));
+
+
 
     }
 
-    private void utførTest(long stillingsprosent, long tilretteleggingsgrad, BigDecimal fasit) {
-        var resultat = UtbetalingsgradUtleder.beregnUtbetalingsgrad(lagSøknad(stillingsprosent), BigDecimal.valueOf(tilretteleggingsgrad));
-        assertThat(resultat.stripTrailingZeros()).isEqualTo(fasit.stripTrailingZeros());
+    private void utførTest(BigDecimal stillingsprosent, BigDecimal tilretteleggingsgrad, BigDecimal fasit) {
+        var resultat = UtbetalingsgradUtleder.beregnUtbetalingsgrad(lagSøknad(stillingsprosent), tilretteleggingsgrad);
+        assertThat(resultat).isEqualTo(fasit);
     }
 
 
 
-    private Søknad lagSøknad(long stillingsprosent) {
+    private Søknad lagSøknad(BigDecimal stillingsprosent) {
         var ingenTilrettelegging = new IngenTilretteligging(BEHOVDATO);
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
-            BigDecimal.valueOf(stillingsprosent),
+            stillingsprosent,
             TERMINDATO,
             BEHOVDATO,
             List.of(ingenTilrettelegging));
