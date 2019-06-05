@@ -1,12 +1,7 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
-import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
-import no.nav.svangerskapspenger.domene.felles.arbeid.AktivitetIdentifikator;
-import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 final class UtbetalingsgradUtleder {
@@ -18,8 +13,8 @@ final class UtbetalingsgradUtleder {
         //static class
     }
 
-    static BigDecimal beregnUtbetalingsgrad(Arbeidsprosenter arbeidsprosenter, Søknad søknad, LocalDate fom, LocalDate tom, BigDecimal tilretteleggingsprosent) {
-        BigDecimal stillingsprosent = arbeidsprosenter.getStillingsprosent(tilAktivitetIdentifikator(søknad.getArbeidsforhold()), new LukketPeriode(fom, tom));
+    static BigDecimal beregnUtbetalingsgrad(Søknad søknad, BigDecimal tilretteleggingsprosent) {
+        BigDecimal stillingsprosent = søknad.getStillingsprosentForArbeidsforhold();
         if (stillingsprosent == null || stillingsprosent.equals(NULL_PROSENT)) {
             stillingsprosent = HUNDRE_PROSENT;
         }
@@ -31,13 +26,6 @@ final class UtbetalingsgradUtleder {
             return HUNDRE_PROSENT;
         }
         return utbetalingsgrad;
-    }
-
-    private static AktivitetIdentifikator tilAktivitetIdentifikator(Arbeidsforhold arbeidsforhold) {
-        if (arbeidsforhold.getArbeidsgiverVirksomhetId() != null) {
-            return new AktivitetIdentifikator(arbeidsforhold.getArbeidsgiverVirksomhetId(), arbeidsforhold.getArbeidsforholdId().orElse(null), AktivitetIdentifikator.ArbeidsgiverType.VIRKSOMHET);
-        }
-        return new AktivitetIdentifikator(arbeidsforhold.getArbeidsgiverVirksomhetId(), arbeidsforhold.getArbeidsforholdId().orElse(null), AktivitetIdentifikator.ArbeidsgiverType.PERSON);
     }
 
 }

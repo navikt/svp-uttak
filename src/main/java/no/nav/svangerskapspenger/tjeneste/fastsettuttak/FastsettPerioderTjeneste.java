@@ -6,7 +6,6 @@ import java.util.TreeSet;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.UttaksperioderPerArbeidsforhold;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
@@ -23,7 +22,7 @@ public class FastsettPerioderTjeneste {
 
     private final JacksonJsonConfig jacksonJsonConfig = new JacksonJsonConfig();
 
-    public void fastsettePerioder(AvklarteDatoer avklarteDatoer, Arbeidsprosenter arbeidsprosenter, Uttaksperioder uttaksperioder) {
+    public void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder) {
         //Først knekk opp perioder på alle potensielle knekkpunkter
         var knekkpunkter = finnKnekkpunkter(avklarteDatoer);
         uttaksperioder.knekk(knekkpunkter);
@@ -32,21 +31,21 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
             var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
             if (uttaksperioderPerArbeidsforhold.getArbeidsforholdIkkeOppfyltÅrsak() == null) {
-                fastsettPerioder(avklarteDatoer, arbeidsprosenter, uttaksperioderPerArbeidsforhold);
+                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold);
             }
         });
     }
 
-    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, Arbeidsprosenter arbeidsprosenter, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold) {
+    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold) {
         FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, arbeidsprosenter, periode));
+        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
     }
 
-    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Arbeidsprosenter arbeidsprosenter, Uttaksperiode periode) {
-        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, arbeidsprosenter, periode);
+    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {
+        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode);
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
         var regelJson = EvaluationSerializer.asJson(evaluering);

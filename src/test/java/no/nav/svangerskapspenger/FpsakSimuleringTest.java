@@ -2,6 +2,7 @@ package no.nav.svangerskapspenger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.HashSet;
@@ -11,7 +12,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
@@ -49,6 +49,7 @@ class Resultat {
 public class FpsakSimuleringTest {
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
+    private static final BigDecimal ARBEIDSFORHOLD1_STILLINGSFORHOLD = BigDecimal.valueOf(100L);
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV2();
     private FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
@@ -58,7 +59,7 @@ public class FpsakSimuleringTest {
         var termindato = LocalDate.of(2019, Month.MAY, 1);
         var tilretteleggingsbehovdato = LocalDate.of(2019, Month.JANUARY, 1);
         var ingenTilrettelegging = new IngenTilretteligging(tilretteleggingsbehovdato);
-        var søknad = new Søknad(ARBEIDSFORHOLD1, termindato, tilretteleggingsbehovdato, List.of(ingenTilrettelegging));
+        var søknad = new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_STILLINGSFORHOLD, termindato, tilretteleggingsbehovdato, List.of(ingenTilrettelegging));
         var avklartedatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(tilretteleggingsbehovdato)
             .medTermindato(termindato)
@@ -84,7 +85,7 @@ public class FpsakSimuleringTest {
         var termindato = LocalDate.of(2019, Month.MAY, 6); //mandag
         var tilretteleggingsbehovdato = LocalDate.of(2019, Month.APRIL, 13); //lørdag
         var ingenTilrettelegging = new IngenTilretteligging(tilretteleggingsbehovdato);
-        var søknad = new Søknad(ARBEIDSFORHOLD1, termindato, tilretteleggingsbehovdato, List.of(ingenTilrettelegging));
+        var søknad = new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_STILLINGSFORHOLD, termindato, tilretteleggingsbehovdato, List.of(ingenTilrettelegging));
         var avklartedatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(tilretteleggingsbehovdato)
             .medTermindato(termindato)
@@ -110,11 +111,11 @@ public class FpsakSimuleringTest {
 
     private Resultat opprettOgFastsettPerioder(List<Søknad> søknader, AvklarteDatoer avklarteDatoer) {
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(søknader, new Arbeidsprosenter(), uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(søknader, uttaksperioder);
         if (!manuellBehandlingSet.isEmpty()) {
             return new Resultat(manuellBehandlingSet);
         }
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, new Arbeidsprosenter(), uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
         return new Resultat(uttaksperioder);
     }
 
