@@ -1,6 +1,7 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -22,7 +23,7 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     @Override
-    public Set<ManuellBehandling> opprett(List<Søknad> søknader, Uttaksperioder uttaksperioder) {
+    public Set<ManuellBehandling> opprett(List<Søknad> søknader, Arbeidsprosenter arbeidsprosenter, Uttaksperioder uttaksperioder) {
         var manuellbehandlingSet = EnumSet.noneOf(ManuellBehandling.class);
 
 
@@ -34,7 +35,7 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
                 var tilrettelegginger = fjernUnødvendigeTilrettelegginger(søknad);
 
 
-                opprettPerioder(søknad, tilrettelegginger, uttaksperioder);
+                opprettPerioder(søknad, tilrettelegginger, arbeidsprosenter, uttaksperioder);
 
             }
         });
@@ -42,7 +43,7 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
         return manuellbehandlingSet;
     }
 
-    private void opprettPerioder(Søknad søknad, List<Tilrettelegging> tilrettelegginger, Uttaksperioder uttaksperioder) {
+    private void opprettPerioder(Søknad søknad, List<Tilrettelegging> tilrettelegginger, Arbeidsprosenter arbeidsprosenter, Uttaksperioder uttaksperioder) {
         if (tilrettelegginger.size() == 1) {
             var førsteTilrettelegging = tilrettelegginger.get(0);
             if (førsteTilrettelegging.getArbeidsgiversDato().equals(søknad.getTilretteliggingBehovDato()) &&
@@ -73,10 +74,10 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
         }
 
         var sorterteTilrettelegginger = tilrettelegginger.stream().sorted(Comparator.comparing(Tilrettelegging::getArbeidsgiversDato)).collect(Collectors.toList());
-        opprettPerioderSisteSteg(søknad, uttaksperioder, sorterteTilrettelegginger);
+        opprettPerioderSisteSteg(søknad, arbeidsprosenter, uttaksperioder, sorterteTilrettelegginger);
     }
 
-    private void opprettPerioderSisteSteg(Søknad søknad, Uttaksperioder uttaksperioder, List<Tilrettelegging> sorterteTilrettelegginger) {
+    private void opprettPerioderSisteSteg(Søknad søknad, Arbeidsprosenter arbeidsprosenter, Uttaksperioder uttaksperioder, List<Tilrettelegging> sorterteTilrettelegginger) {
         LocalDate nesteFom = søknad.getTilretteliggingBehovDato();
         if (!sorterteTilrettelegginger.isEmpty() && søknad.getTilretteliggingBehovDato().isBefore(sorterteTilrettelegginger.get(0).getArbeidsgiversDato())) {
             var utbetalingsgrad = FULL_UTBETALINGSGRAD;
@@ -102,14 +103,14 @@ public class UttaksperioderTjenesteV2 implements UttaksperioderTjeneste {
                 if (kryss.equals(TilretteleggingKryss.A)) {
                     utbetalingsgrad = BigDecimal.ZERO;
                 } else if (kryss.equals(TilretteleggingKryss.B)) {
-                    //TODO ta hensyn til stillingsprosent fra  aareg
-                    utbetalingsgrad = FULL_UTBETALINGSGRAD.subtract(tilrettelegging.getTilretteleggingsprosent().divide(BigDecimal.valueOf(100L)).multiply(BigDecimal.valueOf(100L)));
+                    utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(arbeidsprosenter, søknad, fom, tom, tilrettelegging.getTilretteleggingsprosent());
                 }
             }
             opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad);
             nesteFom = tom.plusDays(1);
         }
     }
+
 
     private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
         if (tom.isAfter(fom) || fom.equals(tom)) {

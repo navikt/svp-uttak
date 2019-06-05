@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 
+import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.*;
 import org.junit.Test;
 
@@ -38,7 +39,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -70,7 +71,7 @@ public class FastsettPerioderTjenesteTest {
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO.plusDays(10), TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
 
@@ -113,7 +114,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD2,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         var arbeidsforholdSet = uttaksperioder.alleArbeidsforhold();
 
@@ -149,7 +150,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -178,7 +179,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -214,7 +215,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -250,7 +251,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -288,7 +289,7 @@ public class FastsettPerioderTjenesteTest {
                 new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, startTilpassing.minusDays(1), FULL_UTBETALINGSGRAD),
                 new Uttaksperiode(startTilpassing, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -328,7 +329,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1);
         uttaksperioder.avslåForArbeidsforhold(ARBEIDSFORHOLD1, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
@@ -351,7 +352,7 @@ public class FastsettPerioderTjenesteTest {
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 7), LocalDate.of(2019, Month.JANUARY, 13), FULL_UTBETALINGSGRAD)
         );
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
@@ -380,7 +381,7 @@ public class FastsettPerioderTjenesteTest {
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_UTBETALINGSGRAD) //bare helg
         );
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
@@ -402,7 +403,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -437,7 +438,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -470,7 +471,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(2).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -504,7 +505,7 @@ public class FastsettPerioderTjenesteTest {
         uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
             new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, lagArbeideprosenter(), uttaksperioder);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -541,6 +542,10 @@ public class FastsettPerioderTjenesteTest {
 
     }
 
+    private Arbeidsprosenter lagArbeideprosenter() {
+        var arbeidsprosenter = new Arbeidsprosenter();
+        return arbeidsprosenter;
+    }
 
 
 }

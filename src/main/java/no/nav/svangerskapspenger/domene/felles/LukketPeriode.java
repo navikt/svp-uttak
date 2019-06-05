@@ -1,4 +1,4 @@
-package no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag;
+package no.nav.svangerskapspenger.domene.felles;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -6,12 +6,12 @@ import java.util.Objects;
 /**
  * En periode som har definert både start- og slutt-tidpunkt
  */
-public abstract class LukketPeriode {
+public class LukketPeriode {
 
     private final LocalDate fom;
     private final LocalDate tom;
 
-    protected LukketPeriode(LocalDate fom, LocalDate tom) {
+    public LukketPeriode(LocalDate fom, LocalDate tom) {
         Objects.requireNonNull(tom);
         Objects.requireNonNull(fom);
         if (tom.isBefore(fom)) {

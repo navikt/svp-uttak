@@ -11,6 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
@@ -109,11 +110,11 @@ public class FpsakSimuleringTest {
 
     private Resultat opprettOgFastsettPerioder(List<Søknad> søknader, AvklarteDatoer avklarteDatoer) {
         var uttaksperioder = new Uttaksperioder();
-        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(søknader, uttaksperioder);
+        var manuellBehandlingSet = uttaksperioderTjeneste.opprett(søknader, new Arbeidsprosenter(), uttaksperioder);
         if (!manuellBehandlingSet.isEmpty()) {
             return new Resultat(manuellBehandlingSet);
         }
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, new Arbeidsprosenter(), uttaksperioder);
         return new Resultat(uttaksperioder);
     }
 
