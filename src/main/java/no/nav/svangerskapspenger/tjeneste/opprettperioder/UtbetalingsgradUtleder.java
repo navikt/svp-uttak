@@ -9,10 +9,14 @@ import no.nav.svangerskapspenger.domene.felles.arbeid.AktivitetIdentifikator;
 import no.nav.svangerskapspenger.domene.felles.arbeid.Arbeidsprosenter;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
-class UtbetalingsgradUtleder {
+final class UtbetalingsgradUtleder {
 
     private static final BigDecimal NULL_PROSENT = BigDecimal.ZERO;
     private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
+
+    private UtbetalingsgradUtleder() {
+        //static class
+    }
 
     static BigDecimal beregnUtbetalingsgrad(Arbeidsprosenter arbeidsprosenter, Søknad søknad, LocalDate fom, LocalDate tom, BigDecimal tilretteleggingsprosent) {
         BigDecimal stillingsprosent = arbeidsprosenter.getStillingsprosent(tilAktivitetIdentifikator(søknad.getArbeidsforhold()), new LukketPeriode(fom, tom));

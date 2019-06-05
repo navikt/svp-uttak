@@ -17,11 +17,11 @@ public class Arbeid {
         return stillingsprosent;
     }
 
-    public static Arbeid forFrilans(BigDecimal arbeidsprosent) {
+    public static Arbeid forFrilans() {
         return new Arbeid(STILLINGSPROSENT_100_PROSENT);
     }
 
-    public static Arbeid forSelvstendigNæringsdrivende(BigDecimal arbeidsprosent) {
+    public static Arbeid forSelvstendigNæringsdrivende() {
         return new Arbeid(STILLINGSPROSENT_100_PROSENT);
     }
 
