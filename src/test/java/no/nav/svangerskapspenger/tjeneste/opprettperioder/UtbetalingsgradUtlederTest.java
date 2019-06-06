@@ -10,13 +10,14 @@ import java.util.List;
 
 import org.junit.Test;
 
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 public class UtbetalingsgradUtlederTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
 
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
     private static final LocalDate BEHOVDATO = LocalDate.of(2019, Month.JANUARY, 1);
