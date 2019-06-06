@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -48,7 +49,7 @@ class Resultat {
  */
 public class FpsakSimuleringTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final BigDecimal ARBEIDSFORHOLD1_STILLINGSFORHOLD = BigDecimal.valueOf(100L);
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV2();

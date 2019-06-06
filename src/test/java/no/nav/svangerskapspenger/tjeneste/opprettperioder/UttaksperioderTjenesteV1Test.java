@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
@@ -22,7 +23,7 @@ public class UttaksperioderTjenesteV1Test {
 
     private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV1();

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.resultat.*;
 import org.junit.Test;
 
@@ -15,8 +16,8 @@ import no.nav.svangerskapspenger.domene.søknad.Ferie;
 
 public class FastsettPerioderTjenesteTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet("123", "456");
-    private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet("234", "567");
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
+    private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567");
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
