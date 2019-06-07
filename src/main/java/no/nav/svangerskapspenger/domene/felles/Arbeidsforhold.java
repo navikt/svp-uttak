@@ -27,6 +27,10 @@ public class Arbeidsforhold {
         return new Arbeidsforhold(aktivitetType, null, arbeidsgiverAktørId, arbeidsforholdId);
     }
 
+    public static Arbeidsforhold annet(AktivitetType aktivitetType) {
+        return new Arbeidsforhold(aktivitetType, null, null, null);
+    }
+
     public String getArbeidsgiverVirksomhetId() {
         return arbeidsgiverVirksomhetId;
     }
