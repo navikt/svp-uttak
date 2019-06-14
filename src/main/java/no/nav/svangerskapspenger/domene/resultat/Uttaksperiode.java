@@ -9,7 +9,7 @@ import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
 
 public class Uttaksperiode extends LukketPeriode {
 
-    private final BigDecimal utbetalingsgrad;
+    private BigDecimal utbetalingsgrad;
     private UtfallType utfallType = UtfallType.UAVKLART;
     private PeriodeÅrsak årsak;
     private String regelInput;
@@ -38,6 +38,7 @@ public class Uttaksperiode extends LukketPeriode {
     public void avslå(PeriodeÅrsak årsak, String sporingGrunnlag, String sporingRegel) {
         this.utfallType = UtfallType.IKKE_OPPFYLT;
         this.årsak = årsak;
+        this.utbetalingsgrad = BigDecimal.ZERO;
         this.regelInput = sporingGrunnlag;
         this.regelSporing = sporingRegel;
     }

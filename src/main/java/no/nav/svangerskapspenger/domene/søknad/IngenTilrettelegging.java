@@ -7,13 +7,13 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class IngenTilretteligging implements Tilrettelegging {
+public class IngenTilrettelegging implements Tilrettelegging {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private LocalDate tilretteleggingOpphørerDato;
 
-    public IngenTilretteligging(LocalDate tilretteleggingOpphørerDato) {
+    public IngenTilrettelegging(LocalDate tilretteleggingOpphørerDato) {
         this.tilretteleggingOpphørerDato = tilretteleggingOpphørerDato;
     }
 
