@@ -8,7 +8,8 @@ public enum PeriodeIkkeOppfyltÅrsak implements PeriodeÅrsak {
     SØKT_FOR_SENT(8308, "Søkt for sent"),
     PERIODEN_ER_IKKE_FØR_FØDSEL(8309, "Perioden er ikke før fødsel"),
     PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN(8310, "Perioden må slutte senest tre uker før termin"),
-    PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE(8311, "Perioden er samtidig som en ferie");
+    PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE(8311, "Perioden er samtidig som en ferie"),
+    PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK(8313, "Perioden er etter et opphold i uttak");
 
     private final int id;
     private final String beskrivelse;

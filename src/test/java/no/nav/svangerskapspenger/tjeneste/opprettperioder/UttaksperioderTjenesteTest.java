@@ -44,14 +44,10 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(2);
+        assertThat(perioder).hasSize(1);
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
-
-        assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
-        assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
-        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -72,7 +68,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(3);
+        assertThat(perioder).hasSize(2);
 
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 14));
@@ -81,10 +77,6 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 15));
         assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
         assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
-
-        assertThat(perioder.get(2).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
-        assertThat(perioder.get(2).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
-        assertThat(perioder.get(2).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -104,15 +96,11 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(2);
+        assertThat(perioder).hasSize(1);
 
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
-
-        assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
-        assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
-        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
@@ -134,15 +122,12 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(2);
+        assertThat(perioder).hasSize(1);
 
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("60.00"));
 
-        assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
-        assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
-        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -181,15 +166,11 @@ public class UttaksperioderTjenesteTest {
 
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioder).hasSize(2);
+        assertThat(perioder).hasSize(1);
 
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato().minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
-
-        assertThat(perioder.get(1).getFom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato());
-        assertThat(perioder.get(1).getTom()).isEqualTo(søknad.sisteDagFørTermin());
-        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
     }
 
 
@@ -322,15 +303,11 @@ public class UttaksperioderTjenesteTest {
         assertThat(manuellBehandlingSet).hasSize(0);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
 
-        assertThat(perioder).hasSize(2);
+        assertThat(perioder).hasSize(1);
 
-        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
-        assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
-
-        assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
-        assertThat(perioder.get(1).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
+        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
+        assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
     }
 
     @Test

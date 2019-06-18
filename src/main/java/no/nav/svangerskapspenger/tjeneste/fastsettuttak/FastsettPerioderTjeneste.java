@@ -28,6 +28,7 @@ public class FastsettPerioderTjeneste {
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private UttaksresultatMerger uttaksresultatMerger = new UttaksresultatMerger();
+    private UttakHullUtleder uttakHullUtleder = new UttakHullUtleder();
 
     public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, List<Søknad> tidligereSøknader, AvklarteDatoer avklarteDatoer) {
         var nyeUttaksperioder = new Uttaksperioder();
@@ -38,6 +39,10 @@ public class FastsettPerioderTjeneste {
             uttaksperioderTjeneste.opprett(tidligereSøknader, perioder);
             tidligereUttaksperioder = Optional.of(perioder);
         }
+
+        var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(tidligereUttaksperioder, nyeUttaksperioder, avklarteDatoer.getFerier());
+        eventueltStartHullUttak.ifPresent(startHullUttak -> avklarteDatoer.setStartOppholdUttak(startHullUttak));
+
         tidligereUttaksperioder.ifPresent(perioder -> fastsettePerioder(avklarteDatoer, perioder));
         if (!nyeSøknader.isEmpty()) {
             //Kjør reglene bare dersom det er søkt om noe nytt
@@ -103,11 +108,12 @@ public class FastsettPerioderTjeneste {
         var knekkpunkter = new TreeSet<LocalDate>();
 
         avklarteDatoer.getOpphørsdatoForMedlemskap().ifPresent(knekkpunkter::add);
-        avklarteDatoer.getFørsteLovligeUttaksdag().ifPresent(knekkpunkter::add);
+        avklarteDatoer.getFørsteLovligeUttaksdato().ifPresent(knekkpunkter::add);
         knekkpunkter.add(avklarteDatoer.getTerminsdato().minusWeeks(3));
         avklarteDatoer.getFødselsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);
+        avklarteDatoer.getStartOppholdUttak().ifPresent(knekkpunkter::add);
         avklarteDatoer.getFerier().forEach(ferie -> {
             knekkpunkter.add(ferie.getFom());
             knekkpunkter.add(ferie.getTom().plusDays(1));
