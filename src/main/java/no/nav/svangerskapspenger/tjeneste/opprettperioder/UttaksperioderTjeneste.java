@@ -111,10 +111,6 @@ public class UttaksperioderTjeneste {
 
 
     private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
-        if (BigDecimal.ZERO.equals(utbetalingsgrad)) {
-            //Ikke lag perioder med 0 utbetalingsgrad.
-            return;
-        }
         if (tom.isAfter(fom) || fom.equals(tom)) {
             uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(fom, tom, utbetalingsgrad));
         }

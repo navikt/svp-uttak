@@ -1,5 +1,7 @@
 package no.nav.svangerskapspenger.regler.fastsettperiode.betingelser;
 
+import java.math.BigDecimal;
+
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
@@ -18,7 +20,8 @@ public class SjekkHullUttak extends LeafSpecification<FastsettePeriodeGrunnlag> 
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
         var eventuellStartHullUttak = grunnlag.getAvklarteDatoer().getStartOppholdUttak();
         if (eventuellStartHullUttak.isPresent()) {
-            if (grunnlag.getAktuellPeriode().getFom().isBefore(eventuellStartHullUttak.get())) {
+            if (grunnlag.getAktuellPeriode().getFom().isBefore(eventuellStartHullUttak.get())
+                || BigDecimal.ZERO.equals(grunnlag.getAktuellPeriode().getUtbetalingsgrad())) {
                 return nei();
             }
             return ja();
