@@ -1,7 +1,7 @@
 package no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag;
 
-import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
+import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 
 public class FastsettePeriodeGrunnlag {
 

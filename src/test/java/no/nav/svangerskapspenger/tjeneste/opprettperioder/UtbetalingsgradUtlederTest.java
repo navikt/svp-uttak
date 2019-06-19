@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
+import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 public class UtbetalingsgradUtlederTest {
@@ -44,9 +44,6 @@ public class UtbetalingsgradUtlederTest {
         utførTest(new BigDecimal("120"), new BigDecimal("12"), new BigDecimal("90.00"));
         utførTest(new BigDecimal("120"), new BigDecimal("0"), new BigDecimal("100.00"));
         utførTest(new BigDecimal("120"), new BigDecimal("108"), new BigDecimal("10.00"));
-
-
-
     }
 
     private void utførTest(BigDecimal stillingsprosent, BigDecimal tilretteleggingsgrad, BigDecimal fasit) {
@@ -54,10 +51,8 @@ public class UtbetalingsgradUtlederTest {
         assertThat(resultat).isEqualTo(fasit);
     }
 
-
-
     private Søknad lagSøknad(BigDecimal stillingsprosent) {
-        var ingenTilrettelegging = new IngenTilretteligging(BEHOVDATO);
+        var ingenTilrettelegging = new IngenTilrettelegging(BEHOVDATO);
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,

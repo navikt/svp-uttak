@@ -6,7 +6,7 @@ import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.IngenTilretteligging;
+import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import org.junit.Test;
 
@@ -18,14 +18,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UttaksperioderTjenesteV2Test {
+public class UttaksperioderTjenesteTest {
 
     private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
 
-    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjenesteV2();
+    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
 
     @Test
     public void først_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_to_perioder() {
@@ -45,6 +45,7 @@ public class UttaksperioderTjenesteV2Test {
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
         assertThat(perioder).hasSize(2);
+
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
@@ -85,11 +86,12 @@ public class UttaksperioderTjenesteV2Test {
         assertThat(perioder.get(2).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
         assertThat(perioder.get(2).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
         assertThat(perioder.get(2).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
     }
 
     @Test
     public void først_ingen_tilrettelegging_før_behov_dato_så_full_tilrettelegging_fører_til_to_perioder() {
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2018, Month.DECEMBER, 15));
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2018, Month.DECEMBER, 15));
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -118,7 +120,7 @@ public class UttaksperioderTjenesteV2Test {
     @Test
     public void alt_før_behovsdato_fjernes_dersom_det_finnes_en_arbeidsgiversdato_link_behovsdato() {
 
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2018, Month.DECEMBER, 15));
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2018, Month.DECEMBER, 15));
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("40.0"));
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
@@ -143,6 +145,8 @@ public class UttaksperioderTjenesteV2Test {
         assertThat(perioder.get(1).getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
         assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
         assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
+
     }
 
 
@@ -188,8 +192,9 @@ public class UttaksperioderTjenesteV2Test {
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
 
         assertThat(perioder.get(1).getFom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato());
-        assertThat(perioder.get(1).getTom()).isEqualTo(søknad.sisteDagFørTermin());
+        assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
         assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
     }
 
 
@@ -286,7 +291,7 @@ public class UttaksperioderTjenesteV2Test {
 
     @Test
     public void ingen_tilrettelegging_fra_første_dag_gir_en_periode() {
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1));
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
                 ARBEIDSFORHOLD1,
                 HUNDRE_PROSENT,
@@ -307,8 +312,8 @@ public class UttaksperioderTjenesteV2Test {
 
 
     @Test
-    public void ingen_tilrettelegging_før_etter_en_uke_gir_en_perioder() {
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
+    public void ingen_tilrettelegging_før_etter_en_uke_gir_to_perioder() {
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
             HUNDRE_PROSENT,
@@ -335,7 +340,7 @@ public class UttaksperioderTjenesteV2Test {
 
     @Test
     public void ingen_tilrettelegging_etter_3_uker_før_termin_gir_avslag_på_arbeidsforhold() {
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20).plusWeeks(1));
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.APRIL, 20).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
             HUNDRE_PROSENT,
@@ -355,7 +360,7 @@ public class UttaksperioderTjenesteV2Test {
 
     @Test
     public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
-        var ingenTilrettelegging = new IngenTilretteligging(LocalDate.of(2019, Month.APRIL, 20));
+        var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.APRIL, 20));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
             HUNDRE_PROSENT,

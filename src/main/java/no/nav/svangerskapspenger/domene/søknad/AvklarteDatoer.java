@@ -16,6 +16,7 @@ public class AvklarteDatoer {
     private LocalDate termindato;
     private LocalDate fødselsdato;
     private List<Ferie> ferier = new ArrayList<>();
+    private LocalDate startOppholdUttak;
 
     private AvklarteDatoer() {
     }
@@ -33,7 +34,7 @@ public class AvklarteDatoer {
         return Optional.ofNullable(opphørsdatoForMedlemskap);
     }
 
-    public Optional<LocalDate>getFørsteLovligeUttaksdag() {
+    public Optional<LocalDate> getFørsteLovligeUttaksdato() {
         return Optional.ofNullable(førsteLovligeUttaksdato);
     }
 
@@ -47,6 +48,20 @@ public class AvklarteDatoer {
 
     public List<Ferie> getFerier() {
         return Collections.unmodifiableList(ferier);
+    }
+
+    public Optional<LocalDate> getStartOppholdUttak() {
+        return Optional.ofNullable(startOppholdUttak);
+    }
+
+    /**
+     * Setter en eventuelt start for hull i uttak som skal føre til at alle perioder etterpå skal avlås.
+     * (Ikke en del av builder siden den må settes på et senere tidspunkt enn når objektet bygges i utgangspunktet)
+     *
+     * @param startOppholdUttak
+     */
+    public void setStartOppholdUttak(LocalDate startOppholdUttak) {
+        this.startOppholdUttak = startOppholdUttak;
     }
 
     public static final class Builder {

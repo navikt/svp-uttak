@@ -17,8 +17,8 @@ public class SjekkFørsteLovligeUttaksdato extends LeafSpecification<FastsettePe
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
         var sluttUttaksperiode = grunnlag.getAktuellPeriode().getTom();
-        if (!grunnlag.getAvklarteDatoer().getFørsteLovligeUttaksdag().isPresent()
-            || sluttUttaksperiode.isBefore(grunnlag.getAvklarteDatoer().getFørsteLovligeUttaksdag().get())) {
+        if (!grunnlag.getAvklarteDatoer().getFørsteLovligeUttaksdato().isPresent()
+            || sluttUttaksperiode.isBefore(grunnlag.getAvklarteDatoer().getFørsteLovligeUttaksdato().get())) {
             return ja();
         }
         return nei();

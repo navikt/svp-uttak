@@ -5,6 +5,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkBrukers
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFerie;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFødselsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFørsteLovligeUttaksdato;
+import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkHullUttak;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpphørsdatoForMedlemskap;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkTermindato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
@@ -38,9 +39,13 @@ public class FastsettePeriodeRegel implements RuleService<FastsettePeriodeGrunnl
     @Override
     public Specification<FastsettePeriodeGrunnlag> getSpecification() {
 
+        var sjekkHull = rs.hvisRegel(SjekkHullUttak.ID, "Er perioden etter et hull uten ytelse?")
+            .hvis(new SjekkHullUttak(), Sluttpunkt.ikkeOppfylt("UT8014", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK))
+            .ellers(Sluttpunkt.oppfylt("UT8011", PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET));
+
         var sjekkFerie = rs.hvisRegel(SjekkFerie.ID, "Er perioden i en ferieperiode?")
             .hvis(new SjekkFerie(), Sluttpunkt.ikkeOppfylt("UT8012", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE))
-            .ellers(Sluttpunkt.oppfylt("UT8011", PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET));
+            .ellers(sjekkHull);
 
         var sjekkTermindato = rs.hvisRegel(SjekkTermindato.ID, "Er perioden på eller etter \"termin minus tre uker\"?")
                 .hvis(new SjekkTermindato(), Sluttpunkt.ikkeOppfylt("UT8010", PeriodeIkkeOppfyltÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN))

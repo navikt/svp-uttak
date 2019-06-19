@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
+import java.util.List;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.resultat.*;
@@ -12,12 +14,19 @@ import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
+import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Ferie;
+import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 public class FastsettPerioderTjenesteTest {
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
+    private static final BigDecimal ARBEIDSFORHOLD1_PROSENT = BigDecimal.valueOf(100L);
     private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567");
+    private static final BigDecimal ARBEIDSFORHOLD2_PROSENT = BigDecimal.valueOf(100L);
+
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
@@ -28,17 +37,17 @@ public class FastsettPerioderTjenesteTest {
     private final FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
 
     @Test
-    public void lovlig_uttak_skal_bli_innvilget() {
+    public void ingen_tilrettelegging_fra_behovsdato() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -55,20 +64,21 @@ public class FastsettPerioderTjenesteTest {
 
 
     @Test
-    public void lovlig_uttak_i_to_arbeidsforhold_skal_bli_innvilget() {
+    public void ingen_tilrettelegging_i_to_arbeidsforhold() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD2,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO.plusDays(10), TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
+        var søknad1 = new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO)));
+        var søknad2 = new Søknad(ARBEIDSFORHOLD2, ARBEIDSFORHOLD2_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO.plusDays(10),
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
+        var nyeSøknader = List.of(søknad1, søknad2);
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
 
@@ -77,7 +87,7 @@ public class FastsettPerioderTjenesteTest {
         var periode0 = perioder.get(0);
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(ARBEIDSFORHOLD1_PROSENT);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
         assertThat(periode0.getRegelInput()).isNotEmpty();
@@ -88,7 +98,7 @@ public class FastsettPerioderTjenesteTest {
         periode0 = perioder.get(0);
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusDays(10));
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(ARBEIDSFORHOLD2_PROSENT);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
         assertThat(periode0.getRegelInput()).isNotEmpty();
@@ -97,54 +107,16 @@ public class FastsettPerioderTjenesteTest {
 
 
     @Test
-    public void lovlig_uttak_skal_bli_innvilget_for_to_arbeidsforhold() {
-        var avklarteDatoer = new AvklarteDatoer.Builder()
-            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
-            .medTermindato(TERMINDATO)
-            .build();
-
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD2,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
-
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
-
-        var arbeidsforholdSet = uttaksperioder.alleArbeidsforhold();
-
-        assertThat(arbeidsforholdSet).hasSize(2);
-
-        var perioderArb1 = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioderArb1).hasSize(1);
-        var periode0Arb1 = perioderArb1.get(0);
-        assertThat(periode0Arb1.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
-        assertThat(periode0Arb1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0Arb1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0Arb1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(periode0Arb1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
-
-        var perioderArb2 = uttaksperioder.perioder(ARBEIDSFORHOLD2).getUttaksperioder();
-        assertThat(perioderArb2).hasSize(1);
-        var periode0Arb2 = perioderArb2.get(0);
-        assertThat(periode0Arb2.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
-        assertThat(periode0Arb2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0Arb2.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
-        assertThat(periode0Arb2.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(periode0Arb2.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
-    }
-
-    @Test
     public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -152,7 +124,7 @@ public class FastsettPerioderTjenesteTest {
         var periode0 = perioder.get(0);
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode0.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.SØKT_FOR_SENT);
         assertThat(periode0.getRegelInput()).isNotEmpty();
@@ -168,11 +140,11 @@ public class FastsettPerioderTjenesteTest {
             .medBrukersDødsdato(brukersdødsdato)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -188,7 +160,7 @@ public class FastsettPerioderTjenesteTest {
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(brukersdødsdato);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_DØD);
     }
@@ -203,11 +175,11 @@ public class FastsettPerioderTjenesteTest {
             .medBarnetsDødsdato(barnetsDødsdato)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -223,7 +195,7 @@ public class FastsettPerioderTjenesteTest {
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(barnetsDødsdato);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BARN_ER_DØDT);
     }
@@ -238,11 +210,11 @@ public class FastsettPerioderTjenesteTest {
             .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -258,7 +230,7 @@ public class FastsettPerioderTjenesteTest {
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(opphørAvMedlemskap);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_IKKE_MEDLEM);
 
@@ -273,13 +245,13 @@ public class FastsettPerioderTjenesteTest {
             .medOpphørsdatoForMedlemskap(opphørAvMedlemskap)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-                new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, startTilpassing.minusDays(1), FULL_UTBETALINGSGRAD),
-                new Uttaksperiode(startTilpassing, TERMINDATO.minusWeeks(3).minusDays(1), BigDecimal.valueOf(40L)));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new DelvisTilrettelegging(startTilpassing, BigDecimal.valueOf(60L)))));
+        var tidligereSøknader = new ArrayList<Søknad>();
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -295,30 +267,30 @@ public class FastsettPerioderTjenesteTest {
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(startTilpassing);
         assertThat(periode1.getTom()).isEqualTo(opphørAvMedlemskap.minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(new BigDecimal("40.00"));
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
         var periode2 = perioder.get(2);
         assertThat(periode2.getFom()).isEqualTo(opphørAvMedlemskap);
         assertThat(periode2.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(BigDecimal.valueOf(40L));
+        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode2.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.BRUKER_ER_IKKE_MEDLEM);
     }
 
     @Test
-    public void dersom_arbeidsforholdet_er_avslått_ifn_opprettelse_så_skal_ikke_fastsette_perioder_avstyre_resultatet() {
+    public void dersom_arbeidsgiver_kan_tilrettelegge_fra_start_så_skal_hele_arbeidsforholdet_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1);
-        uttaksperioder.avslåForArbeidsforhold(ARBEIDSFORHOLD1, ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new FullTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
@@ -333,14 +305,15 @@ public class FastsettPerioderTjenesteTest {
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 4), FULL_UTBETALINGSGRAD),
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_UTBETALINGSGRAD), //bare helg
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 7), LocalDate.of(2019, Month.JANUARY, 13), FULL_UTBETALINGSGRAD)
-        );
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00")),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5), new BigDecimal("20.00")),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 7), new BigDecimal("30.00"))
+        )));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
@@ -348,12 +321,12 @@ public class FastsettPerioderTjenesteTest {
         var periode0 = perioder.get(0);
         assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 4));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(new BigDecimal("90.00"));
 
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 7));
-        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 13));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(new BigDecimal("70.00"));
     }
 
     @Test
@@ -363,12 +336,13 @@ public class FastsettPerioderTjenesteTest {
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 5), LocalDate.of(2019, Month.JANUARY, 6), FULL_UTBETALINGSGRAD) //bare helg
-        );
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, LocalDate.of(2019, 1, 27), LocalDate.of(2019, 1, 5),
+            List.of(
+                new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5))
+            )));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
@@ -385,11 +359,11 @@ public class FastsettPerioderTjenesteTest {
             .medFødselsdato(fødseldatoTidligFødsel)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -402,11 +376,10 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
 
-
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(fødseldatoTidligFødsel);
         assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_IKKE_FØR_FØDSEL);
     }
@@ -419,11 +392,11 @@ public class FastsettPerioderTjenesteTest {
             .medTermindato(TERMINDATO)
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -432,7 +405,7 @@ public class FastsettPerioderTjenesteTest {
         var periode0 = perioder.get(0);
         assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
         assertThat(periode0.getTom()).isEqualTo(førsteLovligeUttaksdato.minusDays(1));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode0.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.SØKT_FOR_SENT);
 
@@ -444,37 +417,6 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 
-    @Test
-    public void uttaksperioder_som_går_utover_3_uker_før_termindato_skal_ikke_oppfylles() {
-        var avklarteDatoer = new AvklarteDatoer.Builder()
-            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
-            .medTermindato(TERMINDATO)
-            .build();
-
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(2).minusDays(1), FULL_UTBETALINGSGRAD));
-
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
-
-        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
-        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(2);
-
-        var periode0 = perioder.get(0);
-        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
-        assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
-        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
-
-        var periode1 = perioder.get(1);
-        assertThat(periode1.getFom()).isEqualTo(TERMINDATO.minusWeeks(3));
-        assertThat(periode1.getTom()).isEqualTo(TERMINDATO.minusWeeks(2).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
-        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
-        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN);
-    }
 
     @Test
     public void ferie_skal_avslås() {
@@ -484,11 +426,12 @@ public class FastsettPerioderTjenesteTest {
             .medFerie(new Ferie(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1)))
             .build();
 
-        var uttaksperioder = new Uttaksperioder();
-        uttaksperioder.leggTilPerioder(ARBEIDSFORHOLD1,
-            new Uttaksperiode(TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), FULL_UTBETALINGSGRAD));
 
-        fastsettPerioderTjeneste.fastsettePerioder(avklarteDatoer, uttaksperioder);
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var tidligereSøknader = new ArrayList<Søknad>();
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -507,12 +450,11 @@ public class FastsettPerioderTjenesteTest {
         var periode1 = perioder.get(1);
         assertThat(periode1.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1));
         assertThat(periode1.getTom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1));
-        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
         assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
         assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
         assertThat(periode1.getRegelInput()).isNotEmpty();
         assertThat(periode1.getRegelSporing()).isNotEmpty();
-
 
         var periode2 = perioder.get(2);
         assertThat(periode2.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2));
@@ -522,6 +464,88 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode2.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
         assertThat(periode2.getRegelInput()).isNotEmpty();
         assertThat(periode2.getRegelSporing()).isNotEmpty();
+    }
+
+    @Test
+    public void perioder_etter_hull_i_uttak_skal_avslås() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00")),
+                new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
+            )));
+        var tidligereSøknader = new ArrayList<Søknad>();
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(3);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(new BigDecimal("90.00"));
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
+        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 28));
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
+        var periode2 = perioder.get(2);
+        assertThat(periode2.getFom()).isEqualTo(LocalDate.of(2019, Month.MARCH, 1));
+        assertThat(periode2.getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
+        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK);
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
+    }
+
+    @Test
+    public void hull_som_dekkes_av_ferie_skal_ikke_føre_til_avslag_på_etterfølgende_perioder() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medFerie(new Ferie(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28)))
+            .build();
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00")),
+                new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
+            )));
+        var tidligereSøknader = new ArrayList<Søknad>();
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(3);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(new BigDecimal("90.00"));
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
+        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 28));
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode1.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
+
+        var periode2 = perioder.get(2);
+        assertThat(periode2.getFom()).isEqualTo(LocalDate.of(2019, Month.MARCH, 1));
+        assertThat(periode2.getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(new BigDecimal("70.00"));
 
     }
 
