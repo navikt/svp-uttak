@@ -14,8 +14,8 @@ import no.nav.svangerskapspenger.utils.Virkedager;
 
 class UttakHullUtleder {
 
-    public Optional<LocalDate> finnStartHull(Optional<Uttaksperioder> tidligereUttaksperioder, Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
-        List<LocalDateInterval> sorterteIntervaler = tilSorterteIntervaler(tidligereUttaksperioder, nyeUttaksperioder, ferier);
+    public Optional<LocalDate> finnStartHull(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
+        List<LocalDateInterval> sorterteIntervaler = tilSorterteIntervaler(nyeUttaksperioder, ferier);
 
         for (int i = 1; i < sorterteIntervaler.size(); i++) {
             var forrigeSluttPlusEn = sorterteIntervaler.get(i - 1).getTomDato().plusDays(1);
@@ -30,9 +30,8 @@ class UttakHullUtleder {
         return Optional.empty();
     }
 
-    private List<LocalDateInterval> tilSorterteIntervaler(Optional<Uttaksperioder> tidligereUttaksperioder, Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
+    private List<LocalDateInterval> tilSorterteIntervaler(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
         var perioder = new ArrayList<LocalDateInterval>();
-        tidligereUttaksperioder.ifPresent(uttaksperioder -> perioder.addAll(tilIntervaler(uttaksperioder)));
         perioder.addAll(tilIntervaler(nyeUttaksperioder));
         perioder.addAll(tilIntervaler(ferier));
         perioder.sort(LocalDateInterval::compareTo);

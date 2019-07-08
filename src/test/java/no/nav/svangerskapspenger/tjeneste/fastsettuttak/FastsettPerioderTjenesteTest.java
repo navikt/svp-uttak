@@ -45,9 +45,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -76,9 +75,8 @@ public class FastsettPerioderTjenesteTest {
         var søknad2 = new Søknad(ARBEIDSFORHOLD2, ARBEIDSFORHOLD2_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO.plusDays(10),
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
         var nyeSøknader = List.of(søknad1, søknad2);
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
 
@@ -114,9 +112,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -142,9 +139,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -177,9 +173,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -212,9 +207,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -249,9 +243,8 @@ public class FastsettPerioderTjenesteTest {
         var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new DelvisTilrettelegging(startTilpassing, BigDecimal.valueOf(60L)))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -288,9 +281,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new FullTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
@@ -311,9 +303,8 @@ public class FastsettPerioderTjenesteTest {
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5), new BigDecimal("20.00")),
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 7), new BigDecimal("30.00"))
         )));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
@@ -340,9 +331,8 @@ public class FastsettPerioderTjenesteTest {
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5))
             )));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).hasSize(0);
@@ -361,9 +351,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -394,9 +383,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -429,9 +417,8 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -479,9 +466,8 @@ public class FastsettPerioderTjenesteTest {
                 new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
             )));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(3);
@@ -520,9 +506,8 @@ public class FastsettPerioderTjenesteTest {
                 new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
             )));
-        var tidligereSøknader = new ArrayList<Søknad>();
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, tidligereSøknader, avklarteDatoer);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(3);
