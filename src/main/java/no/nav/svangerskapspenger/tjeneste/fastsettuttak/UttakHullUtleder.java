@@ -33,14 +33,18 @@ class UttakHullUtleder {
     private List<LocalDateInterval> tilSorterteIntervaler(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
         var perioder = new ArrayList<LocalDateInterval>();
         perioder.addAll(tilIntervaler(nyeUttaksperioder));
-        perioder.addAll(tilIntervaler(ferier));
+        var førsteuttaksdato = nyeUttaksperioder.finnFørsteUttaksdato();
+        if (førsteuttaksdato.isPresent()) {
+            perioder.addAll(tilIntervaler(ferier, førsteuttaksdato.get()));
+        }
         perioder.sort(LocalDateInterval::compareTo);
         return perioder;
     }
 
-    private List<LocalDateInterval> tilIntervaler(List<Ferie> ferier) {
+    private List<LocalDateInterval> tilIntervaler(List<Ferie> ferier, LocalDate førsteuttaksdato) {
         return ferier
             .stream()
+            .filter(ferie -> ferie.getFom().isAfter(førsteuttaksdato)) //se bort fra ferieperioder som er før førsteuttaksdato
             .map(ferie -> new LocalDateInterval(ferie.getFom(), ferie.getTom()))
             .collect(Collectors.toList());
     }
