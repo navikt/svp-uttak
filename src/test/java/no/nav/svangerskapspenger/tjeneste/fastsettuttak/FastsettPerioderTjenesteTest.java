@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.List;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
@@ -30,7 +29,7 @@ public class FastsettPerioderTjenesteTest {
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
-    private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY,1);
+    private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
     private static final LocalDate SØKNAD_MOTTAT_DATO = LocalDate.of(2019, Month.JANUARY, 3);
     private static final LocalDate FØRSTE_LOVLIGE_UTTAKSDATO = SØKNAD_MOTTAT_DATO.withDayOfMonth(1).minusMonths(3);
 
@@ -532,6 +531,31 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
         assertThat(periode2.getUtbetalingsgrad()).isEqualTo(new BigDecimal("70.00"));
 
+    }
+
+    @Test
+    public void ferie_periode_før_uttak_skal_ikke_påvirke_resultatet() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medFerie(new Ferie(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
+            .build();
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(
+                new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
+            )));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
     }
 
 }
