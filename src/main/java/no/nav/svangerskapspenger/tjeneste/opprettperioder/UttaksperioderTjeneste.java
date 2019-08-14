@@ -94,15 +94,13 @@ public class UttaksperioderTjeneste {
                 tom = søknad.sisteDagFørTermin();
             }
             var utbetalingsgrad = FULL_UTBETALINGSGRAD;
-            if (i >= 0) {
-                var tilrettelegging = sorterteTilrettelegginger.get(i);
-                var kryss = tilrettelegging.getTilretteleggingKryss();
+            var tilrettelegging = sorterteTilrettelegginger.get(i);
+            var kryss = tilrettelegging.getTilretteleggingKryss();
 
-                if (kryss.equals(TilretteleggingKryss.A)) {
-                    utbetalingsgrad = BigDecimal.ZERO;
-                } else if (kryss.equals(TilretteleggingKryss.B)) {
-                    utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
-                }
+            if (kryss.equals(TilretteleggingKryss.A)) {
+                utbetalingsgrad = BigDecimal.ZERO;
+            } else if (kryss.equals(TilretteleggingKryss.B)) {
+                utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
             }
             opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad);
             nesteFom = tom.plusDays(1);
