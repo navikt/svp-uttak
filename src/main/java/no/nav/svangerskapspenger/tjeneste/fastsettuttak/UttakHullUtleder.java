@@ -16,9 +16,15 @@ class UttakHullUtleder {
 
     public Optional<LocalDate> finnStartHull(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
         List<LocalDateInterval> sorterteIntervaler = tilSorterteIntervaler(nyeUttaksperioder, ferier);
-
+        if (sorterteIntervaler.isEmpty()) {
+            return Optional.empty();
+        }
+        var forrigeSluttPlusEn = sorterteIntervaler.get(0).getTomDato().plusDays(1);
         for (int i = 1; i < sorterteIntervaler.size(); i++) {
-            var forrigeSluttPlusEn = sorterteIntervaler.get(i - 1).getTomDato().plusDays(1);
+            var nyForrigeSluttPlusEn = sorterteIntervaler.get(i - 1).getTomDato().plusDays(1);
+            if (nyForrigeSluttPlusEn.isAfter(forrigeSluttPlusEn)) {
+                forrigeSluttPlusEn = nyForrigeSluttPlusEn;
+            }
             var startNesteMinusEn = sorterteIntervaler.get(i).getFomDato().minusDays(1);
             if (forrigeSluttPlusEn.isBefore(startNesteMinusEn)) {
                 if (Virkedager.antallVirkedager(forrigeSluttPlusEn, startNesteMinusEn) > 0) {
@@ -34,9 +40,7 @@ class UttakHullUtleder {
         var perioder = new ArrayList<LocalDateInterval>();
         perioder.addAll(tilIntervaler(nyeUttaksperioder));
         var førsteuttaksdato = nyeUttaksperioder.finnFørsteUttaksdato();
-        if (førsteuttaksdato.isPresent()) {
-            perioder.addAll(tilIntervaler(ferier, førsteuttaksdato.get()));
-        }
+        førsteuttaksdato.ifPresent(localDate -> perioder.addAll(tilIntervaler(ferier, localDate)));
         perioder.sort(LocalDateInterval::compareTo);
         return perioder;
     }
