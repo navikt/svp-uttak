@@ -33,7 +33,7 @@ public class FastsettPerioderTjeneste {
         uttaksperioderTjeneste.opprett(nyeSøknader, nyeUttaksperioder);
 
         var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getFerier());
-        eventueltStartHullUttak.ifPresent(startHullUttak -> avklarteDatoer.setStartOppholdUttak(startHullUttak));
+        eventueltStartHullUttak.ifPresent(avklarteDatoer::setStartOppholdUttak);
 
         if (!nyeSøknader.isEmpty()) {
             //Kjør reglene bare dersom det er søkt om noe nytt
