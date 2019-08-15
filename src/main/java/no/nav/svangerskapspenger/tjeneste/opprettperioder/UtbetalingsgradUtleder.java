@@ -16,7 +16,7 @@ final class UtbetalingsgradUtleder {
 
     static BigDecimal beregnUtbetalingsgrad(Søknad søknad, BigDecimal tilretteleggingsprosent) {
         BigDecimal stillingsprosent = søknad.getStillingsprosentForArbeidsforhold();
-        if (stillingsprosent == null || stillingsprosent.equals(NULL_PROSENT)) {
+        if (stillingsprosent == null || stillingsprosent.compareTo(BigDecimal.ZERO) == 0) {
             stillingsprosent = HUNDRE_PROSENT;
         }
         if (tilretteleggingsprosent.compareTo(stillingsprosent) > 0) {

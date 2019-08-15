@@ -44,6 +44,12 @@ public class UtbetalingsgradUtlederTest {
         utførTest(new BigDecimal("120"), new BigDecimal("12"), new BigDecimal("90.00"));
         utførTest(new BigDecimal("120"), new BigDecimal("0"), new BigDecimal("100.00"));
         utførTest(new BigDecimal("120"), new BigDecimal("108"), new BigDecimal("10.00"));
+
+        utførTest(null, new BigDecimal("10"), new BigDecimal("90.00"));
+        utførTest(new BigDecimal("0.0"), new BigDecimal("10"), new BigDecimal("90.00"));
+        utførTest(new BigDecimal("0.00"), new BigDecimal("10"), new BigDecimal("90.00"));
+        utførTest(BigDecimal.ZERO, new BigDecimal("10"), new BigDecimal("90.00"));
+
     }
 
     private void utførTest(BigDecimal stillingsprosent, BigDecimal tilretteleggingsgrad, BigDecimal fasit) {
