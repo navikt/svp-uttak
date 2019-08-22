@@ -26,6 +26,11 @@ public class FastsettPerioderTjenesteTest {
     private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567");
     private static final BigDecimal ARBEIDSFORHOLD2_PROSENT = BigDecimal.valueOf(100L);
 
+    private static final Arbeidsforhold ARBEIDSFORHOLD3 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "1");
+    private static final BigDecimal ARBEIDSFORHOLD3_PROSENT = BigDecimal.valueOf(60L);
+    private static final Arbeidsforhold ARBEIDSFORHOLD4 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "2");
+    private static final BigDecimal ARBEIDSFORHOLD4_PROSENT = BigDecimal.valueOf(40L);
+
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
     private static final LocalDate TILRETTELEGGING_BEHOV_DATO = LocalDate.of(2019, Month.JANUARY, 1);
@@ -62,7 +67,7 @@ public class FastsettPerioderTjenesteTest {
 
 
     @Test
-    public void ingen_tilrettelegging_i_to_arbeidsforhold() {
+    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -102,6 +107,46 @@ public class FastsettPerioderTjenesteTest {
         assertThat(periode0.getRegelSporing()).isNotEmpty();
     }
 
+    @Test
+    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+
+        var søknad1 = new Søknad(ARBEIDSFORHOLD3, ARBEIDSFORHOLD3_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO)));
+        var søknad2 = new Søknad(ARBEIDSFORHOLD4, ARBEIDSFORHOLD4_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO.plusDays(10),
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
+        var nyeSøknader = List.of(søknad1, søknad2);
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD3).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO);
+        assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getRegelInput()).isNotEmpty();
+        assertThat(periode0.getRegelSporing()).isNotEmpty();
+
+        perioder = uttaksperioder.perioder(ARBEIDSFORHOLD4).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(TILRETTELEGGING_BEHOV_DATO.plusDays(10));
+        assertThat(periode0.getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(FULL_UTBETALINGSGRAD);
+        assertThat(periode0.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode0.getÅrsak()).isEqualTo(PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
+        assertThat(periode0.getRegelInput()).isNotEmpty();
+        assertThat(periode0.getRegelSporing()).isNotEmpty();
+    }
 
     @Test
     public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
