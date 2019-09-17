@@ -10,7 +10,7 @@
 
     <properties>
         <revision>1.0</revision>
-        <sha1></sha1>
+        <sha1/>
         <changelist>-SNAPSHOT</changelist>
 
         <java.version>10</java.version>
@@ -23,7 +23,7 @@
         <fpsak.tidsserie.version>1.7</fpsak.tidsserie.version>
         <junit.version>4.12</junit.version>
         <assertj.version>3.8.0</assertj.version>
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.10.0.pr2</jackson.version>
     </properties>
 
 
