@@ -18,8 +18,8 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriod
 
 class FastsettePeriodeUtfall extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
-    public static final String UTFALL = "UTFALL";
-    public static final String ÅRSAK = "ÅRSAK";
+    static final String UTFALL = "UTFALL";
+    static final String ÅRSAK = "ÅRSAK";
 
 
     private final PeriodeÅrsak periodeÅrsak;

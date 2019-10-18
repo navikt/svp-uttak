@@ -1,6 +1,5 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -60,13 +59,12 @@ public class UtbetalingsgradUtlederTest {
     private Søknad lagSøknad(BigDecimal stillingsprosent) {
         var ingenTilrettelegging = new IngenTilrettelegging(BEHOVDATO);
 
-        var søknad = new Søknad(
+        return new Søknad(
             ARBEIDSFORHOLD1,
             stillingsprosent,
             TERMINDATO,
             BEHOVDATO,
             List.of(ingenTilrettelegging));
-        return søknad;
     }
 
 }

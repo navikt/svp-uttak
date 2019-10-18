@@ -23,7 +23,7 @@ import no.nav.fpsak.nare.specification.Specification;
 @RuleDocumentation(value = FastsettePeriodeRegel.ID, specificationReference = "TODO")
 public class FastsettePeriodeRegel implements RuleService<FastsettePeriodeGrunnlag> {
 
-    public static final String ID = "SVP_VK 14.4";
+    static final String ID = "SVP_VK 14.4";
 
     private final Ruleset<FastsettePeriodeGrunnlag> rs = new Ruleset<>();
 
