@@ -21,16 +21,15 @@ import no.nav.svangerskapspenger.tjeneste.fastsettuttak.feil.UttakRegelFeil;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.jackson.JacksonJsonConfig;
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjeneste;
 
-public class FastsettPerioderTjeneste {
+class FastsettPerioderTjeneste {
 
     private final JacksonJsonConfig jacksonJsonConfig = new JacksonJsonConfig();
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private UttakHullUtleder uttakHullUtleder = new UttakHullUtleder();
 
-    public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer) {
-        var nyeUttaksperioder = new Uttaksperioder();
-        uttaksperioderTjeneste.opprett(nyeSøknader, nyeUttaksperioder);
+    Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer) {
+        var nyeUttaksperioder = uttaksperioderTjeneste.opprett(nyeSøknader);
 
         var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getFerier());
         eventueltStartHullUttak.ifPresent(avklarteDatoer::setStartOppholdUttak);

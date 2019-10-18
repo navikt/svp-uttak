@@ -14,7 +14,7 @@ public class UttaksperioderPerArbeidsforhold {
     private ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak;
     private List<Uttaksperiode> uttaksperioder;
 
-    public UttaksperioderPerArbeidsforhold(List<Uttaksperiode> uttaksperioder) {
+    UttaksperioderPerArbeidsforhold(List<Uttaksperiode> uttaksperioder) {
         this.uttaksperioder = uttaksperioder;
     }
 

@@ -12,19 +12,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UttaksperioderTjeneste {
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);
 
-    public Set<ManuellBehandling> opprett(List<Søknad> søknader, Uttaksperioder uttaksperioder) {
-        var manuellbehandlingSet = EnumSet.noneOf(ManuellBehandling.class);
-
-
+    public Uttaksperioder opprett(List<Søknad> søknader) {
+        Uttaksperioder uttaksperioder = new Uttaksperioder();
         søknader.forEach(søknad -> {
 
             if (søknad.getTilretteliggingBehovDato().isAfter(søknad.sisteDagFørTermin())) {
@@ -38,7 +34,7 @@ public class UttaksperioderTjeneste {
             }
         });
 
-        return manuellbehandlingSet;
+        return uttaksperioder;
     }
 
     private void opprettPerioder(Søknad søknad, List<Tilrettelegging> tilrettelegginger, Uttaksperioder uttaksperioder) {

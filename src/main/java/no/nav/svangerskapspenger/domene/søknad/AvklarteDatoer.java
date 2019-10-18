@@ -58,7 +58,7 @@ public class AvklarteDatoer {
      * Setter en eventuelt start for hull i uttak som skal føre til at alle perioder etterpå skal avlås.
      * (Ikke en del av builder siden den må settes på et senere tidspunkt enn når objektet bygges i utgangspunktet)
      *
-     * @param startOppholdUttak
+     * @param startOppholdUttak start for opphold i uttak
      */
     public void setStartOppholdUttak(LocalDate startOppholdUttak) {
         this.startOppholdUttak = startOppholdUttak;

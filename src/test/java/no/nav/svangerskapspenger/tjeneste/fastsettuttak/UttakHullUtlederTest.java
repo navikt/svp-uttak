@@ -29,7 +29,7 @@ public class UttakHullUtlederTest {
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, List.of());
 
-        assertThat(førsteHull).isEqualTo(Optional.ofNullable(null));
+        assertThat(førsteHull).isEqualTo(Optional.empty());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class UttakHullUtlederTest {
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, List.of());
 
-        assertThat(førsteHull).isEqualTo(Optional.ofNullable(null));
+        assertThat(førsteHull).isEqualTo(Optional.empty());
     }
 
 }
