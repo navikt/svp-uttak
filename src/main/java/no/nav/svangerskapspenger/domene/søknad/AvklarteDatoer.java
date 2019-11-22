@@ -101,8 +101,8 @@ public class AvklarteDatoer {
             return this;
         }
 
-        public Builder medFerie(Ferie ferie) {
-            kladd.ferier.add(ferie);
+        public Builder medFerie(List<Ferie> ferie) {
+            kladd.ferier.addAll(ferie);
             return this;
         }
 

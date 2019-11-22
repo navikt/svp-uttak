@@ -33,4 +33,8 @@ public class LukketPeriode {
         return !this.tom.isBefore(annenPeriode.fom) && !this.fom.isAfter(annenPeriode.tom);
     }
 
+    public boolean overlapper(LocalDate dato) {
+        return !this.tom.isBefore(dato) && !this.fom.isAfter(dato);
+    }
+
 }
