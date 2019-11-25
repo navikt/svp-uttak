@@ -49,7 +49,7 @@ public class Uttaksperioder {
         alleArbeidsforhold().forEach(arbeidsforhold -> perioderPerArbeidsforholdMap.get(arbeidsforhold).knekk(knekkpunkter));
     }
 
-    Optional<LocalDate> finnSisteUttaksdato() {
+    public Optional<LocalDate> finnSisteUttaksdato() {
         Optional<LocalDate> sisteUttaksdato = Optional.empty();
         for (var entry: perioderPerArbeidsforholdMap.entrySet()) {
             var maxDatoForArbeidsforhold = entry.getValue().getUttaksperioder().stream().map(LukketPeriode::getTom).max(LocalDate::compareTo);
