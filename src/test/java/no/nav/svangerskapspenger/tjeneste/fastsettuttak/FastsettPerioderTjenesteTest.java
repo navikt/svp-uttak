@@ -455,7 +455,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(new Ferie(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1)))
+            .medFerie(Ferie.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1)))
             .build();
 
 
@@ -541,7 +541,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(new Ferie(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28)))
+            .medFerie(Ferie.opprett(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28)))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
@@ -583,7 +583,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(new Ferie(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
+            .medFerie(Ferie.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
