@@ -4,6 +4,7 @@ import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
+import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.domene.søknad.Tilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.TilretteleggingKryss;
@@ -89,20 +90,29 @@ public class UttaksperioderTjeneste {
             } else {
                 tom = søknad.sisteDagFørTermin();
             }
-            var utbetalingsgrad = FULL_UTBETALINGSGRAD;
             var tilrettelegging = sorterteTilrettelegginger.get(i);
-            var kryss = tilrettelegging.getTilretteleggingKryss();
-
-            if (kryss.equals(TilretteleggingKryss.A)) {
-                utbetalingsgrad = BigDecimal.ZERO;
-            } else if (kryss.equals(TilretteleggingKryss.B)) {
-                utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
-            }
+            BigDecimal utbetalingsgrad = finnUtbetalingsgrad(søknad, tilrettelegging);
             opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad);
             nesteFom = tom.plusDays(1);
         }
     }
 
+    private BigDecimal finnUtbetalingsgrad(Søknad søknad, Tilrettelegging tilrettelegging) {
+        var utbetalingsgrad = FULL_UTBETALINGSGRAD;
+        var kryss = tilrettelegging.getTilretteleggingKryss();
+
+        if (kryss.equals(TilretteleggingKryss.A)) {
+            utbetalingsgrad = BigDecimal.ZERO;
+        } else if (kryss.equals(TilretteleggingKryss.B)) {
+            var overstyrtUtbetalingsgradOpt = ((DelvisTilrettelegging)tilrettelegging).getOverstyrtUtbetalingsgrad();
+            if (overstyrtUtbetalingsgradOpt.isPresent()) {
+                utbetalingsgrad = overstyrtUtbetalingsgradOpt.get();
+            } else {
+                utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
+            }
+        }
+        return utbetalingsgrad;
+    }
 
     private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
         if (tom.isAfter(fom) || fom.equals(tom)) {
