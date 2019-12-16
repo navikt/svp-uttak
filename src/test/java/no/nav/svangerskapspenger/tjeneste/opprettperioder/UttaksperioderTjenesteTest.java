@@ -349,4 +349,25 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(0);
     }
 
+    @Test
+    public void dersom_delvis_tilrettelegging_har_overstyrt_utbetalingsgrad_så_skal_denne_brukes_i_uttaksperioden() {
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), new BigDecimal("50.00"));
+
+        var søknad = new Søknad(
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
+
+        var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
+
+    }
+
 }
