@@ -1,6 +1,7 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.felles.Tuple;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -79,7 +80,7 @@ public class UttaksperioderTjeneste {
             if (sorterteTilrettelegginger.get(0).getTilretteleggingKryss().equals(TilretteleggingKryss.C)) {
                 utbetalingsgrad = BigDecimal.ZERO;
             }
-            opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), nesteFom, sorterteTilrettelegginger.get(0).getArbeidsgiversDato().minusDays(1), utbetalingsgrad);
+            opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), nesteFom, sorterteTilrettelegginger.get(0).getArbeidsgiversDato().minusDays(1), utbetalingsgrad, false);
             nesteFom = sorterteTilrettelegginger.get(0).getArbeidsgiversDato();
         }
         for (int i = 0; i < sorterteTilrettelegginger.size(); i++) {
@@ -91,14 +92,15 @@ public class UttaksperioderTjeneste {
                 tom = søknad.sisteDagFørTermin();
             }
             var tilrettelegging = sorterteTilrettelegginger.get(i);
-            BigDecimal utbetalingsgrad = finnUtbetalingsgrad(søknad, tilrettelegging);
-            opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad);
+            var utbetalingsgrad = finnUtbetalingsgrad(søknad, tilrettelegging);
+            opprettPeriode(uttaksperioder, søknad.getArbeidsforhold(), fom, tom, utbetalingsgrad.getElement1(), utbetalingsgrad.getElement2());
             nesteFom = tom.plusDays(1);
         }
     }
 
-    private BigDecimal finnUtbetalingsgrad(Søknad søknad, Tilrettelegging tilrettelegging) {
+    private Tuple<BigDecimal, Boolean> finnUtbetalingsgrad(Søknad søknad, Tilrettelegging tilrettelegging) {
         var utbetalingsgrad = FULL_UTBETALINGSGRAD;
+        var utbetalingsgradOverstyrt = false;
         var kryss = tilrettelegging.getTilretteleggingKryss();
 
         if (kryss.equals(TilretteleggingKryss.A)) {
@@ -107,16 +109,17 @@ public class UttaksperioderTjeneste {
             var overstyrtUtbetalingsgradOpt = ((DelvisTilrettelegging)tilrettelegging).getOverstyrtUtbetalingsgrad();
             if (overstyrtUtbetalingsgradOpt.isPresent()) {
                 utbetalingsgrad = overstyrtUtbetalingsgradOpt.get();
+                utbetalingsgradOverstyrt = true;
             } else {
                 utbetalingsgrad = UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
             }
         }
-        return utbetalingsgrad;
+        return new Tuple<>(utbetalingsgrad, utbetalingsgradOverstyrt);
     }
 
-    private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
+    private void opprettPeriode(Uttaksperioder uttaksperioder, Arbeidsforhold arbeidsforhold, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad, boolean utbetalingsgradOverstyrt) {
         if (tom.isAfter(fom) || fom.equals(tom)) {
-            uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(fom, tom, utbetalingsgrad));
+            uttaksperioder.leggTilPerioder(arbeidsforhold, new Uttaksperiode(fom, tom, utbetalingsgrad, utbetalingsgradOverstyrt));
         }
     }
 

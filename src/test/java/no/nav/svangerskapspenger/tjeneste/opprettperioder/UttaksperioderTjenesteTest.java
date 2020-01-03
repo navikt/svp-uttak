@@ -266,6 +266,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
+        assertThat(perioder.get(0).isUtbetalingsgradOverstyrt()).isFalse();
     }
 
     @Test
@@ -367,7 +368,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
-
+        assertThat(perioder.get(0).isUtbetalingsgradOverstyrt()).isTrue();
     }
 
 }
