@@ -537,6 +537,45 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
+    public void perioder_etter_hull_i_uttak_skal_avslås_og_overstyring_av_utbetalingsgrad_skal_ignoreres() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00")),
+                new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), new BigDecimal("20.00"))
+            )));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(3);
+
+        var periode0 = perioder.get(0);
+        assertThat(periode0.getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(periode0.getTom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
+        assertThat(periode0.getUtbetalingsgrad()).isEqualTo(new BigDecimal("90.00"));
+
+        var periode1 = perioder.get(1);
+        assertThat(periode1.getFom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 1));
+        assertThat(periode1.getTom()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 28));
+        assertThat(periode1.getUtfallType()).isEqualTo(UtfallType.OPPFYLT);
+        assertThat(periode1.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+
+        var periode2 = perioder.get(2);
+        assertThat(periode2.getFom()).isEqualTo(LocalDate.of(2019, Month.MARCH, 1));
+        assertThat(periode2.getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
+        assertThat(periode2.getÅrsak()).isEqualTo(PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK);
+        assertThat(periode2.getUtfallType()).isEqualTo(UtfallType.IKKE_OPPFYLT);
+        assertThat(periode2.getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
+        assertThat(periode2.isUtbetalingsgradOverstyrt()).isFalse();
+    }
+
+    @Test
     public void hull_som_dekkes_av_ferie_skal_ikke_føre_til_avslag_på_etterfølgende_perioder() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
