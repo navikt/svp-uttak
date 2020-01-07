@@ -48,6 +48,7 @@ public class Uttaksperiode extends LukketPeriode {
         this.utfallType = UtfallType.IKKE_OPPFYLT;
         this.årsak = årsak;
         this.utbetalingsgrad = BigDecimal.ZERO;
+        this.utbetalingsgradOverstyrt = false;
         this.regelInput = sporingGrunnlag;
         this.regelSporing = sporingRegel;
     }
