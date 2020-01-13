@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import no.nav.svangerskapspenger.domene.søknad.Ferie;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
@@ -93,6 +94,21 @@ public class UttakHullUtlederTest {
 
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, List.of());
+
+        assertThat(førsteHull).isEqualTo(Optional.empty());
+    }
+
+    @Test
+    public void overlappende_ferie_midt_i_periode_med_0_utbetaling_skal_ikke_gi_hull() {
+        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
+
+        var perioder = new Uttaksperioder();
+        perioder.leggTilPerioder(arb1,
+            new Uttaksperiode(LocalDate.of(2019, 7, 8), LocalDate.of(2019, 8, 4), BigDecimal.valueOf(0)),
+            new Uttaksperiode(LocalDate.of(2019, 8, 5), LocalDate.of(2019, 9, 10), BigDecimal.valueOf(100))
+        );
+
+        var førsteHull = new UttakHullUtleder().finnStartHull(perioder, Ferie.opprett(LocalDate.of(2019, 7, 20), LocalDate.of(2019, 7, 27)));
 
         assertThat(førsteHull).isEqualTo(Optional.empty());
     }
