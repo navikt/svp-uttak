@@ -9,6 +9,7 @@
     <packaging>jar</packaging>
 
     <properties>
+       <jupiter.version>5.6.0</jupiter.version>
        <sonar.projectKey>navikt_svp-uttak</sonar.projectKey>
        <sonar.organization>navit</sonar.organization>
        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -30,6 +31,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>no.nav.fpsak.nare</groupId>
             <artifactId>fpsak-nare-core</artifactId>
             <version>${fpsak.nare.version}</version>
@@ -48,15 +61,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-
-
-        <!-- Test avhengigheter -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
