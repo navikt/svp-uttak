@@ -68,34 +68,51 @@
         </dependency>
     </dependencies>
 
-
+<build>
+    <plugins>
+        <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.5</version>
+                <executions>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+    </plugins>
+   </build>    
     <scm>
         <connection>scm:git:https://github.com/navikt/svp-uttak.git</connection>
         <developerConnection>scm:git:https://github.com/navikt/svp-uttak.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+     <organization>
+        <name>no.nav</name>
+        <url>https://github.com/navikt</url>
+    </organization>
 
-    <repositories>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+     <distributionManagement>
         <repository>
-            <id>repo.adeo.no</id>
-            <name>Maven repo i iApp-sonen</name>
-            <url>https://repo.adeo.no/repository</url>
+            <id>github</id>
+            <name>Github navikt Maven Packages</name>
+            <url>https://maven.pkg.github.com/navikt/svp-uttak/</url>
         </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>m2internal</id>
-            <name>NAV Maven2 Internal Repository</name>
-            <url>https://repo.adeo.no/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>m2snapshot</id>
-            <name>NAV Maven2 Snapshot Repository</name>
-            <url>https://repo.adeo.no/repository/maven-snapshots/</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
     </distributionManagement>
-
 
 </project>
