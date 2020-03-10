@@ -10,19 +10,10 @@ import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
 public class Uttaksperiode extends LukketPeriode {
 
     private BigDecimal utbetalingsgrad;
-    private boolean utbetalingsgradOverstyrt;
     private UtfallType utfallType = UtfallType.UAVKLART;
     private PeriodeÅrsak årsak;
     private String regelInput;
     private String regelSporing;
-
-    public Uttaksperiode(LocalDate fom,
-                         LocalDate tom,
-                         BigDecimal utbetalingsgrad,
-                         boolean utbetalingsgradOverstyrt) {
-        this(fom, tom, utbetalingsgrad);
-        this.utbetalingsgradOverstyrt = utbetalingsgradOverstyrt;
-    }
 
     public Uttaksperiode(LocalDate fom,
                          LocalDate tom,
@@ -37,7 +28,7 @@ public class Uttaksperiode extends LukketPeriode {
      *
      */
     private Uttaksperiode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom) {
-        this(fom, tom, uttaksperiode.utbetalingsgrad, uttaksperiode.utbetalingsgradOverstyrt);
+        this(fom, tom, uttaksperiode.utbetalingsgrad);
         this.årsak = uttaksperiode.årsak;
         this.utfallType =uttaksperiode.utfallType;
         this.regelInput = uttaksperiode.regelInput;
@@ -48,7 +39,6 @@ public class Uttaksperiode extends LukketPeriode {
         this.utfallType = UtfallType.IKKE_OPPFYLT;
         this.årsak = årsak;
         this.utbetalingsgrad = BigDecimal.ZERO;
-        this.utbetalingsgradOverstyrt = false;
         this.regelInput = sporingGrunnlag;
         this.regelSporing = sporingRegel;
     }
@@ -78,10 +68,6 @@ public class Uttaksperiode extends LukketPeriode {
 
     public BigDecimal getUtbetalingsgrad() {
         return utbetalingsgrad;
-    }
-
-    public boolean isUtbetalingsgradOverstyrt() {
-        return utbetalingsgradOverstyrt;
     }
 
     Optional<Tuple<Uttaksperiode, Uttaksperiode>> knekk(LocalDate knekkpunkt) {

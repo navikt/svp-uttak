@@ -31,11 +31,11 @@ public class UttaksperioderTjenesteTest {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(50L));
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging, fullTilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging, fullTilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -145,11 +145,11 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_fra_start() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                Collections.singletonList(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -163,11 +163,11 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_etter_en_måned() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                Collections.singletonList(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            Collections.singletonList(tilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -189,11 +189,11 @@ public class UttaksperioderTjenesteTest {
     public void full_tilrettelegging_på_termin() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.MAY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(tilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(tilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -209,11 +209,11 @@ public class UttaksperioderTjenesteTest {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1), BigDecimal.valueOf(20L));
 
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -234,11 +234,11 @@ public class UttaksperioderTjenesteTest {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L));
 
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -253,11 +253,11 @@ public class UttaksperioderTjenesteTest {
     public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(delvisTilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -266,18 +266,17 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
-        assertThat(perioder.get(0).isUtbetalingsgradOverstyrt()).isFalse();
     }
 
     @Test
     public void ingen_tilrettelegging_fra_første_dag_gir_en_periode() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
-                ARBEIDSFORHOLD1,
-                HUNDRE_PROSENT,
-                TERMINDATO,
-                LocalDate.of(2019, Month.JANUARY, 1),
-                List.of(ingenTilrettelegging));
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(ingenTilrettelegging));
 
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
@@ -349,26 +348,4 @@ public class UttaksperioderTjenesteTest {
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(0);
     }
-
-    @Test
-    public void dersom_delvis_tilrettelegging_har_overstyrt_utbetalingsgrad_så_skal_denne_brukes_i_uttaksperioden() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), new BigDecimal("50.00"));
-
-        var søknad = new Søknad(
-            ARBEIDSFORHOLD1,
-            HUNDRE_PROSENT,
-            TERMINDATO,
-            LocalDate.of(2019, Month.JANUARY, 1),
-            List.of(delvisTilrettelegging));
-
-        var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
-
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioder).hasSize(1);
-        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
-        assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
-        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("50.00"));
-        assertThat(perioder.get(0).isUtbetalingsgradOverstyrt()).isTrue();
-    }
-
 }

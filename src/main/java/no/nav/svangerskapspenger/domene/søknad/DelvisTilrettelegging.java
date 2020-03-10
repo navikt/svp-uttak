@@ -8,16 +8,11 @@ public class DelvisTilrettelegging implements Tilrettelegging {
 
     private LocalDate tilretteleggingArbeidsgiverDato;
     private final BigDecimal tilretteleggingsprosent;
-    private Optional<BigDecimal> overstyrtUtbetalingsgrad;
 
 
-    public DelvisTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato, BigDecimal tilretteleggingsprosent, BigDecimal overstyrtUtbetalingsgrad) {
+    public DelvisTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato, BigDecimal tilretteleggingsprosent) {
         this.tilretteleggingArbeidsgiverDato = tilretteleggingArbeidsgiverDato;
         this.tilretteleggingsprosent = tilretteleggingsprosent;
-        this.overstyrtUtbetalingsgrad = Optional.ofNullable(overstyrtUtbetalingsgrad);
-    }
-    public DelvisTilrettelegging(LocalDate tilretteleggingArbeidsgiverDato, BigDecimal tilretteleggingsprosent) {
-        this(tilretteleggingArbeidsgiverDato, tilretteleggingsprosent, null);
     }
 
     @Override
@@ -39,9 +34,4 @@ public class DelvisTilrettelegging implements Tilrettelegging {
     public void setArbeidsgiversDato(LocalDate arbeidsgiversDato) {
         this.tilretteleggingArbeidsgiverDato = arbeidsgiversDato;
     }
-
-    public Optional<BigDecimal> getOverstyrtUtbetalingsgrad() {
-        return overstyrtUtbetalingsgrad;
-    }
-
 }

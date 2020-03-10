@@ -375,30 +375,6 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void perioder_etter_hull_i_uttak_skal_avslås_og_overstyring_av_utbetalingsgrad_skal_ignoreres() {
-        var avklarteDatoer = new AvklarteDatoer.Builder()
-            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
-            .medTermindato(TERMINDATO)
-            .build();
-
-        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
-            List.of(
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00")),
-                new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), new BigDecimal("20.00"))
-            )));
-
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
-
-        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioder).hasSize(3);
-
-        sjekkInnvilgetPeriode(perioder.get(0), LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), new BigDecimal("90.00"));
-        sjekkInnvilgetPeriode(perioder.get(1), LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28), BigDecimal.ZERO);
-        sjekkAvslåttPeriode(perioder.get(2), LocalDate.of(2019, Month.MARCH, 1), LocalDate.of(2019, Month.APRIL, 9), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK);
-    }
-
-    @Test
     public void hull_som_dekkes_av_ferie_skal_ikke_føre_til_avslag_på_etterfølgende_perioder() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -445,27 +421,6 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_med_delvis_tilrettelegging_og_overstyrt_utbetalingsgrad_får_riktig_uttaksresultat() {
-        var avklarteDatoer = new AvklarteDatoer.Builder()
-            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
-            .medTermindato(TERMINDATO)
-            .build();
-
-
-        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
-            List.of(new DelvisTilrettelegging(TILRETTELEGGING_BEHOV_DATO, BigDecimal.valueOf(60L), new BigDecimal("20.00")))));
-
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
-
-        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
-        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
-        assertThat(perioder).hasSize(1);
-
-        sjekkInnvilgetPeriodeMedOverstyrtUtbetalingsgrad(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), new BigDecimal("20.00"));
-    }
-
-
-    @Test
     public void ferie_overlappende_med_periode_mellom_behovsdato_og_oppstart_av_ingen_tilrettelegging_skal_ikke_føre_til_avslag_pga_hull_mellom_uttak() {
         var behovsdato = LocalDate.of(2019, Month.SEPTEMBER, 30);
         var startFerie = LocalDate.of(2019, Month.NOVEMBER, 10);
@@ -495,21 +450,21 @@ public class FastsettPerioderTjenesteTest {
     }
 
     private void sjekkInnvilgetPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom) {
-        sjekkPeriode(uttaksperiode, fom, tom, FULL_UTBETALINGSGRAD, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET, false);
+        sjekkPeriode(uttaksperiode, fom, tom, FULL_UTBETALINGSGRAD, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 
     private void sjekkInnvilgetPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
-        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET, false);
+        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
     private void sjekkInnvilgetPeriodeMedOverstyrtUtbetalingsgrad(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
-        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET, true);
+        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 
     private void sjekkAvslåttPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, PeriodeIkkeOppfyltÅrsak årsak) {
-        sjekkPeriode(uttaksperiode, fom, tom, BigDecimal.ZERO, UtfallType.IKKE_OPPFYLT, årsak, false);
+        sjekkPeriode(uttaksperiode, fom, tom, BigDecimal.ZERO, UtfallType.IKKE_OPPFYLT, årsak);
     }
 
-    private void sjekkPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad, UtfallType utfallType, Årsak årsak, boolean overstyrtUtbetalingsgrad) {
+    private void sjekkPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad, UtfallType utfallType, Årsak årsak) {
         assertThat(uttaksperiode.getFom()).isEqualTo(fom);
         assertThat(uttaksperiode.getTom()).isEqualTo(tom);
         assertThat(uttaksperiode.getUtbetalingsgrad()).isEqualByComparingTo(utbetalingsgrad);
@@ -517,7 +472,6 @@ public class FastsettPerioderTjenesteTest {
         assertThat(uttaksperiode.getÅrsak()).isEqualTo(årsak);
         assertThat(uttaksperiode.getRegelInput()).isNotEmpty();
         assertThat(uttaksperiode.getRegelSporing()).isNotEmpty();
-        assertThat(uttaksperiode.isUtbetalingsgradOverstyrt()).isEqualTo(overstyrtUtbetalingsgrad);
     }
 
 }
