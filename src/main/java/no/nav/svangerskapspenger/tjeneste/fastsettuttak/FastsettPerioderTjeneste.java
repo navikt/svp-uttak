@@ -75,14 +75,9 @@ public class FastsettPerioderTjeneste {
         var årsak = regelresultat.getPeriodeÅrsak();
 
         switch (utfallType) {
-            case IKKE_OPPFYLT:
-                periode.avslå(årsak, inputJson, regelJson);
-                break;
-            case OPPFYLT:
-                periode.innvilg(årsak, inputJson, regelJson);
-                break;
-            default:
-                throw new UnsupportedOperationException(String.format("Ukjent utfalltype: %s", utfallType.name()));
+            case IKKE_OPPFYLT -> periode.avslå(årsak, inputJson, regelJson);
+            case OPPFYLT -> periode.innvilg(årsak, inputJson, regelJson);
+            default -> throw new UnsupportedOperationException(String.format("Ukjent utfalltype: %s", utfallType.name()));
         }
     }
 

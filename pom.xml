@@ -15,19 +15,29 @@
        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <revision>2.1</revision>
         <sha1>-SNAPSHOT</sha1>
-        <java.version>11</java.version>
+        <java.version>16</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <fpsak.nare.version>2.1.0-20200121220149-fc67304</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.0_20191220142239_d22df82</fpsak.tidsserie.version>
+        <fpsak.nare.version>2.1.4</fpsak.nare.version>
+        <fpsak.tidsserie.version>2.5.6</fpsak.tidsserie.version>
         <junit.version>4.12</junit.version>
         <assertj.version>3.19.0</assertj.version>
-        <jackson.version>2.12.1</jackson.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.12.3</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -55,12 +65,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
