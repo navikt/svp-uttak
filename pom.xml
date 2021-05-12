@@ -21,9 +21,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <fpsak.nare.version>2.1.4</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.5.6</fpsak.tidsserie.version>
-        <junit.version>4.12</junit.version>
+        <fpsak.nare.version>2.1.5</fpsak.nare.version>
+        <fpsak.tidsserie.version>2.5.7</fpsak.tidsserie.version>
         <assertj.version>3.19.0</assertj.version>
     </properties>
 
