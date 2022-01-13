@@ -77,9 +77,20 @@
         </dependency>
     </dependencies>
 
-<build>
-    <plugins>
-        <plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.9.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.7</version>
@@ -98,8 +109,8 @@
                     </execution>
                 </executions>
             </plugin>
-    </plugins>
-   </build>    
+        </plugins>
+    </build>
     <scm>
         <connection>scm:git:https://github.com/navikt/svp-uttak.git</connection>
         <developerConnection>scm:git:https://github.com/navikt/svp-uttak.git</developerConnection>
