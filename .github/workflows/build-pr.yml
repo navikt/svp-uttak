@@ -1,7 +1,17 @@
 name: Bygg pull request
 
-on: [pull_request_target]
-
+on:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+      - '**.MD'
+      - '.gitignore'
+      - 'LICENCE'
+      - 'CODEOWNERS'
+      - '.github/workflows/build.yml'
+      - '.github/workflows/release.yml'
 jobs:
   build:
 
@@ -16,15 +26,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: Hent tag
-        run: echo "TAG=$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
-      - name: Build
-        shell: bash
+      - name: Kompiler med sonar analyse
+        if: github.actor != 'dependabot[bot]'
         run: |
-          echo "Building $TAG"
-          mvn --batch-mode --quiet -Dsonar.login=${SONAR_TOKEN}  --settings ./.github/.m2/settings.xml -Dsha1=$TAG  org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+          mvn jacoco:prepare-agent install jacoco:report sonar:sonar --quiet --batch-mode --settings .github/.m2/settings.xml -Dsonar.login=${SONAR_TOKEN}
         env:
-          GITHUB_USERNAME: x-access-token
-          GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Kompiler uten sonar analyse
+        if: github.actor == 'dependabot[bot]'
+        run: |
+          mvn package --quiet --batch-mode --settings .github/.m2/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
