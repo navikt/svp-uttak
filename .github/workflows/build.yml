@@ -16,7 +16,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Sjekk ut kode
       - uses: actions/checkout@v2
       - run:  git fetch --prune --unshallow
       - name: Set up JDK 17
