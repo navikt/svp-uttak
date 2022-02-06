@@ -10,7 +10,7 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriod
 @RuleDocumentation(SjekkHullUttak.ID)
 public class SjekkHullUttak extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
-    public static final String ID = "SVP_VK_14.4.9";
+    public static final String ID = "SVP_VK 14.4.9";
 
     public SjekkHullUttak() {
         super(ID);
