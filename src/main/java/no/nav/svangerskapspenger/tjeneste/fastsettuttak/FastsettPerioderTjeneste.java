@@ -95,6 +95,7 @@ public class FastsettPerioderTjeneste {
         avklarteDatoer.getOpphørsdatoForMedlemskap().ifPresent(knekkpunkter::add);
         avklarteDatoer.getFørsteLovligeUttaksdato().ifPresent(knekkpunkter::add);
         knekkpunkter.add(avklarteDatoer.getTerminsdato().minusWeeks(3));
+        avklarteDatoer.getStartdatoNesteSak().ifPresent(knekkpunkter::add);
         avklarteDatoer.getFødselsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);

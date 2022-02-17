@@ -7,11 +7,16 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import no.nav.svangerskapspenger.domene.felles.AktivitetType;
-import no.nav.svangerskapspenger.domene.resultat.*;
 import org.junit.Test;
 
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.PeriodeIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.PeriodeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.resultat.UtfallType;
+import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
+import no.nav.svangerskapspenger.domene.resultat.Årsak;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Ferie;
@@ -129,6 +134,28 @@ public class FastsettPerioderTjenesteTest {
         assertThat(perioder).hasSize(1);
 
         sjekkAvslåttPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1), PeriodeIkkeOppfyltÅrsak.SØKT_FOR_SENT);
+    }
+
+    @Test
+    public void uttak_skal_avslås_pga_innvilget_annen_sak_senere_i_perioden() {
+        var startdatoNySak = TERMINDATO.minusMonths(2);
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medStartdatoNesteSak(startdatoNySak)
+            .build();
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+        assertThat(perioder).hasSize(2);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, startdatoNySak.minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TERMINDATO.minusMonths(2), TERMINDATO.minusWeeks(3).minusDays(1), PeriodeIkkeOppfyltÅrsak.BEGYNT_ANNEN_SAK);
     }
 
     @Test

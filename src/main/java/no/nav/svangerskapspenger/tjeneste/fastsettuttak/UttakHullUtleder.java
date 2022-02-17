@@ -1,68 +1,59 @@
 package no.nav.svangerskapspenger.tjeneste.fastsettuttak;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import no.nav.fpsak.tidsserie.LocalDateInterval;
+import no.nav.fpsak.tidsserie.LocalDateSegment;
+import no.nav.fpsak.tidsserie.LocalDateTimeline;
+import no.nav.fpsak.tidsserie.StandardCombinators;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.Ferie;
-import no.nav.svangerskapspenger.utils.Virkedager;
 
 class UttakHullUtleder {
 
     Optional<LocalDate> finnStartHull(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
-        List<LocalDateInterval> sorterteIntervaler = tilSorterteIntervaler(nyeUttaksperioder, ferier);
-        if (sorterteIntervaler.isEmpty()) {
-            return Optional.empty();
-        }
-        var forrigeSluttPlusEn = sorterteIntervaler.get(0).getTomDato().plusDays(1);
-        for (int i = 1; i < sorterteIntervaler.size(); i++) {
-            var nyForrigeSluttPlusEn = sorterteIntervaler.get(i - 1).getTomDato().plusDays(1);
-            if (nyForrigeSluttPlusEn.isAfter(forrigeSluttPlusEn)) {
-                forrigeSluttPlusEn = nyForrigeSluttPlusEn;
-            }
-            var startNesteMinusEn = sorterteIntervaler.get(i).getFomDato().minusDays(1);
-            if (forrigeSluttPlusEn.isBefore(startNesteMinusEn)) {
-                if (Virkedager.antallVirkedager(forrigeSluttPlusEn, startNesteMinusEn) > 0) {
-                    return Optional.of(forrigeSluttPlusEn);
-                }
-            }
-
-        }
-        return Optional.empty();
+        var intervaller = intervallerFraTidslinje(nyeUttaksperioder, ferier);
+        // Velg dagen etter tidligste tom dersom disjoint etter tidslinje-compress
+        return intervaller.size() < 2 ? Optional.empty() :
+            intervaller.stream().map(LocalDateInterval::getTomDato).min(Comparator.naturalOrder()).map(d -> d.plusDays(1));
     }
 
-    private List<LocalDateInterval> tilSorterteIntervaler(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
-        var perioder = new ArrayList<>(tilIntervaler(nyeUttaksperioder));
-        if (!perioder.isEmpty()) {
-            perioder.sort(LocalDateInterval::compareTo);
-            var førsteuttaksdato = perioder.get(0).getFomDato();
-            var sisteuttaksdato = perioder.get(perioder.size()-1).getTomDato();
-            perioder.addAll(tilIntervaler(ferier, førsteuttaksdato, sisteuttaksdato));
-            perioder.sort(LocalDateInterval::compareTo);
+    private Collection<LocalDateInterval> intervallerFraTidslinje(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
+        var perioder = new ArrayList<>(tilSegmenter(nyeUttaksperioder));
+        if (!perioder.isEmpty() && !ferier.isEmpty()) {
+            var førsteuttaksdato = perioder.stream().map(LocalDateSegment::getFom).min(Comparator.naturalOrder()).orElseThrow();
+            var sisteuttaksdato = perioder.stream().map(LocalDateSegment::getTom).max(Comparator.naturalOrder()).orElseThrow();
+            perioder.addAll(tilSegmenter(ferier, førsteuttaksdato, sisteuttaksdato));
         }
-        return perioder;
+        return new LocalDateTimeline<>(perioder, StandardCombinators::alwaysTrueForMatch).compress().getLocalDateIntervals();
     }
 
-    private List<LocalDateInterval> tilIntervaler(List<Ferie> ferier, LocalDate førsteuttaksdato, LocalDate sisteuttaksdato) {
-        return ferier
-            .stream()
-            .filter(ferie -> !ferie.getFom().isBefore(førsteuttaksdato) &&  !ferie.getFom().isAfter(sisteuttaksdato)) //se bort fra ferieperioder som er før eller etter uttak
-            .map(ferie -> new LocalDateInterval(ferie.getFom(), ferie.getTom()))
-            .collect(Collectors.toList());
+    private List<LocalDateSegment<Boolean>> tilSegmenter(List<Ferie> ferier, LocalDate førsteuttaksdato, LocalDate sisteuttaksdato) {
+        return ferier.stream()
+            .filter(ferie -> !ferie.getTom().isBefore(førsteuttaksdato) &&  !ferie.getFom().isAfter(sisteuttaksdato)) //se bort fra ferieperioder som er før eller etter uttak
+            .map(ferie -> new LocalDateSegment<>(ferie.getFom(), utvidFredagTilSøndag(ferie.getTom()), Boolean.TRUE))
+            .toList();
     }
 
-    private List<LocalDateInterval> tilIntervaler(Uttaksperioder uttaksperioder) {
-        return uttaksperioder.alleArbeidsforhold()
-            .stream()
+    private List<LocalDateSegment<Boolean>> tilSegmenter(Uttaksperioder uttaksperioder) {
+        return uttaksperioder.alleArbeidsforhold().stream()
             .flatMap(arbeidsforhold -> uttaksperioder.perioder(arbeidsforhold).getUttaksperioder().stream())
             .filter(periode -> !BigDecimal.ZERO.equals(periode.getUtbetalingsgrad()))
-            .map(periode -> new LocalDateInterval(periode.getFom(), periode.getTom()))
-            .collect(Collectors.toList());
+            .map(periode -> new LocalDateSegment<>(periode.getFom(), utvidFredagTilSøndag(periode.getTom()), Boolean.TRUE))
+            .toList();
+    }
+
+    private LocalDate utvidFredagTilSøndag(LocalDate dato) {
+        if (DayOfWeek.FRIDAY.equals(DayOfWeek.from(DayOfWeek.from(dato)))) return dato.plusDays(2);
+        if (DayOfWeek.SATURDAY.equals(DayOfWeek.from(DayOfWeek.from(dato)))) return dato.plusDays(1);
+        return dato;
     }
 
 }

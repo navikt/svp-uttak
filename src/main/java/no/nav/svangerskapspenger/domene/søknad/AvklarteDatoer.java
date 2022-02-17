@@ -15,6 +15,7 @@ public class AvklarteDatoer {
     private LocalDate førsteLovligeUttaksdato;
     private LocalDate termindato;
     private LocalDate fødselsdato;
+    private LocalDate startdatoNesteSak;
     private List<Ferie> ferier = new ArrayList<>();
     private LocalDate startOppholdUttak;
 
@@ -44,6 +45,10 @@ public class AvklarteDatoer {
 
     public Optional<LocalDate> getFødselsdato() {
         return Optional.ofNullable(fødselsdato);
+    }
+
+    public Optional<LocalDate> getStartdatoNesteSak() {
+        return Optional.ofNullable(startdatoNesteSak);
     }
 
     public List<Ferie> getFerier() {
@@ -98,6 +103,11 @@ public class AvklarteDatoer {
 
         public Builder medFødselsdato(LocalDate fødselsdato) {
             kladd.fødselsdato = fødselsdato;
+            return this;
+        }
+
+        public Builder medStartdatoNesteSak(LocalDate startdato) {
+            kladd.startdatoNesteSak = startdato;
             return this;
         }
 
