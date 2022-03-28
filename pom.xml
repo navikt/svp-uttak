@@ -23,7 +23,7 @@
 
         <jacoco.version>0.8.7</jacoco.version>
         <fpsak.nare.version>2.2.2</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.5.8</fpsak.tidsserie.version>
+        <fpsak.tidsserie.version>2.6.2</fpsak.tidsserie.version>
         <assertj.version>3.22.0</assertj.version>
     </properties>
 
