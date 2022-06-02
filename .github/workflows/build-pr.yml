@@ -26,16 +26,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
-      - name: Kompiler med sonar analyse
-        if: github.actor != 'dependabot[bot]'
+      - name: Build
+        shell: bash
         run: |
-          mvn jacoco:prepare-agent install jacoco:report sonar:sonar --quiet --batch-mode --settings .github/.m2/settings.xml -Dsonar.login=${SONAR_TOKEN}
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Kompiler uten sonar analyse
-        if: github.actor == 'dependabot[bot]'
-        run: |
-          mvn package --quiet --batch-mode --settings .github/.m2/settings.xml
+          echo "Building $(echo $GITHUB_SHA | cut -c1-7)"
+          mvn jacoco:prepare-agent package jacoco:report -e --batch-mode --settings .github/.m2/settings.xml -Dchangelist= -Dsha1=-$(git log -1 --pretty='%ad' --date=format:'%Y%m%d%H%M%S')-$(echo $GITHUB_SHA | cut -c1-7)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -28,9 +28,8 @@ jobs:
       - name: Build artifacts & deploy
         shell: bash
         run: |
-          mvn jacoco:prepare-agent verify jacoco:report sonar:sonar --quiet --batch-mode --settings .github/.m2/settings.xml -Dsonar.login=${SONAR_TOKEN}
+          mvn jacoco:prepare-agent verify jacoco:report -e --batch-mode --settings .github/.m2/settings.xml
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release Drafter
