@@ -8,6 +8,7 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
+import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -15,7 +16,7 @@ import no.nav.svangerskapspenger.domene.resultat.UttaksperioderPerArbeidsforhold
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
-import no.nav.svangerskapspenger.regler.fastsettperiode.Regelresultat;
+import no.nav.svangerskapspenger.regler.fastsettperiode.PeriodeOutcome;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.feil.UttakRegelFeil;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.jackson.JacksonJsonConfig;
@@ -70,9 +71,11 @@ public class FastsettPerioderTjeneste {
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
         var regelJson = EvaluationSerializer.asJson(evaluering);
-        var regelresultat = new Regelresultat(evaluering);
-        var utfallType = regelresultat.getUtfallType();
-        var årsak = regelresultat.getPeriodeÅrsak();
+        var regelresultat = new EvaluationSummary(evaluering).allOutcomes().stream()
+            .filter(PeriodeOutcome.class::isInstance)
+            .findFirst().map(PeriodeOutcome.class::cast).orElseThrow();
+        var utfallType = regelresultat.utfallType();
+        var årsak = regelresultat.periodeÅrsak();
 
         switch (utfallType) {
             case IKKE_OPPFYLT -> periode.avslå(årsak, inputJson, regelJson);
