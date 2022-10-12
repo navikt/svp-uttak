@@ -16,7 +16,7 @@ public class LukketPeriodeTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void mnaglende_tom_skal_kaste_exception() {
+    public void manglende_tom_skal_kaste_exception() {
         new LukketPeriode(LocalDate.of(2019, Month.JANUARY, 1), null) {};
     }
 
