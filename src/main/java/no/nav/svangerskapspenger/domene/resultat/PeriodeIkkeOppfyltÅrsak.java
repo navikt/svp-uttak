@@ -10,7 +10,10 @@ public enum PeriodeIkkeOppfyltÅrsak implements PeriodeÅrsak {
     PERIODEN_MÅ_SLUTTE_SENEST_TRE_UKER_FØR_TERMIN(8310, "Perioden må slutte senest tre uker før termin"),
     PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE(8311, "Perioden er samtidig som en ferie"),
     PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK(8313, "Perioden er etter et opphold i uttak"),
-    BEGYNT_ANNEN_SAK(8314, "Perioden er etter startdato annen sak/stønadsperiode");
+    BEGYNT_ANNEN_SAK(8314, "Perioden er etter startdato annen sak/stønadsperiode"),
+    SVANGERSKAPSVILKÅRET_IKKE_OPPFYLT(8315, "Svangerskapsvilkåret er ikke oppfylt"),
+    OPPTJENINGSVILKÅRET_IKKE_OPPFYLT(8316, "Opptjeningsvilkåret er ikke oppfylt"),
+    ;
 
     private final int id;
     private final String beskrivelse;

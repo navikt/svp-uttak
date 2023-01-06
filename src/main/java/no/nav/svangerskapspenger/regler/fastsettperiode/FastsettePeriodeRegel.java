@@ -13,6 +13,8 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFerie;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFødselsdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFørsteLovligeUttaksdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkHullUttak;
+import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkManueltSVPVilkår;
+import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpptjeningsvilkåret;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpphørsdatoForMedlemskap;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkStønadsperiode;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkTermindato;
@@ -59,6 +61,10 @@ public class FastsettePeriodeRegel implements RuleService<FastsettePeriodeGrunnl
             .hvis(new SjekkFerie(), Sluttpunkt.ikkeOppfylt("UT8012", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE))
 
             .hvis(new SjekkHullUttak(), Sluttpunkt.ikkeOppfylt("UT8014", PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_ETTER_ET_OPPHOLD_I_UTTAK))
+
+            .hvis(new SjekkOpptjeningsvilkåret(), Sluttpunkt.ikkeOppfylt("UT8015", PeriodeIkkeOppfyltÅrsak.OPPTJENINGSVILKÅRET_IKKE_OPPFYLT))
+
+            .hvis(new SjekkManueltSVPVilkår(), Sluttpunkt.ikkeOppfylt("UT8016   ", PeriodeIkkeOppfyltÅrsak.SVANGERSKAPSVILKÅRET_IKKE_OPPFYLT))
 
             .ellers(Sluttpunkt.oppfylt("UT8011", PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET));
     }
