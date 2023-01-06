@@ -18,6 +18,7 @@ import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.PeriodeOutcome;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
+import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.feil.UttakRegelFeil;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.jackson.JacksonJsonConfig;
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjeneste;
@@ -29,7 +30,7 @@ public class FastsettPerioderTjeneste {
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private UttakHullUtleder uttakHullUtleder = new UttakHullUtleder();
 
-    public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer) {
+    public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer, Inngangsvilkår inngangsvilkår) {
         var nyeUttaksperioder = uttaksperioderTjeneste.opprett(nyeSøknader);
 
         var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getFerier());
@@ -37,14 +38,14 @@ public class FastsettPerioderTjeneste {
 
         if (!nyeSøknader.isEmpty()) {
             //Kjør reglene bare dersom det er søkt om noe nytt
-            fastsettePerioder(avklarteDatoer, nyeUttaksperioder);
+            fastsettePerioder(avklarteDatoer, nyeUttaksperioder, inngangsvilkår);
         }
         return nyeUttaksperioder;
     }
 
 
 
-    private void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder) {
+    private void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Inngangsvilkår inngangsvilkår) {
         //Først knekk opp perioder på alle potensielle knekkpunkter
         var knekkpunkter = finnKnekkpunkter(avklarteDatoer);
         uttaksperioder.knekk(knekkpunkter);
@@ -53,21 +54,21 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
             var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
             if (uttaksperioderPerArbeidsforhold.getArbeidsforholdIkkeOppfyltÅrsak() == null) {
-                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold);
+                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold, inngangsvilkår);
             }
         });
     }
 
-    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold) {
+    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold, Inngangsvilkår inngangsvilkår) {
         FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode));
+        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode, inngangsvilkår));
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
     }
 
-    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode) {
-        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode);
+    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode, Inngangsvilkår inngangsvilkår) {
+        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode, inngangsvilkår);
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
         var regelJson = EvaluationSerializer.asJson(evaluering);
