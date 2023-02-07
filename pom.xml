@@ -22,7 +22,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <jacoco.version>0.8.8</jacoco.version>
-        <fpsak.nare.version>2.4.0</fpsak.nare.version>
+        <fpsak.nare.version>2.5.2</fpsak.nare.version>
         <fpsak.tidsserie.version>2.6.6</fpsak.tidsserie.version>
         <assertj.version>3.24.2</assertj.version>
     </properties>
