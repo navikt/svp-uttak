@@ -75,7 +75,7 @@ public class FastsettPerioderTjeneste {
         var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode, inngangsvilkår);
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
-        var regelJson = EvaluationSerializer.asJson(evaluering, REGEL_VERSION);
+        var regelJson = EvaluationSerializer.asJson(evaluering, REGEL_VERSION, NareVersion.NARE_VERSION);
         var regelresultat = new EvaluationSummary(evaluering).allOutcomes().stream()
             .filter(PeriodeOutcome.class::isInstance)
             .findFirst().map(PeriodeOutcome.class::cast).orElseThrow();
