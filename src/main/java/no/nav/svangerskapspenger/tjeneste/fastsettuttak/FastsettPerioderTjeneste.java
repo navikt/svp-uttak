@@ -9,6 +9,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
+import no.nav.fpsak.nare.evaluation.summary.EvaluationVersion;
+import no.nav.fpsak.nare.evaluation.summary.NareVersion;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -24,6 +26,8 @@ import no.nav.svangerskapspenger.tjeneste.fastsettuttak.jackson.JacksonJsonConfi
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjeneste;
 
 public class FastsettPerioderTjeneste {
+
+    private static final EvaluationVersion REGEL_VERSION = NareVersion.readVersionPropertyFor("svp-uttak", "nare/svp-uttak-version.properties");
 
     private final JacksonJsonConfig jacksonJsonConfig = new JacksonJsonConfig();
 
@@ -71,7 +75,7 @@ public class FastsettPerioderTjeneste {
         var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode, inngangsvilkår);
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
-        var regelJson = EvaluationSerializer.asJson(evaluering);
+        var regelJson = EvaluationSerializer.asJson(evaluering, REGEL_VERSION);
         var regelresultat = new EvaluationSummary(evaluering).allOutcomes().stream()
             .filter(PeriodeOutcome.class::isInstance)
             .findFirst().map(PeriodeOutcome.class::cast).orElseThrow();
