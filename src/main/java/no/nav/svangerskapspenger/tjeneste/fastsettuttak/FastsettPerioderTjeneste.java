@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSerializer;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationSummary;
 import no.nav.fpsak.nare.evaluation.summary.EvaluationVersion;
 import no.nav.fpsak.nare.evaluation.summary.NareVersion;
+import no.nav.fpsak.nare.json.JsonOutput;
+import no.nav.fpsak.nare.json.NareJsonException;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
@@ -22,14 +22,11 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.PeriodeOutcome;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.feil.UttakRegelFeil;
-import no.nav.svangerskapspenger.tjeneste.fastsettuttak.jackson.JacksonJsonConfig;
 import no.nav.svangerskapspenger.tjeneste.opprettperioder.UttaksperioderTjeneste;
 
 public class FastsettPerioderTjeneste {
 
     private static final EvaluationVersion REGEL_VERSION = NareVersion.readVersionPropertyFor("svp-uttak", "nare/svp-uttak-version.properties");
-
-    private final JacksonJsonConfig jacksonJsonConfig = new JacksonJsonConfig();
 
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private UttakHullUtleder uttakHullUtleder = new UttakHullUtleder();
@@ -91,8 +88,8 @@ public class FastsettPerioderTjeneste {
 
     private String toJson(FastsettePeriodeGrunnlag grunnlag) {
         try {
-            return jacksonJsonConfig.toJson(grunnlag);
-        } catch (JsonProcessingException e) {
+            return JsonOutput.asJson(grunnlag);
+        } catch (NareJsonException e) {
             throw new UttakRegelFeil("Kunne ikke serialisere regelinput for avklaring av uttaksperioder.", e);
         }
     }
