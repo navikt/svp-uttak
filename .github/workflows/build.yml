@@ -1,39 +1,29 @@
-name: Bygg og deploy
+name: Bygg
 
 on:
   push:
     branches:
-      - master         # Push events on master branch
+      - '**'
     paths-ignore:
       - '**.md'
       - '**.MD'
       - '.gitignore'
-      - 'LICENCE'
+      - 'LICENSE'
       - 'CODEOWNERS'
-      - '.github/workflows/build-pr.yml'
+  schedule:
+    - cron: '0 4 * * 1'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run:  git fetch --prune --unshallow
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'maven'
+  build-feature:
+    name: Build
+    uses: navikt/fp-gha-workflows/.github/workflows/build-feature.yml@main
+    with:
+      sonar-scan: true # default: false
+    secrets: inherit
 
-      - name: Build artifacts & deploy
-        shell: bash
-        run: |
-          mvn jacoco:prepare-agent verify jacoco:report -e --batch-mode --settings .github/.m2/settings.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Release Drafter
-        uses: release-drafter/release-drafter@v5
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release-drafter:
+    name: Update
+    if: github.ref_name == 'master'
+    needs: build-feature
+    uses: navikt/fp-gha-workflows/.github/workflows/release-drafter.yml@main
+    secrets: inherit

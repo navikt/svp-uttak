@@ -10,9 +10,6 @@
 
     <properties>
        <jupiter.version>5.9.2</jupiter.version>
-       <sonar.projectKey>navikt_svp-uttak</sonar.projectKey>
-       <sonar.organization>navikt</sonar.organization>
-       <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <revision>2.1</revision>
         <sha1>-SNAPSHOT</sha1>
         <java.version>17</java.version>
@@ -25,6 +22,12 @@
         <fpsak.nare.version>2.5.3</fpsak.nare.version>
         <fpsak.tidsserie.version>2.6.6</fpsak.tidsserie.version>
         <assertj.version>3.24.2</assertj.version>
+
+        <!-- Sonar felles -->
+        <sonar.organization>navikt</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.projectKey>navikt_svp-uttak</sonar.projectKey>
     </properties>
 
     <dependencies>
