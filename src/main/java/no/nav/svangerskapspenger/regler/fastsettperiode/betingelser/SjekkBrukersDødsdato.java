@@ -16,14 +16,10 @@ public class SjekkBrukersDødsdato extends LeafSpecification<FastsettePeriodeGru
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-        if (grunnlag.getAvklarteDatoer().getBrukersDødsdato().isPresent()) {
+        return grunnlag.getAvklarteDatoer().getBrukersDødsdato().map(brukersdødsdato -> {
             var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
-            var brukersdødsdato = grunnlag.getAvklarteDatoer().getBrukersDødsdato().get();
-            if (startUttaksperiode.equals(brukersdødsdato) || startUttaksperiode.isAfter(brukersdødsdato)) {
-                return ja();
-            }
-        }
-        return nei();
+            return startUttaksperiode.equals(brukersdødsdato) || startUttaksperiode.isAfter(brukersdødsdato) ? ja() : nei();
+        }).orElse(nei());
     }
 
 }

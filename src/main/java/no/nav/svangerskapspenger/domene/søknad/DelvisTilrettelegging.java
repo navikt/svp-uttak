@@ -2,7 +2,6 @@ package no.nav.svangerskapspenger.domene.søknad;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class DelvisTilrettelegging implements Tilrettelegging {
 

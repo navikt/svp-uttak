@@ -1,13 +1,6 @@
 package no.nav.svangerskapspenger.tjeneste.opprettperioder;
 
-import no.nav.svangerskapspenger.domene.felles.AktivitetType;
-import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
-import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
-import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.Søknad;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +8,15 @@ import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
+
+import no.nav.svangerskapspenger.domene.felles.AktivitetType;
+import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
+import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
+import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 public class UttaksperioderTjenesteTest {
 
@@ -154,7 +155,7 @@ public class UttaksperioderTjenesteTest {
         var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
-        assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getUttaksperioder()).isEmpty();
         assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
     }
 
@@ -328,7 +329,7 @@ public class UttaksperioderTjenesteTest {
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
             .isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE_FREM_TIL_3_UKER_FØR_TERMIN);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioder).hasSize(0);
+        assertThat(perioder).isEmpty();
     }
 
     @Test
@@ -346,6 +347,6 @@ public class UttaksperioderTjenesteTest {
         assertThat(uttaksperioder.perioder(ARBEIDSFORHOLD1).getArbeidsforholdIkkeOppfyltÅrsak())
             .isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.LEGES_DATO_IKKE_FØR_TRE_UKER_FØR_TERMINDATO);
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
-        assertThat(perioder).hasSize(0);
+        assertThat(perioder).isEmpty();
     }
 }

@@ -7,13 +7,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import no.nav.svangerskapspenger.domene.søknad.Ferie;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
+import no.nav.svangerskapspenger.domene.søknad.Ferie;
 
 public class UttakHullUtlederTest {
 
@@ -30,7 +30,7 @@ public class UttakHullUtlederTest {
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, List.of());
 
-        assertThat(førsteHull).isEqualTo(Optional.empty());
+        assertThat(førsteHull).isEmpty();
     }
 
     @Test
@@ -95,7 +95,7 @@ public class UttakHullUtlederTest {
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, List.of());
 
-        assertThat(førsteHull).isEqualTo(Optional.empty());
+        assertThat(førsteHull).isEmpty();
     }
 
     @Test
@@ -110,7 +110,7 @@ public class UttakHullUtlederTest {
 
         var førsteHull = new UttakHullUtleder().finnStartHull(perioder, Ferie.opprett(LocalDate.of(2019, 7, 20), LocalDate.of(2019, 7, 27)));
 
-        assertThat(førsteHull).isEqualTo(Optional.empty());
+        assertThat(førsteHull).isEmpty();
     }
 
 }

@@ -35,7 +35,7 @@ public class VirkedagerTest {
         assertThat(Virkedager.antallVirkedager(mandag.plusDays(1), søndag)).isEqualTo(4);
         assertThat(Virkedager.antallVirkedager(mandag.plusDays(1), søndag.plusDays(1))).isEqualTo(5);
         assertThat(Virkedager.antallVirkedager(mandag.plusDays(4), søndag)).isEqualTo(1);
-        assertThat(Virkedager.antallVirkedager(mandag.plusDays(5), søndag)).isEqualTo(0);
+        assertThat(Virkedager.antallVirkedager(mandag.plusDays(5), søndag)).isZero();
 
         assertThat(Virkedager.antallVirkedager(mandag.minusDays(1), søndag)).isEqualTo(5);
         assertThat(Virkedager.antallVirkedager(mandag.minusDays(2), søndag)).isEqualTo(5);

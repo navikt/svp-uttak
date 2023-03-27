@@ -22,8 +22,8 @@ public class UttaksperioderTest {
         uttaksperioder.leggTilPerioder(arbeidsforhold,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
 
-        assertThat(uttaksperioder.finnFørsteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
-        assertThat(uttaksperioder.finnSisteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 31));
+        assertThat(uttaksperioder.finnFørsteUttaksdato()).contains(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(uttaksperioder.finnSisteUttaksdato()).contains(LocalDate.of(2019, Month.JANUARY, 31));
     }
 
     @Test
@@ -36,8 +36,8 @@ public class UttaksperioderTest {
         uttaksperioder.leggTilPerioder(arbeidsforhold2,
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 15), LocalDate.of(2019, Month.FEBRUARY, 20), FULL_UTBETALING));
 
-        assertThat(uttaksperioder.finnFørsteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
-        assertThat(uttaksperioder.finnSisteUttaksdato().get()).isEqualTo(LocalDate.of(2019, Month.FEBRUARY, 20));
+        assertThat(uttaksperioder.finnFørsteUttaksdato()).contains(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(uttaksperioder.finnSisteUttaksdato()).contains(LocalDate.of(2019, Month.FEBRUARY, 20));
     }
 
     @Test
@@ -48,16 +48,16 @@ public class UttaksperioderTest {
             new Uttaksperiode(LocalDate.of(2019, Month.JANUARY, 1), LocalDate.of(2019, Month.JANUARY, 31), FULL_UTBETALING));
         uttaksperioder.avslåForArbeidsforhold(arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
 
-        assertThat(uttaksperioder.finnFørsteUttaksdato().isPresent()).isFalse();
-        assertThat(uttaksperioder.finnSisteUttaksdato().isPresent()).isFalse();
+        assertThat(uttaksperioder.finnFørsteUttaksdato()).isEmpty();
+        assertThat(uttaksperioder.finnSisteUttaksdato()).isEmpty();
     }
 
     @Test
     public void ingen_perioder_gir_ingen_start_og_slutt_dato() {
         var uttaksperioder = new Uttaksperioder();
 
-        assertThat(uttaksperioder.finnFørsteUttaksdato().isPresent()).isFalse();
-        assertThat(uttaksperioder.finnSisteUttaksdato().isPresent()).isFalse();
+        assertThat(uttaksperioder.finnFørsteUttaksdato()).isEmpty();
+        assertThat(uttaksperioder.finnSisteUttaksdato()).isEmpty();
     }
 
     @Test

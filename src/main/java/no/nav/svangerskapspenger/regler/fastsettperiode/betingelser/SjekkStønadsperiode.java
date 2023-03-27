@@ -16,15 +16,9 @@ public class SjekkStønadsperiode extends LeafSpecification<FastsettePeriodeGrun
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-
-        if (grunnlag.getAvklarteDatoer().getStartdatoNesteSak().isPresent()) {
+        return grunnlag.getAvklarteDatoer().getStartdatoNesteSak().map(startNesteSak -> {
             var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
-            var startNesteSak = grunnlag.getAvklarteDatoer().getStartdatoNesteSak().get();
-            if (startUttaksperiode.equals(startNesteSak) || startUttaksperiode.isAfter(startNesteSak)) {
-                return ja();
-            }
-        }
-        return nei();
+            return startUttaksperiode.equals(startNesteSak) || startUttaksperiode.isAfter(startNesteSak) ? ja() : nei();
+        }).orElse(nei());
     }
-
 }
