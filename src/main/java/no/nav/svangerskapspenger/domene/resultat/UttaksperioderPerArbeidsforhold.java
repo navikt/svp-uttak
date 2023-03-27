@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import no.nav.svangerskapspenger.utils.Virkedager;
 
@@ -27,7 +26,7 @@ public class UttaksperioderPerArbeidsforhold {
         return uttaksperioder
             .stream()
             .filter(periode -> Virkedager.antallVirkedager(periode.getFom(), periode.getTom())>0)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     public void avslå(ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak) {

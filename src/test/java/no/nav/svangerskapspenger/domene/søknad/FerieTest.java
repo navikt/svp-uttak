@@ -1,10 +1,10 @@
 package no.nav.svangerskapspenger.domene.søknad;
 
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.Test;
 
 public class FerieTest {
 
@@ -105,7 +105,7 @@ public class FerieTest {
 
         var ferieListe = Ferie.opprett(fom, tom);
 
-        assertThat(ferieListe).hasSize(0);
+        assertThat(ferieListe).isEmpty();
     }
 
     @Test

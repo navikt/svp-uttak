@@ -17,14 +17,9 @@ public class SjekkOpphørsdatoForMedlemskap extends LeafSpecification<FastsetteP
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-        if (grunnlag.getAvklarteDatoer().getOpphørsdatoForMedlemskap().isPresent()) {
+        return grunnlag.getAvklarteDatoer().getOpphørsdatoForMedlemskap().map(opphørsdatoForMedlemskap -> {
             var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
-            var opphørsdatoForMedlemskap = grunnlag.getAvklarteDatoer().getOpphørsdatoForMedlemskap().get();
-            if (startUttaksperiode.equals(opphørsdatoForMedlemskap) || startUttaksperiode.isAfter(opphørsdatoForMedlemskap)) {
-                return ja();
-            }
-        }
-        return nei();
+            return startUttaksperiode.equals(opphørsdatoForMedlemskap) || startUttaksperiode.isAfter(opphørsdatoForMedlemskap) ? ja() : nei();
+        }).orElse(nei());
     }
-
 }

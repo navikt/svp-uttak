@@ -1,12 +1,12 @@
 package no.nav.svangerskapspenger.utils;
 
-import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
 
 public class BevegeligeHelligdagerUtil {
 

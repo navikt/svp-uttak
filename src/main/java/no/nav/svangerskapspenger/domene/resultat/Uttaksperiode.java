@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import no.nav.svangerskapspenger.domene.felles.Tuple;
 import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
+import no.nav.svangerskapspenger.domene.felles.Tuple;
 
 public class Uttaksperiode extends LukketPeriode {
 

@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 import org.junit.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
@@ -24,6 +23,7 @@ import no.nav.svangerskapspenger.domene.søknad.Ferie;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
+import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 
 public class FastsettPerioderTjenesteTest {
 
@@ -267,7 +267,7 @@ public class FastsettPerioderTjenesteTest {
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
-        assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getUttaksperioder()).isEmpty();
         assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.ARBEIDSGIVER_KAN_TILRETTELEGGE);
     }
 
@@ -309,7 +309,7 @@ public class FastsettPerioderTjenesteTest {
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
-        assertThat(perioder.getUttaksperioder()).hasSize(0);
+        assertThat(perioder.getUttaksperioder()).isEmpty();
         assertThat(perioder.getArbeidsforholdIkkeOppfyltÅrsak()).isEqualTo(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
     }
 

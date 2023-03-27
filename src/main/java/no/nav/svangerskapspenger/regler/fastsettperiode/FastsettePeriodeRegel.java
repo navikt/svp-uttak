@@ -14,8 +14,8 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFødsel
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkFørsteLovligeUttaksdato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkHullUttak;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkManueltSVPVilkår;
-import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpptjeningsvilkåret;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpphørsdatoForMedlemskap;
+import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkOpptjeningsvilkåret;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkStønadsperiode;
 import no.nav.svangerskapspenger.regler.fastsettperiode.betingelser.SjekkTermindato;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;

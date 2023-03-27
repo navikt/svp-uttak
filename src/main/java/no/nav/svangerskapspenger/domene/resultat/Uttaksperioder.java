@@ -19,11 +19,7 @@ public class Uttaksperioder {
     }
 
     public void leggTilPerioder(Arbeidsforhold arbeidsforhold, Uttaksperiode... perioder) {
-        var uttaksperioderPerArbeidsforhold = perioderPerArbeidsforholdMap.get(arbeidsforhold);
-        if (uttaksperioderPerArbeidsforhold == null) {
-            perioderPerArbeidsforholdMap.put(arbeidsforhold, new UttaksperioderPerArbeidsforhold(List.of(perioder)));
-            return;
-        }
+        var uttaksperioderPerArbeidsforhold = perioderPerArbeidsforholdMap.computeIfAbsent(arbeidsforhold, key -> new UttaksperioderPerArbeidsforhold(List.of()));
         uttaksperioderPerArbeidsforhold.leggTilPerioder(perioder);
     }
 
@@ -36,14 +32,9 @@ public class Uttaksperioder {
     }
 
     public void avslåForArbeidsforhold(Arbeidsforhold arbeidsforhold, ArbeidsforholdIkkeOppfyltÅrsak arbeidsforholdIkkeOppfyltÅrsak) {
-        var perioderPerArbeidsforhold = perioderPerArbeidsforholdMap.get(arbeidsforhold);
-        if (perioderPerArbeidsforhold == null) {
-            perioderPerArbeidsforhold = new UttaksperioderPerArbeidsforhold(List.of());
-            perioderPerArbeidsforholdMap.put(arbeidsforhold, perioderPerArbeidsforhold);
-        }
+        var perioderPerArbeidsforhold = perioderPerArbeidsforholdMap.computeIfAbsent(arbeidsforhold, key -> new UttaksperioderPerArbeidsforhold(List.of()));
         perioderPerArbeidsforhold.avslå(arbeidsforholdIkkeOppfyltÅrsak);
     }
-
 
     public void knekk(Set<LocalDate> knekkpunkter) {
         alleArbeidsforhold().forEach(arbeidsforhold -> perioderPerArbeidsforholdMap.get(arbeidsforhold).knekk(knekkpunkter));
@@ -53,7 +44,7 @@ public class Uttaksperioder {
         Optional<LocalDate> sisteUttaksdato = Optional.empty();
         for (var entry: perioderPerArbeidsforholdMap.entrySet()) {
             var maxDatoForArbeidsforhold = entry.getValue().getUttaksperioder().stream().map(LukketPeriode::getTom).max(LocalDate::compareTo);
-            if (!sisteUttaksdato.isPresent() || (maxDatoForArbeidsforhold.isPresent() && maxDatoForArbeidsforhold.get().isAfter(sisteUttaksdato.get()))) {
+            if (sisteUttaksdato.isEmpty() || (maxDatoForArbeidsforhold.isPresent() && maxDatoForArbeidsforhold.get().isAfter(sisteUttaksdato.get()))) {
                 sisteUttaksdato = maxDatoForArbeidsforhold;
             }
         }
@@ -64,7 +55,7 @@ public class Uttaksperioder {
         Optional<LocalDate> førsteUttaksdato = Optional.empty();
         for (var entry: perioderPerArbeidsforholdMap.entrySet()) {
             var minDatoForArbeidsforhold = entry.getValue().getUttaksperioder().stream().map(LukketPeriode::getFom).min(LocalDate::compareTo);
-            if (!førsteUttaksdato.isPresent() || (minDatoForArbeidsforhold.isPresent() && minDatoForArbeidsforhold.get().isBefore(førsteUttaksdato.get()))) {
+            if (førsteUttaksdato.isEmpty() || (minDatoForArbeidsforhold.isPresent() && minDatoForArbeidsforhold.get().isBefore(førsteUttaksdato.get()))) {
                 førsteUttaksdato = minDatoForArbeidsforhold;
             }
         }
