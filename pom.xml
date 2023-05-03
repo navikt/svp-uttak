@@ -20,7 +20,7 @@
 
         <jacoco.version>0.8.10</jacoco.version>
         <fpsak.nare.version>2.5.3</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.6.6</fpsak.tidsserie.version>
+        <fpsak.tidsserie.version>2.6.7</fpsak.tidsserie.version>
         <assertj.version>3.24.2</assertj.version>
 
         <!-- Sonar felles -->
