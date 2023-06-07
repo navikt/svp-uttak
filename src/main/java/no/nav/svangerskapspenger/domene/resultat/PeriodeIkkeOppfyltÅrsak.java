@@ -13,6 +13,7 @@ public enum PeriodeIkkeOppfyltÅrsak implements PeriodeÅrsak {
     BEGYNT_ANNEN_SAK(8314, "Perioden er etter startdato annen sak/stønadsperiode"),
     SVANGERSKAPSVILKÅRET_IKKE_OPPFYLT(8315, "Svangerskapsvilkåret er ikke oppfylt"),
     OPPTJENINGSVILKÅRET_IKKE_OPPFYLT(8316, "Opptjeningsvilkåret er ikke oppfylt"),
+    PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER(8317, "Uttaksperioden er samtidig som det mottas sykepenger"),
     ;
 
     private final int id;

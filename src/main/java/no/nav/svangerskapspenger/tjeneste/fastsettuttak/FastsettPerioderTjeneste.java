@@ -34,7 +34,7 @@ public class FastsettPerioderTjeneste {
     public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer, Inngangsvilkår inngangsvilkår) {
         var nyeUttaksperioder = uttaksperioderTjeneste.opprett(nyeSøknader);
 
-        var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getFerier());
+        var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getOppholdListe());
         eventueltStartHullUttak.ifPresent(avklarteDatoer::setStartOppholdUttak);
 
         if (!nyeSøknader.isEmpty()) {
@@ -105,9 +105,9 @@ public class FastsettPerioderTjeneste {
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getStartOppholdUttak().ifPresent(knekkpunkter::add);
-        avklarteDatoer.getFerier().forEach(ferie -> {
-            knekkpunkter.add(ferie.getFom());
-            knekkpunkter.add(ferie.getTom().plusDays(1));
+        avklarteDatoer.getOppholdListe().forEach(opphold -> {
+            knekkpunkter.add(opphold.getFom());
+            knekkpunkter.add(opphold.getTom().plusDays(1));
         });
 
         return knekkpunkter;
