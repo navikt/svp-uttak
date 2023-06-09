@@ -633,9 +633,6 @@ public class FastsettPerioderTjenesteTest {
     private void sjekkInnvilgetPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
         sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
-    private void sjekkInnvilgetPeriodeMedOverstyrtUtbetalingsgrad(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
-        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
-    }
 
     private void sjekkAvslåttPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, PeriodeIkkeOppfyltÅrsak årsak) {
         sjekkPeriode(uttaksperiode, fom, tom, BigDecimal.ZERO, UtfallType.IKKE_OPPFYLT, årsak);
