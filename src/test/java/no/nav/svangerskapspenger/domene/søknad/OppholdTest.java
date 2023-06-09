@@ -4,15 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
+import no.nav.svangerskapspenger.tjeneste.fastsettuttak.SvpOppholdÅrsak;
+
 import org.junit.Test;
 
-public class FerieTest {
+public class OppholdTest {
 
     @Test
     public void ferie_uten_røde_dager_skal_ikke_føre_til_knekk() {
         var fom = LocalDate.of(2019, 5, 13);
         var tom = LocalDate.of(2019, 5, 16);
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(1);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
@@ -24,7 +26,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 3);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(1);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom.plusDays(1));
@@ -36,7 +38,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 13);
         var tom = LocalDate.of(2019, 5, 17);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(1);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
@@ -49,7 +51,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 17);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(1);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom.plusDays(1));
@@ -61,7 +63,7 @@ public class FerieTest {
             var fom = LocalDate.of(2019, 5, 2);
             var tom = LocalDate.of(2019, 5, 19);
 
-            var ferieListe = Ferie.opprett(fom, tom);
+            var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
             assertThat(ferieListe).hasSize(2);
             assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
@@ -75,7 +77,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 19);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(3);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
@@ -91,7 +93,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 2);
         var tom = LocalDate.of(2019, 5, 2);
 
-        var ferieListe = Ferie.opprett(fom , tom);
+        var ferieListe = Opphold.opprett(fom , tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(1);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
@@ -103,7 +105,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 1);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).isEmpty();
     }
@@ -113,7 +115,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 19);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(2);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom.plusDays(1));
@@ -127,7 +129,7 @@ public class FerieTest {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 16);
 
-        var ferieListe = Ferie.opprett(fom, tom);
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
 
         assertThat(ferieListe).hasSize(2);
         assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);

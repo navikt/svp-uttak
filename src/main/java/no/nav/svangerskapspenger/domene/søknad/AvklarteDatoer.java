@@ -16,7 +16,7 @@ public class AvklarteDatoer {
     private LocalDate termindato;
     private LocalDate fødselsdato;
     private LocalDate startdatoNesteSak;
-    private List<Ferie> ferier = new ArrayList<>();
+    private List<Opphold> oppholdListe = new ArrayList<>();
     private LocalDate startOppholdUttak;
 
     private AvklarteDatoer() {
@@ -51,8 +51,8 @@ public class AvklarteDatoer {
         return Optional.ofNullable(startdatoNesteSak);
     }
 
-    public List<Ferie> getFerier() {
-        return Collections.unmodifiableList(ferier);
+    public List<Opphold> getOppholdListe() {
+        return Collections.unmodifiableList(oppholdListe);
     }
 
     public Optional<LocalDate> getStartOppholdUttak() {
@@ -111,8 +111,8 @@ public class AvklarteDatoer {
             return this;
         }
 
-        public Builder medFerie(List<Ferie> ferie) {
-            kladd.ferier.addAll(ferie);
+        public Builder medOpphold(List<Opphold> opphold) {
+            kladd.oppholdListe.addAll(opphold);
             return this;
         }
 

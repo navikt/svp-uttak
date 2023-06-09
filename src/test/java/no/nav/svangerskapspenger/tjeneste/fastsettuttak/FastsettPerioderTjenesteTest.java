@@ -19,7 +19,7 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Årsak;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.Ferie;
+import no.nav.svangerskapspenger.domene.søknad.Opphold;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
@@ -357,11 +357,11 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ferie_skal_avslås() {
+    public void periode_med_ferie_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(Ferie.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1)))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
             .build();
 
 
@@ -378,6 +378,111 @@ public class FastsettPerioderTjenesteTest {
         sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
         sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
         sjekkInnvilgetPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void periode_med_sykepenger_skal_avslås() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(3);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusMonths(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(4), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void periode_med_sykepenger_og_ferie_skal_avslås() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(5);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkInnvilgetPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(3), TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(4), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(4), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_1() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(5);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(1), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(3), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(6), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkInnvilgetPeriode(perioder.get(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(7), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_2() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(5);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(4), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(5), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(6), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(3), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(4), TERMINDATO.minusWeeks(3).minusDays(1));
     }
 
     @Test
@@ -409,7 +514,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(Ferie.opprett(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28)))
+            .medOpphold(Opphold.opprett(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28), SvpOppholdÅrsak.FERIE))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
@@ -434,7 +539,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(Ferie.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
+            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
@@ -461,7 +566,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(behovsdato.minusMonths(3))
             .medTermindato(termindato)
-            .medFerie(Ferie.opprett(startFerie, sluttFerie))
+            .medOpphold(Opphold.opprett(startFerie, sluttFerie, SvpOppholdÅrsak.FERIE))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, termindato, behovsdato,
@@ -484,7 +589,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(Ferie.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
+            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
@@ -505,7 +610,7 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medFerie(Ferie.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28)))
+            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
@@ -526,9 +631,6 @@ public class FastsettPerioderTjenesteTest {
     }
 
     private void sjekkInnvilgetPeriode(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
-        sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
-    }
-    private void sjekkInnvilgetPeriodeMedOverstyrtUtbetalingsgrad(Uttaksperiode uttaksperiode, LocalDate fom, LocalDate tom, BigDecimal utbetalingsgrad) {
         sjekkPeriode(uttaksperiode, fom, tom, utbetalingsgrad, UtfallType.OPPFYLT, PeriodeOppfyltÅrsak.UTTAK_ER_INNVILGET);
     }
 

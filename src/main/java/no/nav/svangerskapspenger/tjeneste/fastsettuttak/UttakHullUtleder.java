@@ -14,31 +14,31 @@ import no.nav.fpsak.tidsserie.LocalDateSegment;
 import no.nav.fpsak.tidsserie.LocalDateTimeline;
 import no.nav.fpsak.tidsserie.StandardCombinators;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
-import no.nav.svangerskapspenger.domene.søknad.Ferie;
+import no.nav.svangerskapspenger.domene.søknad.Opphold;
 
 class UttakHullUtleder {
 
-    Optional<LocalDate> finnStartHull(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
-        var intervaller = intervallerFraTidslinje(nyeUttaksperioder, ferier);
+    Optional<LocalDate> finnStartHull(Uttaksperioder nyeUttaksperioder, List<Opphold> opphold) {
+        var intervaller = intervallerFraTidslinje(nyeUttaksperioder, opphold);
         // Velg dagen etter tidligste tom dersom disjoint etter tidslinje-compress
         return intervaller.size() < 2 ? Optional.empty() :
             intervaller.stream().map(LocalDateInterval::getTomDato).min(Comparator.naturalOrder()).map(d -> d.plusDays(1));
     }
 
-    private Collection<LocalDateInterval> intervallerFraTidslinje(Uttaksperioder nyeUttaksperioder, List<Ferie> ferier) {
+    private Collection<LocalDateInterval> intervallerFraTidslinje(Uttaksperioder nyeUttaksperioder, List<Opphold> opphold) {
         var perioder = new ArrayList<>(tilSegmenter(nyeUttaksperioder));
-        if (!perioder.isEmpty() && !ferier.isEmpty()) {
+        if (!perioder.isEmpty() && !opphold.isEmpty()) {
             var førsteuttaksdato = perioder.stream().map(LocalDateSegment::getFom).min(Comparator.naturalOrder()).orElseThrow();
             var sisteuttaksdato = perioder.stream().map(LocalDateSegment::getTom).max(Comparator.naturalOrder()).orElseThrow();
-            perioder.addAll(tilSegmenter(ferier, førsteuttaksdato, sisteuttaksdato));
+            perioder.addAll(tilSegmenter(opphold, førsteuttaksdato, sisteuttaksdato));
         }
         return new LocalDateTimeline<>(perioder, StandardCombinators::alwaysTrueForMatch).compress().getLocalDateIntervals();
     }
 
-    private List<LocalDateSegment<Boolean>> tilSegmenter(List<Ferie> ferier, LocalDate førsteuttaksdato, LocalDate sisteuttaksdato) {
-        return ferier.stream()
-            .filter(ferie -> !ferie.getTom().isBefore(førsteuttaksdato) &&  !ferie.getFom().isAfter(sisteuttaksdato)) //se bort fra ferieperioder som er før eller etter uttak
-            .map(ferie -> new LocalDateSegment<>(ferie.getFom(), utvidFredagTilSøndag(ferie.getTom()), Boolean.TRUE))
+    private List<LocalDateSegment<Boolean>> tilSegmenter(List<Opphold> oppholdListe, LocalDate førsteuttaksdato, LocalDate sisteuttaksdato) {
+        return oppholdListe.stream()
+            .filter(opphold -> !opphold.getTom().isBefore(førsteuttaksdato) &&  !opphold.getFom().isAfter(sisteuttaksdato)) //se bort fra ferieperioder som er før eller etter uttak
+            .map(opphold -> new LocalDateSegment<>(opphold.getFom(), utvidFredagTilSøndag(opphold.getTom()), Boolean.TRUE))
             .toList();
     }
 

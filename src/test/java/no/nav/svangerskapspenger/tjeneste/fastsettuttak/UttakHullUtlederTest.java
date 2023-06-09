@@ -13,7 +13,7 @@ import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
-import no.nav.svangerskapspenger.domene.søknad.Ferie;
+import no.nav.svangerskapspenger.domene.søknad.Opphold;
 
 public class UttakHullUtlederTest {
 
@@ -108,7 +108,7 @@ public class UttakHullUtlederTest {
             new Uttaksperiode(LocalDate.of(2019, 8, 5), LocalDate.of(2019, 9, 10), BigDecimal.valueOf(100))
         );
 
-        var førsteHull = new UttakHullUtleder().finnStartHull(perioder, Ferie.opprett(LocalDate.of(2019, 7, 20), LocalDate.of(2019, 7, 27)));
+        var førsteHull = new UttakHullUtleder().finnStartHull(perioder, Opphold.opprett(LocalDate.of(2019, 7, 20), LocalDate.of(2019, 7, 27), null));
 
         assertThat(førsteHull).isEmpty();
     }
