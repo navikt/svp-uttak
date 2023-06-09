@@ -432,6 +432,60 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
+    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_1() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(5);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(1), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(3), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(6), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkInnvilgetPeriode(perioder.get(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(7), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_2() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
+            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
+            .build();
+
+
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
+        var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
+
+        assertThat(perioder).hasSize(5);
+
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(4), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(5), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(6), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_EN_FERIE);
+        sjekkAvslåttPeriode(perioder.get(3), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(4), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(4), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
     public void perioder_etter_hull_i_uttak_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)

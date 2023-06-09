@@ -5,9 +5,9 @@ import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.FastsettePeriodeGrunnlag;
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.SvpOppholdÅrsak;
-@RuleDocumentation(SjekkFerie.ID)
+@RuleDocumentation(SjekkSykepenger.ID)
 public class SjekkSykepenger extends LeafSpecification<FastsettePeriodeGrunnlag> {
-    public static final String ID = "SVP_VK 14.4.8";
+    public static final String ID = "SVP_VK 14.4.11";
 
     public SjekkSykepenger() {
         super(ID);
