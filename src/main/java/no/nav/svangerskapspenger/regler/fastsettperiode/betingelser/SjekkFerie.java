@@ -17,7 +17,7 @@ public class SjekkFerie extends LeafSpecification<FastsettePeriodeGrunnlag> {
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-        var overlappendeFerie = grunnlag.getAvklarteDatoer().getOppholdListe().stream()
+        var overlappendeFerie = grunnlag.getOppholdPerArbeidsforhold().stream()
             .filter(opphold -> opphold.getÅrsak().equals(SvpOppholdÅrsak.FERIE))
             .filter(ferie -> ferie.overlapper(grunnlag.getAktuellPeriode())).findAny();
 

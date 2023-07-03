@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -19,9 +20,9 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Årsak;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
 import no.nav.svangerskapspenger.domene.søknad.DelvisTilrettelegging;
-import no.nav.svangerskapspenger.domene.søknad.Opphold;
 import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
+import no.nav.svangerskapspenger.domene.søknad.Opphold;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 
@@ -58,7 +59,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -81,7 +82,7 @@ public class FastsettPerioderTjenesteTest {
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
         var nyeSøknader = List.of(søknad1, søknad2);
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
 
@@ -92,6 +93,36 @@ public class FastsettPerioderTjenesteTest {
         perioder = uttaksperioder.perioder(ARBEIDSFORHOLD2).getUttaksperioder();
         assertThat(perioder).hasSize(1);
         sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO.plusDays(10), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
+    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere_og_opphold_i_ett() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+        var oppholdArbeidsforhold2= Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusDays(15), TILRETTELEGGING_BEHOV_DATO.plusDays(17), SvpOppholdÅrsak.SYKEPENGER);
+
+        var søknad1 = new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO)));
+        var søknad2 = new Søknad(ARBEIDSFORHOLD2, ARBEIDSFORHOLD2_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO.plusDays(10),
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
+        var nyeSøknader = List.of(søknad1, søknad2);
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD2, oppholdArbeidsforhold2));
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1));
+
+        perioder = uttaksperioder.perioder(ARBEIDSFORHOLD2).getUttaksperioder();
+        assertThat(perioder).hasSize(3);
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO.plusDays(10), TILRETTELEGGING_BEHOV_DATO.plusDays(15).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusDays(15), TILRETTELEGGING_BEHOV_DATO.plusDays(17), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusDays(18), TERMINDATO.minusWeeks(3).minusDays(1));
     }
 
     @Test
@@ -108,7 +139,7 @@ public class FastsettPerioderTjenesteTest {
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
         var nyeSøknader = List.of(søknad1, søknad2);
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
 
@@ -122,6 +153,37 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
+    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver_og_opphold_i_ett() {
+        var avklarteDatoer = new AvklarteDatoer.Builder()
+            .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
+            .medTermindato(TERMINDATO)
+            .build();
+
+
+        var søknad1 = new Søknad(ARBEIDSFORHOLD3, ARBEIDSFORHOLD3_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO)));
+        var søknad2 = new Søknad(ARBEIDSFORHOLD4, ARBEIDSFORHOLD4_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO.plusDays(10),
+            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO.plusDays(10))));
+        var nyeSøknader = List.of(søknad1, søknad2);
+
+        var oppholdArbeidsforhold2= Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusDays(15), TILRETTELEGGING_BEHOV_DATO.plusDays(17), SvpOppholdÅrsak.SYKEPENGER);
+
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD4, oppholdArbeidsforhold2));
+
+        assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(2);
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD3).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO, TERMINDATO.minusWeeks(3).minusDays(1));
+
+        perioder = uttaksperioder.perioder(ARBEIDSFORHOLD4).getUttaksperioder();
+        assertThat(perioder).hasSize(3);
+        sjekkInnvilgetPeriode(perioder.get(0), TILRETTELEGGING_BEHOV_DATO.plusDays(10), TILRETTELEGGING_BEHOV_DATO.plusDays(15).minusDays(1));
+        sjekkAvslåttPeriode(perioder.get(1), TILRETTELEGGING_BEHOV_DATO.plusDays(15), TILRETTELEGGING_BEHOV_DATO.plusDays(17), PeriodeIkkeOppfyltÅrsak.PERIODEN_ER_SAMTIDIG_SOM_SYKEPENGER);
+        sjekkInnvilgetPeriode(perioder.get(2), TILRETTELEGGING_BEHOV_DATO.plusDays(18), TERMINDATO.minusWeeks(3).minusDays(1));
+    }
+
+    @Test
     public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTermindato(TERMINDATO)
@@ -130,7 +192,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -151,7 +213,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -173,7 +235,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -195,7 +257,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -218,7 +280,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -242,7 +304,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new DelvisTilrettelegging(startTilpassing, BigDecimal.valueOf(60L)))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -263,7 +325,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new FullTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next());
@@ -285,7 +347,7 @@ public class FastsettPerioderTjenesteTest {
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 7), new BigDecimal("30.00"))
         )));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(2);
@@ -306,7 +368,7 @@ public class FastsettPerioderTjenesteTest {
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5))
             )));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1);
         assertThat(perioder.getUttaksperioder()).isEmpty();
@@ -325,7 +387,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -346,7 +408,7 @@ public class FastsettPerioderTjenesteTest {
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -361,14 +423,13 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
             .build();
 
+        var opphold = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE);
 
-        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
-            List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
+        var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO, List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, opphold));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -385,14 +446,15 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
             .build();
+
+        var opphold = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER);
 
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, opphold));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -409,15 +471,17 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
             .build();
+
+        var oppholdListe = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE);
+        var opphold2Liste = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusMonths(1), TILRETTELEGGING_BEHOV_DATO.plusMonths(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER);
+        oppholdListe.addAll(opphold2Liste);
 
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -436,15 +500,15 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
             .build();
 
-
+        var oppholdListe = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE);
+        var opphold2Liste = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(1).plusDays(3), SvpOppholdÅrsak.SYKEPENGER);
+        oppholdListe.addAll(opphold2Liste);
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1,oppholdListe));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -463,15 +527,18 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE))
-            .medOpphold(Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), SvpOppholdÅrsak.SYKEPENGER))
             .build();
+
+        var oppholdListe = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(1), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(1), SvpOppholdÅrsak.FERIE);
+        var oppholdListe2 = Opphold.opprett(TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).minusDays(2), TILRETTELEGGING_BEHOV_DATO.plusWeeks(2).plusDays(3), SvpOppholdÅrsak.SYKEPENGER);
+
+        oppholdListe.addAll(oppholdListe2);
 
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(new IngenTilrettelegging(TILRETTELEGGING_BEHOV_DATO))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -499,7 +566,7 @@ public class FastsettPerioderTjenesteTest {
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
             )));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(3);
@@ -514,8 +581,9 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28), SvpOppholdÅrsak.FERIE))
             .build();
+
+        var oppholdListe = Opphold.opprett(LocalDate.of(2019, Month.FEBRUARY, 1), LocalDate.of(2019, Month.FEBRUARY, 28), SvpOppholdÅrsak.FERIE);
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
@@ -524,7 +592,7 @@ public class FastsettPerioderTjenesteTest {
                 new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"))
             )));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(3);
@@ -539,15 +607,16 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
+
+        var oppholdListe = Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE);
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
             )));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
@@ -566,13 +635,14 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(behovsdato.minusMonths(3))
             .medTermindato(termindato)
-            .medOpphold(Opphold.opprett(startFerie, sluttFerie, SvpOppholdÅrsak.FERIE))
             .build();
+
+        var oppholdListe = Opphold.opprett(startFerie, sluttFerie, SvpOppholdÅrsak.FERIE);
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, termindato, behovsdato,
             List.of(new IngenTilrettelegging(startIngenTilrettelegging))));
 
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         assertThat(uttaksperioder.alleArbeidsforhold()).hasSize(1);
         var perioder = uttaksperioder.perioder(uttaksperioder.alleArbeidsforhold().iterator().next()).getUttaksperioder();
@@ -589,15 +659,15 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
 
+        var oppholdListe = Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE);
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
             )));
         var avslåttInngangsvilgår = new Inngangsvilkår(false, true);
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);
@@ -610,15 +680,16 @@ public class FastsettPerioderTjenesteTest {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
-            .medOpphold(Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE))
             .build();
+
+        var oppholdListe = Opphold.opprett(LocalDate.of(2018, Month.DECEMBER, 15), LocalDate.of(2018, Month.DECEMBER, 28), SvpOppholdÅrsak.FERIE);
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
             )));
         var avslåttInngangsvilgår = new Inngangsvilkår(true, false);
-        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår);
+        var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
         assertThat(perioder).hasSize(1);

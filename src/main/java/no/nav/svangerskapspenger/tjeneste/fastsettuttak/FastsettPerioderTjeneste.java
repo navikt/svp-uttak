@@ -1,7 +1,10 @@
 package no.nav.svangerskapspenger.tjeneste.fastsettuttak;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -11,11 +14,13 @@ import no.nav.fpsak.nare.evaluation.summary.EvaluationVersion;
 import no.nav.fpsak.nare.evaluation.summary.NareVersion;
 import no.nav.fpsak.nare.json.JsonOutput;
 import no.nav.fpsak.nare.json.NareJsonException;
+import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.resultat.ArbeidsforholdIkkeOppfyltÅrsak;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.resultat.UttaksperioderPerArbeidsforhold;
 import no.nav.svangerskapspenger.domene.søknad.AvklarteDatoer;
+import no.nav.svangerskapspenger.domene.søknad.Opphold;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.regler.fastsettperiode.FastsettePeriodeRegel;
 import no.nav.svangerskapspenger.regler.fastsettperiode.PeriodeOutcome;
@@ -31,23 +36,27 @@ public class FastsettPerioderTjeneste {
     private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
     private UttakHullUtleder uttakHullUtleder = new UttakHullUtleder();
 
-    public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer, Inngangsvilkår inngangsvilkår) {
+    public Uttaksperioder fastsettePerioder(List<Søknad> nyeSøknader, AvklarteDatoer avklarteDatoer, Inngangsvilkår inngangsvilkår,
+                                            Map<Arbeidsforhold, List<Opphold>> oppholdPerArbeidsforholdMap) {
         var nyeUttaksperioder = uttaksperioderTjeneste.opprett(nyeSøknader);
 
-        var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, avklarteDatoer.getOppholdListe());
+        var oppholdListe = oppholdPerArbeidsforholdMap.values().stream().flatMap(Collection::stream).toList();
+
+        var eventueltStartHullUttak = uttakHullUtleder.finnStartHull(nyeUttaksperioder, oppholdListe);
         eventueltStartHullUttak.ifPresent(avklarteDatoer::setStartOppholdUttak);
 
         if (!nyeSøknader.isEmpty()) {
             //Kjør reglene bare dersom det er søkt om noe nytt
-            fastsettePerioder(avklarteDatoer, nyeUttaksperioder, inngangsvilkår);
+            fastsettePerioder(avklarteDatoer, nyeUttaksperioder, inngangsvilkår, oppholdPerArbeidsforholdMap);
         }
         return nyeUttaksperioder;
     }
 
 
 
-    private void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Inngangsvilkår inngangsvilkår) {
-        //Først knekk opp perioder på alle potensielle knekkpunkter
+    private void fastsettePerioder(AvklarteDatoer avklarteDatoer, Uttaksperioder uttaksperioder, Inngangsvilkår inngangsvilkår,
+                                   Map<Arbeidsforhold, List<Opphold>> oppholdPerArbeidsforholdMap) {
+        //Først knekk opp perioder for potensielle knekkpunkter som gjelder alle arbeidsforhold
         var knekkpunkter = finnKnekkpunkter(avklarteDatoer);
         uttaksperioder.knekk(knekkpunkter);
 
@@ -55,21 +64,28 @@ public class FastsettPerioderTjeneste {
         uttaksperioder.alleArbeidsforhold().forEach(arbeidsforhold -> {
             var uttaksperioderPerArbeidsforhold = uttaksperioder.perioder(arbeidsforhold);
             if (uttaksperioderPerArbeidsforhold.getArbeidsforholdIkkeOppfyltÅrsak() == null) {
-                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold, inngangsvilkår);
+                //Knekker opp perioder for et eventuelt opphold per arbeidsforhold
+                var oppholdPerArbeidsforhold = oppholdPerArbeidsforholdMap.getOrDefault(arbeidsforhold, Collections.emptyList());
+                var knekkpunkterOpphold = finnKnekkpunkterOpphold(oppholdPerArbeidsforhold);
+                uttaksperioderPerArbeidsforhold.knekk(knekkpunkterOpphold);
+
+                fastsettPerioder(avklarteDatoer, uttaksperioderPerArbeidsforhold, inngangsvilkår, oppholdPerArbeidsforhold);
             }
         });
     }
 
-    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold, Inngangsvilkår inngangsvilkår) {
+    private void fastsettPerioder(AvklarteDatoer avklarteDatoer, UttaksperioderPerArbeidsforhold uttaksperioderPerArbeidsforhold, Inngangsvilkår inngangsvilkår,
+                                  List<Opphold> oppholdPerArbeidsforhold) {
         FastsettePeriodeRegel regel = new FastsettePeriodeRegel();
-        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode, inngangsvilkår));
+        uttaksperioderPerArbeidsforhold.getUttaksperioder().forEach(periode -> fastsettPeriode(regel, avklarteDatoer, periode, inngangsvilkår, oppholdPerArbeidsforhold));
         if (uttaksperioderPerArbeidsforhold.getUttaksperioder().isEmpty()) {
             uttaksperioderPerArbeidsforhold.avslå(ArbeidsforholdIkkeOppfyltÅrsak.UTTAK_KUN_PÅ_HELG);
         }
     }
 
-    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode, Inngangsvilkår inngangsvilkår) {
-        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode, inngangsvilkår);
+    private void fastsettPeriode(FastsettePeriodeRegel regel, AvklarteDatoer avklarteDatoer, Uttaksperiode periode, Inngangsvilkår inngangsvilkår,
+                                 List<Opphold> oppholdPerArbeidsforhold) {
+        var grunnlag = new FastsettePeriodeGrunnlag(avklarteDatoer, periode, inngangsvilkår, oppholdPerArbeidsforhold);
         var evaluering = regel.evaluer(grunnlag);
         var inputJson = toJson(grunnlag);
         var regelJson = EvaluationSerializer.asJson(evaluering, REGEL_VERSION, NareVersion.NARE_VERSION);
@@ -105,12 +121,16 @@ public class FastsettPerioderTjeneste {
         avklarteDatoer.getBrukersDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getBarnetsDødsdato().ifPresent(knekkpunkter::add);
         avklarteDatoer.getStartOppholdUttak().ifPresent(knekkpunkter::add);
-        avklarteDatoer.getOppholdListe().forEach(opphold -> {
-            knekkpunkter.add(opphold.getFom());
-            knekkpunkter.add(opphold.getTom().plusDays(1));
-        });
-
         return knekkpunkter;
+    }
+
+    private Set<LocalDate> finnKnekkpunkterOpphold(List<Opphold> oppholdListe) {
+        var knekkpunkterOpphold = new TreeSet<LocalDate>();
+        oppholdListe.forEach(opphold -> {
+            knekkpunkterOpphold.add(opphold.getFom());
+            knekkpunkterOpphold.add(opphold.getTom().plusDays(1));
+        });
+        return knekkpunkterOpphold;
     }
 
 }

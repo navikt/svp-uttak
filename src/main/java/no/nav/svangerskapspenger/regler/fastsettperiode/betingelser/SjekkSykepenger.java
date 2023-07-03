@@ -15,7 +15,7 @@ public class SjekkSykepenger extends LeafSpecification<FastsettePeriodeGrunnlag>
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
-        var overlappendeSykepenger = grunnlag.getAvklarteDatoer().getOppholdListe().stream()
+        var overlappendeSykepenger = grunnlag.getOppholdPerArbeidsforhold().stream()
             .filter(opphold -> opphold.getÅrsak().equals(SvpOppholdÅrsak.SYKEPENGER))
             .filter(opphold -> opphold.overlapper(grunnlag.getAktuellPeriode())).findAny();
 

@@ -34,7 +34,7 @@ public class UttaksperioderPerArbeidsforhold {
         this.arbeidsforholdIkkeOppfyltÅrsak = arbeidsforholdIkkeOppfyltÅrsak;
     }
 
-    void knekk(Set<LocalDate> knekkpunkter) {
+    public void knekk(Set<LocalDate> knekkpunkter) {
         knekkpunkter.forEach(knekkpunkt -> {
             var nyePerioder = new ArrayList<Uttaksperiode>();
             uttaksperioder.forEach(periode -> {
