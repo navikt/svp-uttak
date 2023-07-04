@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <properties>
-       <jupiter.version>5.9.3</jupiter.version>
+        <jupiter.version>5.9.3</jupiter.version>
         <revision>2.1</revision>
         <sha1>-SNAPSHOT</sha1>
         <java.version>17</java.version>
@@ -106,7 +106,7 @@
         <developerConnection>scm:git:https://github.com/navikt/svp-uttak.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-     <organization>
+    <organization>
         <name>no.nav</name>
         <url>https://github.com/navikt</url>
     </organization>
@@ -117,7 +117,7 @@
             <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
-     <distributionManagement>
+    <distributionManagement>
         <repository>
             <id>github</id>
             <name>Github navikt Maven Packages</name>
