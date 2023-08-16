@@ -138,4 +138,16 @@ public class OppholdTest {
         assertThat(ferieListe.get(1).getTom()).isEqualTo(tom);
     }
 
+    @Test
+    public void opphold_grunnet_sykepenger_skal_ikke_påvirkes_av_helligdager() {
+        var fom = LocalDate.of(2019, 4, 29);
+        var tom = LocalDate.of(2019, 5, 16);
+
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.SYKEPENGER);
+
+        assertThat(ferieListe).hasSize(1);
+        assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
+        assertThat(ferieListe.get(0).getTom()).isEqualTo(tom);
+    }
+
 }
