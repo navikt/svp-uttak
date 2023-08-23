@@ -13,4 +13,6 @@ public interface Tilrettelegging {
 
     void setArbeidsgiversDato(LocalDate arbeidsgiversDato);
 
+    BigDecimal getOverstyrtUtbetalingsgrad();
+
 }

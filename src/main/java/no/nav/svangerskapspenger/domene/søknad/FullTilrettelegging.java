@@ -35,4 +35,9 @@ public class FullTilrettelegging implements Tilrettelegging {
         this.tilretteleggingArbeidsgiverDato = arbeidsgiversDato;
     }
 
+    @Override
+    public BigDecimal getOverstyrtUtbetalingsgrad() {
+        return BigDecimal.ZERO;
+    }
+
 }
