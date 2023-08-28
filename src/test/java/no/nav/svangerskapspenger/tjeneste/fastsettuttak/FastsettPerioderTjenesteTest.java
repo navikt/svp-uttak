@@ -302,7 +302,7 @@ public class FastsettPerioderTjenesteTest {
 
         var startTilpassing = LocalDate.of(2019, Month.FEBRUARY, 1);
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
-            List.of(new DelvisTilrettelegging(startTilpassing, BigDecimal.valueOf(60L), BigDecimal.ZERO))));
+            List.of(new DelvisTilrettelegging(startTilpassing, BigDecimal.valueOf(60L), null))));
 
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
 
@@ -342,9 +342,9 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), BigDecimal.ZERO),
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5), new BigDecimal("20.00"), BigDecimal.ZERO),
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 7), new BigDecimal("30.00"), BigDecimal.ZERO)
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), null),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 5), new BigDecimal("20.00"), null),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 7), new BigDecimal("30.00"), null)
         )));
 
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
@@ -561,9 +561,9 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), BigDecimal.ZERO),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), null),
                 new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), BigDecimal.ZERO)
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), null)
             )));
 
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of());
@@ -587,9 +587,9 @@ public class FastsettPerioderTjenesteTest {
 
         var nyeSøknader = List.of(new Søknad(ARBEIDSFORHOLD1, ARBEIDSFORHOLD1_PROSENT, TERMINDATO, TILRETTELEGGING_BEHOV_DATO,
             List.of(
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), BigDecimal.ZERO),
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("10.00"), null),
                 new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1)),
-                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), BigDecimal.ZERO)
+                new DelvisTilrettelegging(LocalDate.of(2019, Month.MARCH, 1), new BigDecimal("30.00"), null)
             )));
 
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, inngangsvilkårDefault, Map.of(ARBEIDSFORHOLD1, oppholdListe));

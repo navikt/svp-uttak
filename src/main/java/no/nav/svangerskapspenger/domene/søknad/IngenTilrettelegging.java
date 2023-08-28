@@ -33,7 +33,7 @@ public class IngenTilrettelegging implements Tilrettelegging {
 
     @Override
     public BigDecimal getOverstyrtUtbetalingsgrad() {
-        return BigDecimal.ZERO;
+        return null;
     }
 
 

@@ -11,10 +11,6 @@ public class FullTilrettelegging implements Tilrettelegging {
         this.tilretteleggingArbeidsgiverDato = tilretteleggingArbeidsgiverDato;
     }
 
-    public LocalDate getTilretteleggingArbeidsgiverDato() {
-        return tilretteleggingArbeidsgiverDato;
-    }
-
     @Override
     public LocalDate getArbeidsgiversDato() {
         return tilretteleggingArbeidsgiverDato;
@@ -37,7 +33,7 @@ public class FullTilrettelegging implements Tilrettelegging {
 
     @Override
     public BigDecimal getOverstyrtUtbetalingsgrad() {
-        return BigDecimal.ZERO;
+        return null;
     }
 
 }
