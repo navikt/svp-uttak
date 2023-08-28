@@ -31,5 +31,10 @@ public class IngenTilrettelegging implements Tilrettelegging {
         this.tilretteleggingOpphørerDato = arbeidsgiversDato;
     }
 
+    @Override
+    public BigDecimal getOverstyrtUtbetalingsgrad() {
+        return null;
+    }
+
 
 }

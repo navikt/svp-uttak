@@ -29,7 +29,7 @@ public class UttaksperioderTjenesteTest {
 
     @Test
     public void først_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_to_perioder() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(50L));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(50L), null);
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -56,7 +56,7 @@ public class UttaksperioderTjenesteTest {
 
     @Test
     public void først_ikke_søkt_deretter_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_tre_perioder() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 15), BigDecimal.valueOf(50L));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 15), BigDecimal.valueOf(50L), null);
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -115,7 +115,7 @@ public class UttaksperioderTjenesteTest {
     public void alt_før_behovsdato_fjernes_dersom_det_finnes_en_arbeidsgiversdato_link_behovsdato() {
 
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2018, Month.DECEMBER, 15));
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("40.0"));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("40.0"), null);
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -176,10 +176,10 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder).hasSize(2);
 
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
-        assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato().minusDays(1));
+        assertThat(perioder.get(0).getTom()).isEqualTo(tilrettelegging.getArbeidsgiversDato().minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
 
-        assertThat(perioder.get(1).getFom()).isEqualTo(tilrettelegging.getTilretteleggingArbeidsgiverDato());
+        assertThat(perioder.get(1).getFom()).isEqualTo(tilrettelegging.getArbeidsgiversDato());
         assertThat(perioder.get(1).getTom()).isEqualTo(LocalDate.of(2019, Month.APRIL, 9));
         assertThat(perioder.get(1).getUtbetalingsgrad()).isEqualTo(BigDecimal.ZERO);
 
@@ -207,7 +207,7 @@ public class UttaksperioderTjenesteTest {
 
     @Test
     public void delvis_tilrettelegging_fra_februar_fører_til_to_uttaksperioder() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1), BigDecimal.valueOf(20L));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1), BigDecimal.valueOf(20L), null);
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -232,7 +232,7 @@ public class UttaksperioderTjenesteTest {
 
     @Test
     public void delvis_tilrettelegging_fra_første_dag_fører_til_en_uttaksperioder() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), null);
 
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -252,7 +252,7 @@ public class UttaksperioderTjenesteTest {
 
     @Test
     public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
-        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L));
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L), null);
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
             HUNDRE_PROSENT,
@@ -267,6 +267,26 @@ public class UttaksperioderTjenesteTest {
         assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
         assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
         assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(HUNDRE_PROSENT);
+    }
+
+    @Test
+    public void delvis_tilrettelegging_skal_bruke_overstyrt_utbetalingsgrad() {
+        var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), BigDecimal.valueOf(60.06));
+
+        var søknad = new Søknad(
+            ARBEIDSFORHOLD1,
+            HUNDRE_PROSENT,
+            TERMINDATO,
+            LocalDate.of(2019, Month.JANUARY, 1),
+            List.of(delvisTilrettelegging));
+
+        var uttaksperioder = uttaksperioderTjeneste.opprett(List.of(søknad));
+
+        var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
+        assertThat(perioder).hasSize(1);
+        assertThat(perioder.get(0).getFom()).isEqualTo(LocalDate.of(2019, Month.JANUARY, 1));
+        assertThat(perioder.get(0).getTom()).isEqualTo(TERMINDATO.minusWeeks(3).minusDays(1));
+        assertThat(perioder.get(0).getUtbetalingsgrad()).isEqualTo(new BigDecimal("60.06"));
     }
 
     @Test

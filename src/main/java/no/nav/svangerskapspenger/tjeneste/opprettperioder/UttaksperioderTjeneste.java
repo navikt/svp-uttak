@@ -105,6 +105,9 @@ public class UttaksperioderTjeneste {
         if (kryss.equals(TilretteleggingKryss.A)) {
             return BigDecimal.ZERO;
         } else if (kryss.equals(TilretteleggingKryss.B)) {
+            if (tilrettelegging.getOverstyrtUtbetalingsgrad() != null) {
+                return tilrettelegging.getOverstyrtUtbetalingsgrad();
+            }
             return UtbetalingsgradUtleder.beregnUtbetalingsgrad(søknad, tilrettelegging.getTilretteleggingsprosent());
         }
         return FULL_UTBETALINGSGRAD;
