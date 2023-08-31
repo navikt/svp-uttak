@@ -23,11 +23,11 @@ final class UtbetalingsgradUtleder {
             return NULL_PROSENT;
         }
         var arbeidsprosent = stillingsprosent.subtract(tilretteleggingsprosent);
-        var utbetalingsgrad = arbeidsprosent.multiply(HUNDRE_PROSENT).divide(stillingsprosent, 2, RoundingMode.HALF_UP);
+        var utbetalingsgrad = arbeidsprosent.multiply(HUNDRE_PROSENT).divide(stillingsprosent, 10, RoundingMode.HALF_UP);
         if (utbetalingsgrad.compareTo(BigDecimal.valueOf(100L)) > 0) {
             return HUNDRE_PROSENT;
         }
-        return utbetalingsgrad;
+        return utbetalingsgrad.setScale(2, RoundingMode.HALF_UP);
     }
 
 }
