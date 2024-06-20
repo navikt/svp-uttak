@@ -717,6 +717,7 @@ public class FastsettPerioderTjenesteTest {
         assertThat(uttaksperiode.getÅrsak()).isEqualTo(årsak);
         assertThat(uttaksperiode.getRegelInput()).isNotEmpty();
         assertThat(uttaksperiode.getRegelSporing()).isNotEmpty();
+        assertThat(uttaksperiode.getRegelVersjon()).isNotEmpty();
     }
 
 }

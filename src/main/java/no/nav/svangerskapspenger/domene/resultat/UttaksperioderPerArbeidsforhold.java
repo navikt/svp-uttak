@@ -40,8 +40,8 @@ public class UttaksperioderPerArbeidsforhold {
             uttaksperioder.forEach(periode -> {
                 var knektePerioder = periode.knekk(knekkpunkt);
                 if (knektePerioder.isPresent()) {
-                    nyePerioder.add(knektePerioder.get().getElement1());
-                    nyePerioder.add(knektePerioder.get().getElement2());
+                    nyePerioder.add(knektePerioder.get().periode1());
+                    nyePerioder.add(knektePerioder.get().periode2());
                 } else {
                     nyePerioder.add(periode);
                 }
