@@ -47,7 +47,7 @@ public class FastsettPerioderTjenesteTest {
 
     private final FastsettPerioderTjeneste fastsettPerioderTjeneste = new FastsettPerioderTjeneste();
 
-    private final Inngangsvilkår inngangsvilkårDefault = new Inngangsvilkår(true, true);
+    private final Inngangsvilkår inngangsvilkårDefault = new Inngangsvilkår(true, true, Boolean.TRUE);
 
     @Test
     public void ingen_tilrettelegging_fra_behovsdato() {
@@ -666,7 +666,7 @@ public class FastsettPerioderTjenesteTest {
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
             )));
-        var avslåttInngangsvilgår = new Inngangsvilkår(false, true);
+        var avslåttInngangsvilgår = new Inngangsvilkår(false, true, Boolean.TRUE);
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();
@@ -688,7 +688,7 @@ public class FastsettPerioderTjenesteTest {
             List.of(
                 new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1))
             )));
-        var avslåttInngangsvilgår = new Inngangsvilkår(true, false);
+        var avslåttInngangsvilgår = new Inngangsvilkår(true, false, Boolean.TRUE);
         var uttaksperioder = fastsettPerioderTjeneste.fastsettePerioder(nyeSøknader, avklarteDatoer, avslåttInngangsvilgår, Map.of(ARBEIDSFORHOLD1, oppholdListe));
 
         var perioder = uttaksperioder.perioder(ARBEIDSFORHOLD1).getUttaksperioder();

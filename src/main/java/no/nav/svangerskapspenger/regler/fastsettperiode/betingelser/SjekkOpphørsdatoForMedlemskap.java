@@ -1,6 +1,8 @@
 package no.nav.svangerskapspenger.regler.fastsettperiode.betingelser;
 
 
+import java.util.Objects;
+
 import no.nav.fpsak.nare.doc.RuleDocumentation;
 import no.nav.fpsak.nare.evaluation.Evaluation;
 import no.nav.fpsak.nare.specification.LeafSpecification;
@@ -17,6 +19,10 @@ public class SjekkOpphørsdatoForMedlemskap extends LeafSpecification<FastsetteP
 
     @Override
     public Evaluation evaluate(FastsettePeriodeGrunnlag grunnlag) {
+        // Kompatibel med eldre grunnlag v/deserialisering - vil gå videre dersom true eller null
+        if (Objects.equals(grunnlag.getInngangsvilkår().medlemskapOppfylt(), Boolean.FALSE)) {
+            return ja();
+        }
         return grunnlag.getAvklarteDatoer().getOpphørsdatoForMedlemskap().map(opphørsdatoForMedlemskap -> {
             var startUttaksperiode = grunnlag.getAktuellPeriode().getFom();
             return startUttaksperiode.equals(opphørsdatoForMedlemskap) || startUttaksperiode.isAfter(opphørsdatoForMedlemskap) ? ja() : nei();
