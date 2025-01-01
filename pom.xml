@@ -21,7 +21,7 @@
         <jacoco.version>0.8.12</jacoco.version>
         <fpsak.nare.version>2.6.3</fpsak.nare.version>
         <fpsak.tidsserie.version>2.7.1</fpsak.tidsserie.version>
-        <assertj.version>3.26.3</assertj.version>
+        <assertj.version>3.27.1</assertj.version>
 
         <!-- Sonar felles -->
         <sonar.organization>navikt</sonar.organization>
