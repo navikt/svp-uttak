@@ -21,6 +21,7 @@ final class UtbetalingsgradUtleder {
         }
         if (tilretteleggingsprosent.compareTo(stillingsprosent) > 0) {
             return NULL_PROSENT;
+            
         }
         var arbeidsprosent = stillingsprosent.subtract(tilretteleggingsprosent);
         var utbetalingsgrad = arbeidsprosent.multiply(HUNDRE_PROSENT).divide(stillingsprosent, 10, RoundingMode.HALF_UP);
