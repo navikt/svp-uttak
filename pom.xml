@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <jupiter.version>5.13.3</jupiter.version>
+        <jupiter.version>5.13.4</jupiter.version>
         <revision>2.1</revision>
         <sha1>-SNAPSHOT</sha1>
         <java.version>21</java.version>
