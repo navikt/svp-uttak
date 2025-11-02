@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 
+import org.junit.jupiter.api.Test;
+
 import no.nav.svangerskapspenger.tjeneste.fastsettuttak.SvpOppholdÅrsak;
 
-import org.junit.Test;
-
-public class OppholdTest {
+class OppholdTest {
 
     @Test
-    public void ferie_uten_røde_dager_skal_ikke_føre_til_knekk() {
+    void ferie_uten_røde_dager_skal_ikke_føre_til_knekk() {
         var fom = LocalDate.of(2019, 5, 13);
         var tom = LocalDate.of(2019, 5, 16);
         var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
@@ -22,7 +22,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void rød_dag_i_begynnelsen_fører_til_avkorting_i_begynnelsen() {
+    void rød_dag_i_begynnelsen_fører_til_avkorting_i_begynnelsen() {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 3);
 
@@ -34,7 +34,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void rød_dag_i_slutten_fører_til_avkorting_i_slutten() {
+    void rød_dag_i_slutten_fører_til_avkorting_i_slutten() {
         var fom = LocalDate.of(2019, 5, 13);
         var tom = LocalDate.of(2019, 5, 17);
 
@@ -47,7 +47,7 @@ public class OppholdTest {
 
 
     @Test
-    public void rød_dag_i_begynnelsen_og_slutten_fører_til_avkorting_i_begynnelsen_og_slutten() {
+    void rød_dag_i_begynnelsen_og_slutten_fører_til_avkorting_i_begynnelsen_og_slutten() {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 17);
 
@@ -59,7 +59,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void rød_dag_midt_i_periode_fører_til_2_perioder() {
+    void rød_dag_midt_i_periode_fører_til_2_perioder() {
             var fom = LocalDate.of(2019, 5, 2);
             var tom = LocalDate.of(2019, 5, 19);
 
@@ -73,7 +73,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void to_røde_dager_midt_i_periode_fører_til_3_perioder() {
+    void to_røde_dager_midt_i_periode_fører_til_3_perioder() {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 19);
 
@@ -89,7 +89,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void ferie_på_en_dag_uten_overlapp_med_helligdag_fører_til_uendret_periode() {
+    void ferie_på_en_dag_uten_overlapp_med_helligdag_fører_til_uendret_periode() {
         var fom = LocalDate.of(2019, 5, 2);
         var tom = LocalDate.of(2019, 5, 2);
 
@@ -101,7 +101,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void ferie_på_en_dag_med_overlapp_med_helligdag_fører_til_ingen_periode() {
+    void ferie_på_en_dag_med_overlapp_med_helligdag_fører_til_ingen_periode() {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 1);
 
@@ -111,7 +111,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void overlapp_i_begynnelse_og_midten_fører_til_2_perioder() {
+    void overlapp_i_begynnelse_og_midten_fører_til_2_perioder() {
         var fom = LocalDate.of(2019, 5, 1);
         var tom = LocalDate.of(2019, 5, 19);
 
@@ -125,7 +125,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void overlapp_på_slutten_og_midten_fører_til_2_perioder() {
+    void overlapp_på_slutten_og_midten_fører_til_2_perioder() {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 16);
 
@@ -139,7 +139,7 @@ public class OppholdTest {
     }
 
     @Test
-    public void opphold_grunnet_sykepenger_skal_ikke_påvirkes_av_helligdager() {
+    void opphold_grunnet_sykepenger_skal_ikke_påvirkes_av_helligdager() {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 16);
 

@@ -2,6 +2,7 @@ package no.nav.svangerskapspenger.utils;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -10,22 +11,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
-public class VirkedagerTest {
+class VirkedagerTest {
     private Map<DayOfWeek, LocalDate> uke;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         LocalDate iDag = LocalDate.now();
         LocalDate mandag = iDag.minusDays(iDag.getDayOfWeek().getValue() - DayOfWeek.MONDAY.getValue());
         uke = Stream.of(DayOfWeek.values()).collect(Collectors.toMap(day -> day, day -> mandag.plusDays(day.ordinal())));
     }
 
     @Test
-    public void skalBeregneAntallVirkedager() {
+    void skalBeregneAntallVirkedager() {
         LocalDate mandag = getDayOfWeek(DayOfWeek.MONDAY);
         LocalDate søndag = getDayOfWeek(DayOfWeek.SUNDAY);
 
@@ -43,16 +44,16 @@ public class VirkedagerTest {
         assertThat(Virkedager.antallVirkedager(mandag.minusDays(3), søndag.plusDays(1))).isEqualTo(7);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void skal_kaste_exception_dersom_datoene_har_feil_rekkefølge() {
+    @Test
+    void skal_kaste_exception_dersom_datoene_har_feil_rekkefølge() {
         var mandag = LocalDate.of(2019, Month.MARCH, 4);
         var tirsdag = LocalDate.of(2019, Month.MARCH, 5);
-        Virkedager.antallVirkedager(tirsdag, mandag);
+        assertThrows(IllegalArgumentException.class, () -> Virkedager.antallVirkedager(tirsdag, mandag));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void skal_kaste_exception_dersom_perioden_er_for_lang() {
-        Virkedager.antallVirkedager(LocalDate.of(-100000000, 1, 1), LocalDate.of(20000000,1, 1));
+    @Test
+    void skal_kaste_exception_dersom_perioden_er_for_lang() {
+        assertThrows(UnsupportedOperationException.class, () -> Virkedager.antallVirkedager(LocalDate.of(-100000000, 1, 1), LocalDate.of(20000000,1, 1)));
     }
 
     private LocalDate getDayOfWeek(DayOfWeek dayOfWeek) {

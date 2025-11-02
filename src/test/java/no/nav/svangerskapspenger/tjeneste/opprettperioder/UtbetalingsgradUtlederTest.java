@@ -7,14 +7,14 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
-public class UtbetalingsgradUtlederTest {
+class UtbetalingsgradUtlederTest {
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
 
@@ -22,7 +22,7 @@ public class UtbetalingsgradUtlederTest {
     private static final LocalDate BEHOVDATO = LocalDate.of(2019, Month.JANUARY, 1);
 
     @Test
-    public void test_utbetalingsgrad_beregning() {
+    void test_utbetalingsgrad_beregning() {
         utførTest(new BigDecimal("100"), new BigDecimal("50"), new BigDecimal("50.00"));
         utførTest(new BigDecimal("100"), new BigDecimal("10"), new BigDecimal("90.00"));
         utførTest(new BigDecimal("100"), new BigDecimal("0"), new BigDecimal("100.00"));

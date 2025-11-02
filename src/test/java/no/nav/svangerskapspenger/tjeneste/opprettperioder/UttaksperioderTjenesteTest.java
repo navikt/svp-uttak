@@ -8,7 +8,7 @@ import java.time.Month;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
@@ -18,17 +18,17 @@ import no.nav.svangerskapspenger.domene.søknad.FullTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.IngenTilrettelegging;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
-public class UttaksperioderTjenesteTest {
+class UttaksperioderTjenesteTest {
 
     private static final BigDecimal HUNDRE_PROSENT = BigDecimal.valueOf(100L);
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
 
-    private UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
+    private final UttaksperioderTjeneste uttaksperioderTjeneste = new UttaksperioderTjeneste();
 
     @Test
-    public void først_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_to_perioder() {
+    void først_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_to_perioder() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(50L), null);
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
@@ -55,7 +55,7 @@ public class UttaksperioderTjenesteTest {
 
 
     @Test
-    public void først_ikke_søkt_deretter_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_tre_perioder() {
+    void først_ikke_søkt_deretter_delvis_tilrettelegging_så_full_tilrettelegging_fører_til_tre_perioder() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 15), BigDecimal.valueOf(50L), null);
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
@@ -86,7 +86,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void først_ingen_tilrettelegging_før_behov_dato_så_full_tilrettelegging_fører_til_to_perioder() {
+    void først_ingen_tilrettelegging_før_behov_dato_så_full_tilrettelegging_fører_til_to_perioder() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2018, Month.DECEMBER, 15));
         var fullTilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
@@ -112,7 +112,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void alt_før_behovsdato_fjernes_dersom_det_finnes_en_arbeidsgiversdato_link_behovsdato() {
+    void alt_før_behovsdato_fjernes_dersom_det_finnes_en_arbeidsgiversdato_link_behovsdato() {
 
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2018, Month.DECEMBER, 15));
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), new BigDecimal("40.0"), null);
@@ -143,7 +143,7 @@ public class UttaksperioderTjenesteTest {
 
 
     @Test
-    public void full_tilrettelegging_fra_start() {
+    void full_tilrettelegging_fra_start() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -161,7 +161,7 @@ public class UttaksperioderTjenesteTest {
 
 
     @Test
-    public void full_tilrettelegging_etter_en_måned() {
+    void full_tilrettelegging_etter_en_måned() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -187,7 +187,7 @@ public class UttaksperioderTjenesteTest {
 
 
     @Test
-    public void full_tilrettelegging_på_termin() {
+    void full_tilrettelegging_på_termin() {
         var tilrettelegging = new FullTilrettelegging(LocalDate.of(2019, Month.MAY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -206,7 +206,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void delvis_tilrettelegging_fra_februar_fører_til_to_uttaksperioder() {
+    void delvis_tilrettelegging_fra_februar_fører_til_to_uttaksperioder() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.FEBRUARY, 1), BigDecimal.valueOf(20L), null);
 
         var søknad = new Søknad(
@@ -231,7 +231,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void delvis_tilrettelegging_fra_første_dag_fører_til_en_uttaksperioder() {
+    void delvis_tilrettelegging_fra_første_dag_fører_til_en_uttaksperioder() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), null);
 
         var søknad = new Søknad(
@@ -251,7 +251,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
+    void delvis_tilrettelegging_for_sent_fører_til_en_uttaksperioder_med_full_utbetaling() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.MAY, 1), BigDecimal.valueOf(20L), null);
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -270,7 +270,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void delvis_tilrettelegging_skal_bruke_overstyrt_utbetalingsgrad() {
+    void delvis_tilrettelegging_skal_bruke_overstyrt_utbetalingsgrad() {
         var delvisTilrettelegging = new DelvisTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1), BigDecimal.valueOf(20L), BigDecimal.valueOf(60.06));
 
         var søknad = new Søknad(
@@ -290,7 +290,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void ingen_tilrettelegging_fra_første_dag_gir_en_periode() {
+    void ingen_tilrettelegging_fra_første_dag_gir_en_periode() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -310,7 +310,7 @@ public class UttaksperioderTjenesteTest {
 
 
     @Test
-    public void ingen_tilrettelegging_før_etter_en_uke_gir_to_perioder() {
+    void ingen_tilrettelegging_før_etter_en_uke_gir_to_perioder() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.JANUARY, 1).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -335,7 +335,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void ingen_tilrettelegging_etter_3_uker_før_termin_gir_avslag_på_arbeidsforhold() {
+    void ingen_tilrettelegging_etter_3_uker_før_termin_gir_avslag_på_arbeidsforhold() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.APRIL, 20).plusWeeks(1));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
@@ -353,7 +353,7 @@ public class UttaksperioderTjenesteTest {
     }
 
     @Test
-    public void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
+    void dersom_leges_dato_er_etter_tre_uker_før_termimdato_så_skal_hele_arbeidsforholdet_ikke_oppfylles() {
         var ingenTilrettelegging = new IngenTilrettelegging(LocalDate.of(2019, Month.APRIL, 20));
         var søknad = new Søknad(
             ARBEIDSFORHOLD1,
