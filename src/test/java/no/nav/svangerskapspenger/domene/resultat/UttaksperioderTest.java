@@ -6,17 +6,17 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
 
-public class UttaksperioderTest {
+class UttaksperioderTest {
 
     private static final BigDecimal FULL_UTBETALING = BigDecimal.valueOf(100L);
 
     @Test
-    public void riktig_start_og_slutt_dato_med_en_periode() {
+    void riktig_start_og_slutt_dato_med_en_periode() {
         var arbeidsforhold = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
@@ -27,7 +27,7 @@ public class UttaksperioderTest {
     }
 
     @Test
-    public void riktig_start_og_slutt_dato_med_perioder_på_forskjellige_arbeidsforhold() {
+    void riktig_start_og_slutt_dato_med_perioder_på_forskjellige_arbeidsforhold() {
         var arbeidsforhold1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
         var arbeidsforhold2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567");
         var uttaksperioder = new Uttaksperioder();
@@ -41,7 +41,7 @@ public class UttaksperioderTest {
     }
 
     @Test
-    public void ingen_start_og_slutt_dato_dersom_avslag_på_arbeidsforhold() {
+    void ingen_start_og_slutt_dato_dersom_avslag_på_arbeidsforhold() {
         var arbeidsforhold = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
         var uttaksperioder = new Uttaksperioder();
         uttaksperioder.leggTilPerioder(arbeidsforhold,
@@ -53,7 +53,7 @@ public class UttaksperioderTest {
     }
 
     @Test
-    public void ingen_perioder_gir_ingen_start_og_slutt_dato() {
+    void ingen_perioder_gir_ingen_start_og_slutt_dato() {
         var uttaksperioder = new Uttaksperioder();
 
         assertThat(uttaksperioder.finnFørsteUttaksdato()).isEmpty();
@@ -61,7 +61,7 @@ public class UttaksperioderTest {
     }
 
     @Test
-    public void skal_være_mulig_å_legge_til_perioder() {
+    void skal_være_mulig_å_legge_til_perioder() {
         var uttaksperioder = new Uttaksperioder();
         var arbeidsforhold = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
 

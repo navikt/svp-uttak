@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
@@ -15,10 +15,10 @@ import no.nav.svangerskapspenger.domene.resultat.Uttaksperiode;
 import no.nav.svangerskapspenger.domene.resultat.Uttaksperioder;
 import no.nav.svangerskapspenger.domene.søknad.Opphold;
 
-public class UttakHullUtlederTest {
+class UttakHullUtlederTest {
 
     @Test
-    public void enkelt_uttak_med_et_arbeidsforhold_uten_hull() {
+    void enkelt_uttak_med_et_arbeidsforhold_uten_hull() {
         var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
 
         var perioder = new Uttaksperioder();
@@ -34,7 +34,7 @@ public class UttakHullUtlederTest {
     }
 
     @Test
-    public void enkelt_uttak_med_et_arbeidsforhold_med_hull() {
+    void enkelt_uttak_med_et_arbeidsforhold_med_hull() {
         var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
 
         var perioder = new Uttaksperioder();
@@ -50,7 +50,7 @@ public class UttakHullUtlederTest {
     }
 
     @Test
-    public void komplekst_uttak_med_flere_arbeidsforhold_uten_hull() {
+    void komplekst_uttak_med_flere_arbeidsforhold_uten_hull() {
 
         var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
         var arb2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "2", null);
@@ -99,7 +99,7 @@ public class UttakHullUtlederTest {
     }
 
     @Test
-    public void overlappende_ferie_midt_i_periode_med_0_utbetaling_skal_ikke_gi_hull() {
+    void overlappende_ferie_midt_i_periode_med_0_utbetaling_skal_ikke_gi_hull() {
         var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
 
         var perioder = new Uttaksperioder();

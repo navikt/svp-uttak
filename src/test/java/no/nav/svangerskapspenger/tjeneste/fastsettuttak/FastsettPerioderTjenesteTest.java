@@ -8,7 +8,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import no.nav.svangerskapspenger.domene.felles.AktivitetType;
 import no.nav.svangerskapspenger.domene.felles.Arbeidsforhold;
@@ -26,7 +26,7 @@ import no.nav.svangerskapspenger.domene.søknad.Opphold;
 import no.nav.svangerskapspenger.domene.søknad.Søknad;
 import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår;
 
-public class FastsettPerioderTjenesteTest {
+class FastsettPerioderTjenesteTest {
 
     private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final BigDecimal ARBEIDSFORHOLD1_PROSENT = BigDecimal.valueOf(100L);
@@ -50,7 +50,7 @@ public class FastsettPerioderTjenesteTest {
     private final Inngangsvilkår inngangsvilkårDefault = new Inngangsvilkår(true, true, Boolean.TRUE);
 
     @Test
-    public void ingen_tilrettelegging_fra_behovsdato() {
+    void ingen_tilrettelegging_fra_behovsdato() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -69,7 +69,7 @@ public class FastsettPerioderTjenesteTest {
 
 
     @Test
-    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere() {
+    void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -96,7 +96,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere_og_opphold_i_ett() {
+    void ingen_tilrettelegging_i_to_arbeidsforhold_hos_forskjellige_arbeidsgivere_og_opphold_i_ett() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -126,7 +126,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver() {
+    void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -153,7 +153,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver_og_opphold_i_ett() {
+    void ingen_tilrettelegging_i_to_arbeidsforhold_hos_samme_arbeidsgiver_og_opphold_i_ett() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -184,7 +184,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
+    void uttak_skal_avslås_pga_søknadsfrist_dersom_første_lovlige_uttaksdato_ikke_er_satt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medTermindato(TERMINDATO)
             .build();
@@ -202,7 +202,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_skal_avslås_pga_innvilget_annen_sak_senere_i_perioden() {
+    void uttak_skal_avslås_pga_innvilget_annen_sak_senere_i_perioden() {
         var startdatoNySak = TERMINDATO.minusMonths(2);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -224,7 +224,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_ikke_oppfylt_ved_brukers_død() {
+    void uttak_ikke_oppfylt_ved_brukers_død() {
         var brukersdødsdato = LocalDate.of(2019, Month.MARCH, 1);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -246,7 +246,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_ikke_oppfylt_ved_barnets_død() {
+    void uttak_ikke_oppfylt_ved_barnets_død() {
         var barnetsDødsdato = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -269,7 +269,7 @@ public class FastsettPerioderTjenesteTest {
 
 
     @Test
-    public void uttak_etter_opphør_av_medlemskap_avslås() {
+    void uttak_etter_opphør_av_medlemskap_avslås() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -291,7 +291,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void uttak_med_delvis_tilrettelegging_etter_en_måned_og_opphør_av_medlemskap_gir_tre_perioder() {
+    void uttak_med_delvis_tilrettelegging_etter_en_måned_og_opphør_av_medlemskap_gir_tre_perioder() {
         var opphørAvMedlemskap = LocalDate.of(2019, Month.APRIL, 1);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -316,7 +316,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void dersom_arbeidsgiver_kan_tilrettelegge_fra_start_så_skal_hele_arbeidsforholdet_avslås() {
+    void dersom_arbeidsgiver_kan_tilrettelegge_fra_start_så_skal_hele_arbeidsforholdet_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -334,7 +334,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
+    void skal_fjerne_uttaksperiode_dersom_den_kun_inneholder_helg() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -357,7 +357,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void skal_sette_ikke_oppfylt_på_hele_arbeidsforholdet_dersom_periodene_kun_inneholder_helg() {
+    void skal_sette_ikke_oppfylt_på_hele_arbeidsforholdet_dersom_periodene_kun_inneholder_helg() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -376,7 +376,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void lovlig_uttak_med_tidlig_fødsel_skal_ikke_oppfylles_fra_fødselsdato() {
+    void lovlig_uttak_med_tidlig_fødsel_skal_ikke_oppfylles_fra_fødselsdato() {
         var fødseldatoTidligFødsel = TERMINDATO.minusWeeks(4);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
@@ -398,7 +398,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void søkt_for_sent_gir_ikke_oppfylte_perioder_frem_til_første_lovlige_uttaksperiode() {
+    void søkt_for_sent_gir_ikke_oppfylte_perioder_frem_til_første_lovlige_uttaksperiode() {
         var førsteLovligeUttaksdato = TILRETTELEGGING_BEHOV_DATO.plusWeeks(1);
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(førsteLovligeUttaksdato)
@@ -419,7 +419,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void periode_med_ferie_skal_avslås() {
+    void periode_med_ferie_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -442,7 +442,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void periode_med_sykepenger_skal_avslås() {
+    void periode_med_sykepenger_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -467,7 +467,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void periode_med_sykepenger_og_ferie_skal_avslås() {
+    void periode_med_sykepenger_og_ferie_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -496,7 +496,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_1() {
+    void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_1() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -523,7 +523,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_2() {
+    void sjekker_at_uttak_med_opphold_som_overlapper_hverandre_ikke_feiler_2() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -553,7 +553,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void perioder_etter_hull_i_uttak_skal_avslås() {
+    void perioder_etter_hull_i_uttak_skal_avslås() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -577,7 +577,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void hull_som_dekkes_av_ferie_skal_ikke_føre_til_avslag_på_etterfølgende_perioder() {
+    void hull_som_dekkes_av_ferie_skal_ikke_føre_til_avslag_på_etterfølgende_perioder() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -603,7 +603,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ferie_periode_før_uttak_skal_ikke_påvirke_resultatet() {
+    void ferie_periode_før_uttak_skal_ikke_påvirke_resultatet() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -625,7 +625,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void ferie_overlappende_med_periode_mellom_behovsdato_og_oppstart_av_ingen_tilrettelegging_skal_ikke_føre_til_avslag_pga_hull_mellom_uttak() {
+    void ferie_overlappende_med_periode_mellom_behovsdato_og_oppstart_av_ingen_tilrettelegging_skal_ikke_føre_til_avslag_pga_hull_mellom_uttak() {
         var behovsdato = LocalDate.of(2019, Month.SEPTEMBER, 30);
         var startFerie = LocalDate.of(2019, Month.NOVEMBER, 10);
         var sluttFerie =  LocalDate.of(2019, Month.NOVEMBER, 19);
@@ -655,7 +655,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void avslå_når_opptjeningsvilkåret_ikke_er_oppfylt() {
+    void avslå_når_opptjeningsvilkåret_ikke_er_oppfylt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
@@ -676,7 +676,7 @@ public class FastsettPerioderTjenesteTest {
     }
 
     @Test
-    public void avslå_når_svangerskapsvilkåret_ikke_er_oppfylt() {
+    void avslå_når_svangerskapsvilkåret_ikke_er_oppfylt() {
         var avklarteDatoer = new AvklarteDatoer.Builder()
             .medFørsteLovligeUttaksdato(FØRSTE_LOVLIGE_UTTAKSDATO)
             .medTermindato(TERMINDATO)
