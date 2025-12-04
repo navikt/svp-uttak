@@ -73,6 +73,18 @@ class OppholdTest {
     }
 
     @Test
+    void to_røde_dager_på_slutten_skal_fjernes_og_dager_før_opprettholdes() {
+        var fom = LocalDate.of(2025, 12, 22);
+        var tom = LocalDate.of(2025, 12, 26);
+
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
+
+        assertThat(ferieListe).hasSize(1);
+        assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
+        assertThat(ferieListe.get(0).getTom()).isEqualTo(LocalDate.of(2025, 12, 24));
+    }
+
+    @Test
     void to_røde_dager_midt_i_periode_fører_til_3_perioder() {
         var fom = LocalDate.of(2019, 4, 29);
         var tom = LocalDate.of(2019, 5, 19);
