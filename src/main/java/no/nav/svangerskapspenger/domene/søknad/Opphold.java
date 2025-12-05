@@ -17,19 +17,19 @@ public class Opphold extends LukketPeriode {
     }
 
     public static List<Opphold> opprett(LocalDate fom, LocalDate tom, SvpOppholdÅrsak årsak) {
-        var opppholdPeriode = new Opphold(fom, tom, årsak);
+        var oppholdPeriode = new Opphold(fom, tom, årsak);
 
         if (SvpOppholdÅrsak.FERIE.equals(årsak)) {
-            return splittOppholdPåBevegeligeHelligdager(opppholdPeriode, årsak);
+            return splittOppholdPåBevegeligeHelligdager(oppholdPeriode, årsak);
         }
 
-        return List.of(opppholdPeriode);
+        return List.of(oppholdPeriode);
     }
 
-    private static List<Opphold> splittOppholdPåBevegeligeHelligdager(Opphold opppholdPeriode, SvpOppholdÅrsak årsak) {
+    private static List<Opphold> splittOppholdPåBevegeligeHelligdager(Opphold oppholdPeriode, SvpOppholdÅrsak årsak) {
         var oppholdPerioder = new ArrayList<Opphold>();
-        var gjeldendePeriode = opppholdPeriode;
-        var helligdager = BevegeligeHelligdagerUtil.finnBevegeligeHelligdagerUtenHelg(opppholdPeriode);
+        var gjeldendePeriode = oppholdPeriode;
+        var helligdager = BevegeligeHelligdagerUtil.finnBevegeligeHelligdagerUtenHelg(oppholdPeriode);
 
         for (LocalDate helligdag : helligdager) {
             var resultat = splittPåHelligdag(helligdag, gjeldendePeriode, årsak);
