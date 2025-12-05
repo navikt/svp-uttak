@@ -2,7 +2,6 @@ package no.nav.svangerskapspenger.domene.søknad;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import no.nav.svangerskapspenger.domene.felles.LukketPeriode;
@@ -17,39 +16,77 @@ public class Opphold extends LukketPeriode {
         this.årsak = årsak;
     }
 
-    public SvpOppholdÅrsak getÅrsak() {
-        return årsak;
+    public static List<Opphold> opprett(LocalDate fom, LocalDate tom, SvpOppholdÅrsak årsak) {
+        var oppholdPeriode = new Opphold(fom, tom, årsak);
+
+        if (SvpOppholdÅrsak.FERIE.equals(årsak)) {
+            return splittOppholdPåBevegeligeHelligdager(oppholdPeriode, årsak);
+        }
+
+        return List.of(oppholdPeriode);
     }
 
-    public static List<Opphold> opprett(LocalDate fom, LocalDate tom, SvpOppholdÅrsak årsak) {
+    private static List<Opphold> splittOppholdPåBevegeligeHelligdager(Opphold oppholdPeriode, SvpOppholdÅrsak årsak) {
         var oppholdPerioder = new ArrayList<Opphold>();
-        var opppholdPeriode = new Opphold(fom, tom, årsak);
+        var gjeldendePeriode = oppholdPeriode;
+        var helligdager = BevegeligeHelligdagerUtil.finnBevegeligeHelligdagerUtenHelg(oppholdPeriode);
 
-        //Når det er opphold pga annen ytelse (sykepenger)skal vi ikke ta hensyn til bevegelige helligdager
-        if (SvpOppholdÅrsak.FERIE.equals(årsak)) {
-            var helligdager = BevegeligeHelligdagerUtil.finnBevegeligeHelligdagerUtenHelg(opppholdPeriode);
-            for (LocalDate helligdag : helligdager) {
-                if (opppholdPeriode.overlapper(helligdag)) {
-                    var minstToOppholdDager = opppholdPeriode.getFom().isBefore(opppholdPeriode.getTom());
-                    if (!minstToOppholdDager) {
-                        //Bare en dag, og det er helligdag.
-                        return Collections.emptyList();
-                    } else if (helligdag.equals(opppholdPeriode.getFom())) {
-                        //Helligdag på første dag i oppholdet, kutt en dag i starten av oppholdet.
-                        opppholdPeriode = new Opphold(opppholdPeriode.getFom().plusDays(1), opppholdPeriode.getTom(), årsak);
-                    } else if (helligdag.equals(opppholdPeriode.getTom())) {
-                        //Helligdag på siste dag i oppholdet, kutt en dag i slutten av ophholdet. Resten av helligdagene må være etter oppholdet, og avbryter derfor loopen.
-                        opppholdPeriode = new Opphold(opppholdPeriode.getFom(), opppholdPeriode.getTom().minusDays(1), årsak);
-                        break;
-                    } else {
-                        oppholdPerioder.add(new Opphold(opppholdPeriode.getFom(), helligdag.minusDays(1), årsak));
-                        opppholdPeriode = new Opphold(helligdag.plusDays(1), opppholdPeriode.getTom(), årsak);
-                    }
-                }
+        for (LocalDate helligdag : helligdager) {
+            var resultat = splittPåHelligdag(helligdag, gjeldendePeriode, årsak);
+
+            if (resultat.periodeFørHelligdag() != null) {
+                oppholdPerioder.add(resultat.periodeFørHelligdag());
+            }
+
+            gjeldendePeriode = resultat.gjenværendePeriode();
+
+            if (gjeldendePeriode == null) {
+                return oppholdPerioder;
             }
         }
-        oppholdPerioder.add(opppholdPeriode);
+
+        oppholdPerioder.add(gjeldendePeriode);
         return oppholdPerioder;
     }
 
+    private record SplittResultat(Opphold periodeFørHelligdag, Opphold gjenværendePeriode) {}
+
+    private static SplittResultat splittPåHelligdag(LocalDate helligdag, Opphold gjeldendePeriode, SvpOppholdÅrsak årsak) {
+        if (!gjeldendePeriode.overlapper(helligdag)) {
+            return new SplittResultat(null, gjeldendePeriode);
+        }
+
+        if (erKunEnDagIPerioden(gjeldendePeriode)) {
+            return new SplittResultat(null, null);
+        }
+
+        if (erHelligdagFørsteDag(helligdag, gjeldendePeriode)) {
+            return new SplittResultat(null, new Opphold(gjeldendePeriode.getFom().plusDays(1), gjeldendePeriode.getTom(), årsak));
+        }
+
+        if (erHelligdagSisteDag(helligdag, gjeldendePeriode)) {
+            return new SplittResultat(null, new Opphold(gjeldendePeriode.getFom(), gjeldendePeriode.getTom().minusDays(1), årsak));
+        }
+
+        return new SplittResultat(
+            new Opphold(gjeldendePeriode.getFom(), helligdag.minusDays(1), årsak),
+            new Opphold(helligdag.plusDays(1), gjeldendePeriode.getTom(), årsak)
+        );
+    }
+
+    private static boolean erKunEnDagIPerioden(Opphold periode) {
+        return !periode.getFom().isBefore(periode.getTom());
+    }
+
+    private static boolean erHelligdagFørsteDag(LocalDate helligdag, Opphold periode) {
+        return helligdag.equals(periode.getFom());
+    }
+
+    private static boolean erHelligdagSisteDag(LocalDate helligdag, Opphold periode) {
+        return helligdag.equals(periode.getTom());
+    }
+
+    public SvpOppholdÅrsak getÅrsak() {
+        return årsak;
+    }
 }

@@ -89,6 +89,30 @@ class OppholdTest {
     }
 
     @Test
+    void to_røde_dager_på_slutten_skal_fjernes_og_dager_før_opprettholdes() {
+        var fom = LocalDate.of(2025, 12, 22);
+        var tom = LocalDate.of(2025, 12, 26);
+
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
+
+        assertThat(ferieListe).hasSize(1);
+        assertThat(ferieListe.get(0).getFom()).isEqualTo(fom);
+        assertThat(ferieListe.get(0).getTom()).isEqualTo(LocalDate.of(2025, 12, 24));
+    }
+
+    @Test
+    void to_røde_dager_på_starten_skal_fjernes_og_dager_etter_opprettholdes() {
+        var fom = LocalDate.of(2025, 12, 25);
+        var tom = LocalDate.of(2025, 12, 28);
+
+        var ferieListe = Opphold.opprett(fom, tom, SvpOppholdÅrsak.FERIE);
+
+        assertThat(ferieListe).hasSize(1);
+        assertThat(ferieListe.get(0).getFom()).isEqualTo(LocalDate.of(2025, 12, 27));
+        assertThat(ferieListe.get(0).getTom()).isEqualTo(LocalDate.of(2025, 12, 28));
+    }
+
+    @Test
     void ferie_på_en_dag_uten_overlapp_med_helligdag_fører_til_uendret_periode() {
         var fom = LocalDate.of(2019, 5, 2);
         var tom = LocalDate.of(2019, 5, 2);
