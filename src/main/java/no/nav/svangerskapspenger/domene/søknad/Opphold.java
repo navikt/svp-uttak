@@ -32,7 +32,13 @@ public class Opphold extends LukketPeriode {
         var helligdager = BevegeligeHelligdagerUtil.finnBevegeligeHelligdagerUtenHelg(opppholdPeriode);
 
         for (LocalDate helligdag : helligdager) {
-            gjeldendePeriode = behandleHelligdag(helligdag, gjeldendePeriode, oppholdPerioder, årsak);
+            var resultat = splittPåHelligdag(helligdag, gjeldendePeriode, årsak);
+
+            if (resultat.periodeFørHelligdag() != null) {
+                oppholdPerioder.add(resultat.periodeFørHelligdag());
+            }
+
+            gjeldendePeriode = resultat.gjenværendePeriode();
 
             if (gjeldendePeriode == null) {
                 return oppholdPerioder;
@@ -43,26 +49,29 @@ public class Opphold extends LukketPeriode {
         return oppholdPerioder;
     }
 
-    private static Opphold behandleHelligdag(LocalDate helligdag, Opphold gjeldendePeriode,
-                                             List<Opphold> oppholdPerioder, SvpOppholdÅrsak årsak) {
+    private record SplittResultat(Opphold periodeFørHelligdag, Opphold gjenværendePeriode) {}
+
+    private static SplittResultat splittPåHelligdag(LocalDate helligdag, Opphold gjeldendePeriode, SvpOppholdÅrsak årsak) {
         if (!gjeldendePeriode.overlapper(helligdag)) {
-            return gjeldendePeriode;
+            return new SplittResultat(null, gjeldendePeriode);
         }
 
         if (erKunEnDagIPerioden(gjeldendePeriode)) {
-            return null;
+            return new SplittResultat(null, null);
         }
 
         if (erHelligdagFørsteDag(helligdag, gjeldendePeriode)) {
-            return new Opphold(gjeldendePeriode.getFom().plusDays(1), gjeldendePeriode.getTom(), årsak);
+            return new SplittResultat(null, new Opphold(gjeldendePeriode.getFom().plusDays(1), gjeldendePeriode.getTom(), årsak));
         }
 
         if (erHelligdagSisteDag(helligdag, gjeldendePeriode)) {
-            return new Opphold(gjeldendePeriode.getFom(), gjeldendePeriode.getTom().minusDays(1), årsak);
+            return new SplittResultat(null, new Opphold(gjeldendePeriode.getFom(), gjeldendePeriode.getTom().minusDays(1), årsak));
         }
 
-        oppholdPerioder.add(new Opphold(gjeldendePeriode.getFom(), helligdag.minusDays(1), årsak));
-        return new Opphold(helligdag.plusDays(1), gjeldendePeriode.getTom(), årsak);
+        return new SplittResultat(
+            new Opphold(gjeldendePeriode.getFom(), helligdag.minusDays(1), årsak),
+            new Opphold(helligdag.plusDays(1), gjeldendePeriode.getTom(), årsak)
+        );
     }
 
     private static boolean erKunEnDagIPerioden(Opphold periode) {
