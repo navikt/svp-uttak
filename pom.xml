@@ -6,7 +6,7 @@
     <parent>
         <groupId>no.nav.foreldrepenger.felles</groupId>
         <artifactId>fp-parent-lib</artifactId>
-        <version>5.2.1</version>
+        <version>5.2.3</version>
     </parent>
 
     <groupId>no.nav.foreldrepenger</groupId>
@@ -16,7 +16,7 @@
 
     <properties>
         <fpsak.nare.version>2.6.4</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.7.3</fpsak.tidsserie.version>
+        <fpsak.tidsserie.version>2.7.4</fpsak.tidsserie.version>
 
         <!-- Sonar felles -->
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
@@ -34,6 +34,16 @@
             <groupId>no.nav.fpsak.tidsserie</groupId>
             <artifactId>fpsak-tidsserie</artifactId>
             <version>${fpsak.tidsserie.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
