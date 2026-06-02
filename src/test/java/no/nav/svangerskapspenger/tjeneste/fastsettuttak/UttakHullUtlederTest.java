@@ -19,7 +19,7 @@ class UttakHullUtlederTest {
 
     @Test
     void enkelt_uttak_med_et_arbeidsforhold_uten_hull() {
-        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
+        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null, false);
 
         var perioder = new Uttaksperioder();
         perioder.leggTilPerioder(arb1,
@@ -35,7 +35,7 @@ class UttakHullUtlederTest {
 
     @Test
     void enkelt_uttak_med_et_arbeidsforhold_med_hull() {
-        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
+        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null, false);
 
         var perioder = new Uttaksperioder();
         perioder.leggTilPerioder(arb1,
@@ -52,11 +52,11 @@ class UttakHullUtlederTest {
     @Test
     void komplekst_uttak_med_flere_arbeidsforhold_uten_hull() {
 
-        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
-        var arb2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "2", null);
-        var arb3 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "3", null);
-        var arb4 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "4", null);
-        var arb5 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "5", null);
+        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null, false);
+        var arb2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "2", null, false);
+        var arb3 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "3", null, false);
+        var arb4 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "4", null, false);
+        var arb5 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "5", null, false);
 
         var perioder = new Uttaksperioder();
         perioder.leggTilPerioder(arb1,
@@ -100,7 +100,7 @@ class UttakHullUtlederTest {
 
     @Test
     void overlappende_ferie_midt_i_periode_med_0_utbetaling_skal_ikke_gi_hull() {
-        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null);
+        var arb1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "1", null, false);
 
         var perioder = new Uttaksperioder();
         perioder.leggTilPerioder(arb1,
