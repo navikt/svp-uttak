@@ -28,14 +28,14 @@ import no.nav.svangerskapspenger.regler.fastsettperiode.grunnlag.Inngangsvilkår
 
 class FastsettPerioderTjenesteTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456", false);
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
     private static final BigDecimal ARBEIDSFORHOLD1_PROSENT = BigDecimal.valueOf(100L);
-    private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567", false);
+    private static final Arbeidsforhold ARBEIDSFORHOLD2 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "234", "567");
     private static final BigDecimal ARBEIDSFORHOLD2_PROSENT = BigDecimal.valueOf(100L);
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD3 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "1", false);
+    private static final Arbeidsforhold ARBEIDSFORHOLD3 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "1");
     private static final BigDecimal ARBEIDSFORHOLD3_PROSENT = BigDecimal.valueOf(60L);
-    private static final Arbeidsforhold ARBEIDSFORHOLD4 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "2", false);
+    private static final Arbeidsforhold ARBEIDSFORHOLD4 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "345", "2");
     private static final BigDecimal ARBEIDSFORHOLD4_PROSENT = BigDecimal.valueOf(40L);
 
     private static final BigDecimal FULL_UTBETALINGSGRAD = BigDecimal.valueOf(100L);

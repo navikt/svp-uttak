@@ -9,30 +9,26 @@ public class Arbeidsforhold {
     private final String arbeidsgiverVirksomhetId;
     private final String arbeidsgiverAktørId;
     private final String arbeidsforholdId;
-    private final boolean arbeidsforholdErSplittet;
 
-    private Arbeidsforhold(AktivitetType aktivitetType, String arbeidsgiverVirksomhetId, String arbeidsgiverAktørId, String arbeidsforholdId,
-                           boolean arbeidsforholdErSplittet) {
+    private Arbeidsforhold(AktivitetType aktivitetType, String arbeidsgiverVirksomhetId, String arbeidsgiverAktørId, String arbeidsforholdId) {
         this.aktivitetType = aktivitetType;
         this.arbeidsgiverVirksomhetId = arbeidsgiverVirksomhetId;
         this.arbeidsgiverAktørId = arbeidsgiverAktørId;
         this.arbeidsforholdId = arbeidsforholdId;
-        this.arbeidsforholdErSplittet = arbeidsforholdErSplittet;
     }
 
-    public static Arbeidsforhold virksomhet(AktivitetType aktivitetType, String arbeidsgiverVirksomhetId, String arbeidsforholdId,
-                                            boolean arbeidsforholdErSplittet) {
+    public static Arbeidsforhold virksomhet(AktivitetType aktivitetType, String arbeidsgiverVirksomhetId, String arbeidsforholdId) {
         Objects.requireNonNull(arbeidsgiverVirksomhetId);
-        return new Arbeidsforhold(aktivitetType, arbeidsgiverVirksomhetId, null, arbeidsforholdId, arbeidsforholdErSplittet);
+        return new Arbeidsforhold(aktivitetType, arbeidsgiverVirksomhetId, null, arbeidsforholdId);
     }
 
     public static Arbeidsforhold aktør(AktivitetType aktivitetType, String arbeidsgiverAktørId, String arbeidsforholdId) {
         Objects.requireNonNull(arbeidsgiverAktørId);
-        return new Arbeidsforhold(aktivitetType, null, arbeidsgiverAktørId, arbeidsforholdId, false);
+        return new Arbeidsforhold(aktivitetType, null, arbeidsgiverAktørId, arbeidsforholdId);
     }
 
     public static Arbeidsforhold annet(AktivitetType aktivitetType) {
-        return new Arbeidsforhold(aktivitetType, null, null, null, false);
+        return new Arbeidsforhold(aktivitetType, null, null, null);
     }
 
     public String getArbeidsgiverVirksomhetId() {
@@ -51,10 +47,6 @@ public class Arbeidsforhold {
         return aktivitetType;
     }
 
-    public boolean getArbeidsforholdErSplittet() {
-        return arbeidsforholdErSplittet;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -63,12 +55,11 @@ public class Arbeidsforhold {
         return aktivitetType == that.aktivitetType &&
             Objects.equals(arbeidsgiverVirksomhetId, that.arbeidsgiverVirksomhetId) &&
             Objects.equals(arbeidsgiverAktørId, that.arbeidsgiverAktørId) &&
-            Objects.equals(arbeidsforholdId, that.arbeidsforholdId) &&
-            Objects.equals(arbeidsforholdErSplittet, that.arbeidsforholdErSplittet);
+            Objects.equals(arbeidsforholdId, that.arbeidsforholdId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aktivitetType, arbeidsgiverVirksomhetId, arbeidsgiverAktørId, arbeidsforholdId,  arbeidsforholdErSplittet);
+        return Objects.hash(aktivitetType, arbeidsgiverVirksomhetId, arbeidsgiverAktørId, arbeidsforholdId);
     }
 }
