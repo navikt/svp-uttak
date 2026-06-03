@@ -20,5 +20,5 @@ The resulting structure is used downstream in `fp-beregning-ytelse`, letters and
 
 ## Verification
 
-- Verify behavior changes through `fp-sak` and relevant `navikt/fp-autotest` suites≈ `fpsak` or `verdikjede` limited to svangerskapspenger.
+- Verify behavior changes through `fp-sak` and relevant `navikt/fp-autotest` suites `fpsak` or `verdikjede` limited to svangerskapspenger.
 
