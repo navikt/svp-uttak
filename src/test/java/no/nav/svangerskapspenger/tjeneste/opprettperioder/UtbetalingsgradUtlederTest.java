@@ -16,7 +16,7 @@ import no.nav.svangerskapspenger.domene.søknad.Søknad;
 
 class UtbetalingsgradUtlederTest {
 
-    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456", false);
+    private static final Arbeidsforhold ARBEIDSFORHOLD1 = Arbeidsforhold.virksomhet(AktivitetType.ARBEID, "123", "456");
 
     private static final LocalDate TERMINDATO = LocalDate.of(2019, Month.MAY, 1);
     private static final LocalDate BEHOVDATO = LocalDate.of(2019, Month.JANUARY, 1);
