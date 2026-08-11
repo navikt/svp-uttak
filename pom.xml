@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <fpsak.nare.version>2.6.4</fpsak.nare.version>
+        <fpsak.nare.version>2.6.5</fpsak.nare.version>
         <fpsak.tidsserie.version>2.7.6</fpsak.tidsserie.version>
 
         <!-- Sonar felles -->
