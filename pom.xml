@@ -16,7 +16,7 @@
 
     <properties>
         <fpsak.nare.version>2.6.5</fpsak.nare.version>
-        <fpsak.tidsserie.version>2.7.6</fpsak.tidsserie.version>
+        <fpsak.tidsserie.version>2.8.0</fpsak.tidsserie.version>
 
         <!-- Sonar felles -->
         <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
